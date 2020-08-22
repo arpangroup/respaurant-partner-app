@@ -17,8 +17,8 @@
         android:layout_below="@+id/toolbar"
         android:layout_marginTop="4dp"
         android:layout_width="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_accept_order"/>
 
 
