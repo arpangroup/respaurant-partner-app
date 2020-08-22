@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".views.OrderActivity">
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_order"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/order_recycler"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/item_accept_order"/>
+
+
+    <include
+        android:id="@+id/bottomNavigation"
+        layout="@layout/bottom_navigation_main"/>
+
+
+</RelativeLayout>
