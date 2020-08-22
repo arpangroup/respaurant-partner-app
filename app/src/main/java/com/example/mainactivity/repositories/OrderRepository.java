@@ -1,5 +1,7 @@
 package com.example.mainactivity.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -42,11 +44,17 @@ public class OrderRepository {
     }
 
     public void changePrepareTime(Order order){
+        Log.d(TAG, "Inside changePrepareTime() method...........");
         if(mutableOrderList.getValue() == null)return ;
 
+        Log.d(TAG, "PrepareTime: "+order.getRestaurant().getDeliveryTime());
         List<Order> orderList = mutableOrderList.getValue();
 
-        orderList.set(orderList.indexOf(order), order);
+        //orderList.set(orderList.indexOf(order.get), order);
+        //orderList.stream().filter(order1 -> order1.getId() == order.getId()).map(order1 -> order1 = order);
+        orderList.forEach(order1 -> {
+            if(order1.getId() == order.getId())order1.getRestaurant().setDeliveryTime(order.getRestaurant().getDeliveryTime());
+        });
 
         mutableOrderList.setValue(orderList);
     }
