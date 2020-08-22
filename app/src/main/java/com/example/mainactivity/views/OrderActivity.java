@@ -19,9 +19,7 @@ public class OrderActivity extends AppCompatActivity {
     private final String TAG = this.getClass().getSimpleName();
 
     ActivityOrderBinding mBinding;
-    OrderViewModel orderViewModel;
 
-    private OrderListAdapter orderListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,19 +27,7 @@ public class OrderActivity extends AppCompatActivity {
         mBinding = ActivityOrderBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
         //orderViewModel = ViewModelProviders.of(this).get(OrderViewModel.class);
-        orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
-        orderViewModel.init();
 
-        // Initialize RecyclerView
-        orderListAdapter  = new OrderListAdapter();
-        mBinding.orderRecycler.setAdapter(orderListAdapter);
-
-
-        orderViewModel.getNewOrders().observe(this, orders -> {
-            Log.d(TAG, "ORDER: "+orders.get(0));
-            orderListAdapter.submitList(orders);
-
-        });
 
 
 

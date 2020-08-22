@@ -28,9 +28,17 @@ public class OrderViewModel extends ViewModel {
         orderRepository = OrderRepository.getInstance();
     }
 
+    public LiveData<Boolean> getIsLoading(){
+        LiveData<Boolean> isLoading=orderRepository.getIsLoading();
+        return isLoading;
+    }
     public LiveData<List<Order>> getNewOrders(){
         NewOrderRequest newOrderRequest = new NewOrderRequest(6, getListedOrderIds());
         return orderRepository.getNewOrders(newOrderRequest);
+    }
+
+    public void changeDeliveryTime(Order order){
+        orderRepository.changePrepareTime(order);
     }
 
 

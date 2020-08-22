@@ -1,8 +1,12 @@
 package com.example.mainactivity.models;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mainactivity.adapters.DishListAdapter;
+import com.example.mainactivity.util.FormatDate;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -60,20 +64,36 @@ public class Order {
     @SerializedName("coupon_details")
     private CouponDetails couponDetails;
 
-//    @SerializedName("orderitems")
-//    private List<OrderItem> orderitems;
+    @SerializedName("orderitems")
+    private List<Dish> orderitems;
 
 
 //    @SerializedName("delivery_details")
 //    private DeliveryGuy deliveryDetails;
 
+    @SerializedName("user")
+    private User user;
 
+
+    @BindingAdapter(value = "setDishes")
+    public static void setDishes(RecyclerView recyclerView, List<Dish> dishes){
+        if(dishes != null){
+            DishListAdapter dishListAdapter = new DishListAdapter();
+            dishListAdapter.submitList(dishes);
+            recyclerView.setAdapter(dishListAdapter);
+        }
+    }
+
+    public String getOrderDate(){
+       return FormatDate.format2(this.createdAt);
+    }
 
 
     public static DiffUtil.ItemCallback<Order> itemCallback = new DiffUtil.ItemCallback<Order>() {
         @Override
         public boolean areItemsTheSame(@NonNull Order oldItem, @NonNull Order newItem) {
-            return oldItem.getId() == newItem.getId();
+            //return oldItem.getId() == newItem.getId() && oldItem.getRestaurant().getDeliveryTime().equals(newItem.getRestaurant().getDeliveryTime());
+            return oldItem.getRestaurant().getDeliveryTime().equals(newItem.getRestaurant().getDeliveryTime());
         }
 
         @Override
