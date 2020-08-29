@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_auth"
+    app:startDestination="@id/otpSentFragment">
+
+    <fragment
+        android:id="@+id/otpSentFragment"
+        android:name="com.example.mainactivity.views.auth.OtpSentFragment"
+        android:label="fragment_otp_sent"
+        tools:layout="@layout/fragment_otp_sent" >
+        <action
+            android:id="@+id/action_otpSentFragment_to_otpVerifyFragment"
+            app:destination="@id/otpVerifyFragment" />
+        <action
+            android:id="@+id/action_otpSentFragment_to_signupFragment"
+            app:destination="@id/signupFragment"
+            app:popUpTo="@id/otpSentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/otpVerifyFragment"
+        android:name="com.example.mainactivity.views.auth.OtpVerifyFragment"
+        android:label="OtpVerifyFragment" />
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.mainactivity.views.auth.SignupFragment"
+        android:label="fragment_signup"
+        tools:layout="@layout/fragment_signup" />
+</navigation>

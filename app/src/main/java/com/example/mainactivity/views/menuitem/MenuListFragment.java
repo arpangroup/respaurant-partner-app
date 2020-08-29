@@ -1,4 +1,4 @@
-package com.example.mainactivity.views;
+package com.example.mainactivity.views.menuitem;
 
 import android.os.Bundle;
 

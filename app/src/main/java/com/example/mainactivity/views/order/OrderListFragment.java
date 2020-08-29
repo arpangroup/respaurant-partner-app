@@ -1,32 +1,42 @@
-package com.example.mainactivity.views;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+package com.example.mainactivity.views.order;
 
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.example.mainactivity.R;
+import com.example.mainactivity.adapters.OrderListAdapter;
 import com.example.mainactivity.commons.OrderStatus;
-import com.example.mainactivity.databinding.ActivityOrderBinding;
+import com.example.mainactivity.databinding.FragmentOrderListBinding;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.viewmodels.OrderViewModel;
+import com.example.mainactivity.views.menuitem.MenuActivity;
+import com.example.mainactivity.views.MoreActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderActivity extends AppCompatActivity {
+public class OrderListFragment extends Fragment implements OrderListAdapter.OrderPrepareInterface {
     private final String TAG = this.getClass().getSimpleName();
-    ActivityOrderBinding mBinding;
-    OrderViewModel orderViewModel;
-    NavController navController;
 
-    Dashboard mDashboard = null;
+    private FragmentOrderListBinding mBinding;
+    OrderViewModel orderViewModel;
+    private OrderListAdapter orderListAdapter;
+    private NavController navController;
+    private Dashboard mDashboard;
 
     public static enum OrderType {
         ALL,
@@ -37,24 +47,49 @@ public class OrderActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mBinding = ActivityOrderBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
-        orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
-        orderViewModel.init();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mBinding = FragmentOrderListBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
+    }
 
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment_container);
-        //NavigationUI.setupActionBarWithNavController(this, navController);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Initialize ViewModel
+        orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
+        orderViewModel.init();
 
         initClicks();
 
-        orderViewModel.getDashboard().observe(this, dashboard -> {
+        // Initialize NavController
+        navController = Navigation.findNavController(view);
+
+        // Initialize RecyclerView
+        orderListAdapter = new OrderListAdapter(this);
+        mBinding.orderRecycler.setAdapter(orderListAdapter);
+
+
+        orderViewModel.getDashboard().observe(requireActivity(), dashboard -> {
             mDashboard = dashboard;
             orderViewModel.setFilterOrders(dashboard.getAllOrders());
         });
 
+        orderViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
+            if(aBoolean)mBinding.progressbar.setVisibility(View.VISIBLE);
+            else mBinding.progressbar.setVisibility(View.GONE);
+        });
+
+        orderViewModel.getAllOrders().observe(getViewLifecycleOwner(), orders -> {
+            orderListAdapter.submitList(orders);
+        });
+
+
     }
+
+
+
+
 
     private void initClicks() {
         //Toolbar Click:
@@ -63,8 +98,8 @@ public class OrderActivity extends AppCompatActivity {
         mBinding.toolbar.tagReady.setOnClickListener(view -> changeToolbarTag(OrderType.READY));
         mBinding.toolbar.tagPicked.setOnClickListener(view -> changeToolbarTag(OrderType.PICKED));
         //BottomNavigation Click:
-        mBinding.bottomNavigation.menuLinear.setOnClickListener(view -> startActivity(new Intent(this, MenuActivity.class)));
-        mBinding.bottomNavigation.accountLinear.setOnClickListener(view -> startActivity(new Intent(this, MoreActivity.class)));
+        mBinding.bottomNavigation.menuLinear.setOnClickListener(view -> startActivity(new Intent(requireActivity(), MenuActivity.class)));
+        mBinding.bottomNavigation.accountLinear.setOnClickListener(view -> startActivity(new Intent(requireActivity(), MoreActivity.class)));
     }
 
     public void changeToolbarTag(OrderType orderType){
@@ -73,22 +108,22 @@ public class OrderActivity extends AppCompatActivity {
         mBinding.toolbar.tagReady.setBackgroundResource(R.drawable.rounded_gray_border);
         mBinding.toolbar.tagPicked.setBackgroundResource(R.drawable.rounded_gray_border);
 
-        mBinding.toolbar.tagAll.setTextColor(ContextCompat.getColor(this, R.color.black));
-        mBinding.toolbar.tagPreparing.setTextColor(ContextCompat.getColor(this, R.color.black));
-        mBinding.toolbar.tagReady.setTextColor(ContextCompat.getColor(this, R.color.black));
-        mBinding.toolbar.tagPicked.setTextColor(ContextCompat.getColor(this, R.color.black));
+        mBinding.toolbar.tagAll.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black));
+        mBinding.toolbar.tagPreparing.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black));
+        mBinding.toolbar.tagReady.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black));
+        mBinding.toolbar.tagPicked.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black));
 
         if(orderType == OrderType.ALL){
             mBinding.toolbar.tagAll.setBackgroundResource(R.drawable.rounded_red_border);
-            mBinding.toolbar.tagAll.setTextColor(ContextCompat.getColor(this, R.color.holo_red_dark));
+            mBinding.toolbar.tagAll.setTextColor(ContextCompat.getColor(requireActivity(), R.color.holo_red_dark));
 
-            orderViewModel.getDashboard().observe(this, dashboard -> orderViewModel.setFilterOrders(dashboard.getAllOrders()));
+            orderViewModel.getDashboard().observe(requireActivity(), dashboard -> orderViewModel.setFilterOrders(dashboard.getAllOrders()));
             return;
         }
 
         if(orderType == OrderType.PREPARE){
             mBinding.toolbar.tagPreparing.setBackgroundResource(R.drawable.rounded_red_border);
-            mBinding.toolbar.tagPreparing.setTextColor(ContextCompat.getColor(this, R.color.holo_red_dark));
+            mBinding.toolbar.tagPreparing.setTextColor(ContextCompat.getColor(requireActivity(), R.color.holo_red_dark));
 
             List<Order> filterOrders = filterOrders(mDashboard.getAllOrders(), orderType);
             orderViewModel.setFilterOrders(filterOrders);
@@ -97,7 +132,7 @@ public class OrderActivity extends AppCompatActivity {
 
         if(orderType == OrderType.READY){
             mBinding.toolbar.tagReady.setBackgroundResource(R.drawable.rounded_red_border);
-            mBinding.toolbar.tagReady.setTextColor(ContextCompat.getColor(this, R.color.holo_red_dark));
+            mBinding.toolbar.tagReady.setTextColor(ContextCompat.getColor(requireActivity(), R.color.holo_red_dark));
 
             List<Order> filterOrders = filterOrders(mDashboard.getAllOrders(), orderType);
             orderViewModel.setFilterOrders(filterOrders);
@@ -106,7 +141,7 @@ public class OrderActivity extends AppCompatActivity {
 
         if(orderType == OrderType.PICKED){
             mBinding.toolbar.tagPicked.setBackgroundResource(R.drawable.rounded_red_border);
-            mBinding.toolbar.tagPicked.setTextColor(ContextCompat.getColor(this, R.color.holo_red_dark));
+            mBinding.toolbar.tagPicked.setTextColor(ContextCompat.getColor(requireActivity(), R.color.holo_red_dark));
 
             List<Order> filterOrders = filterOrders(mDashboard.getAllOrders(), orderType);
             orderViewModel.setFilterOrders(filterOrders);

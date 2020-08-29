@@ -1,4 +1,4 @@
-package com.example.mainactivity.views;
+package com.example.mainactivity.views.menuitem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -9,7 +9,8 @@ import android.os.Bundle;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.ActivityMenuBinding;
-import com.example.mainactivity.databinding.ActivityOrderBinding;
+import com.example.mainactivity.views.MainActivity;
+import com.example.mainactivity.views.MoreActivity;
 
 public class MenuActivity extends AppCompatActivity {
     private final String TAG = this.getClass().getSimpleName();
@@ -28,7 +29,7 @@ public class MenuActivity extends AppCompatActivity {
 
 
         mBinding.bottomNavigation.orderLinear.setOnClickListener(view ->{
-            startActivity(new Intent(this, OrderActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         });
 

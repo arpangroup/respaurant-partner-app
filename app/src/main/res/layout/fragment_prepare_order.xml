@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".views.OrderPrepareFragment">
+    tools:context=".views.order.OrderPrepareFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/order_recycler"

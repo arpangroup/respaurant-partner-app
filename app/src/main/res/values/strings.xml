@@ -62,6 +62,7 @@
     <string name="continue_with_google">Continue with Google</string>
     <string name="dont_have_an_account">Dont have an account?</string>
     <string name="create_now">CREATE NOW</string>
+    <string name="by_continuing_you_are_agree">By continuing, you are agree to our \n Terms of Service Privacy Policy Content Polivy</string>
     <string name="create_account">CREATE ACCOUNT</string>
     <string name="enter_your_full_name">Enter Your Full Name</string>
     <string name="by_creating_account_you_accept_terms_and_conditions">By creating account, you accept terms and conditions</string>

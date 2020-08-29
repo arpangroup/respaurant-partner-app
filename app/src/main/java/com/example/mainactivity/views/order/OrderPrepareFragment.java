@@ -1,4 +1,4 @@
-package com.example.mainactivity.views;
+package com.example.mainactivity.views.order;
 
 import android.os.Bundle;
 
@@ -9,34 +9,28 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.mainactivity.R;
-import com.example.mainactivity.adapters.OrderAcceptListAdapter;
 import com.example.mainactivity.adapters.OrderListAdapter;
-import com.example.mainactivity.databinding.FragmentAcceptOrderBinding;
-import com.example.mainactivity.databinding.FragmentOrderListBinding;
-import com.example.mainactivity.models.Order;
+import com.example.mainactivity.databinding.FragmentPrepareOrderBinding;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class OrderListFragment extends Fragment implements OrderListAdapter.OrderPrepareInterface {
+public class OrderPrepareFragment extends Fragment implements OrderListAdapter.OrderPrepareInterface {
     private final String TAG = this.getClass().getSimpleName();
 
-    private FragmentOrderListBinding mBinding;
+    private FragmentPrepareOrderBinding mBinding;
     OrderViewModel orderViewModel;
     private OrderListAdapter orderListAdapter;
     private NavController navController;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mBinding = FragmentOrderListBinding.inflate(inflater, container, false);
+        mBinding = FragmentPrepareOrderBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
+
     }
 
     @Override
@@ -46,7 +40,6 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         // Initialize ViewModel
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         orderViewModel.init();
-
         // Initialize NavController
         navController = Navigation.findNavController(view);
 
@@ -54,15 +47,11 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         orderListAdapter = new OrderListAdapter(this);
         mBinding.orderRecycler.setAdapter(orderListAdapter);
 
-        orderViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
-            if(aBoolean)mBinding.progressbar.setVisibility(View.VISIBLE);
-            else mBinding.progressbar.setVisibility(View.GONE);
-        });
 
-        orderViewModel.getAllOrders().observe(getViewLifecycleOwner(), orders -> {
+        orderViewModel.getNewOrders().observe(getViewLifecycleOwner(), orders -> {
+            //Log.d(TAG, "ORDER: "+orders.get(0));
             orderListAdapter.submitList(orders);
         });
-
 
     }
 }

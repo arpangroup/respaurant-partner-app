@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".views.MenuListFragment">
+    tools:context=".views.menuitem.MenuListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/menu_recycler"

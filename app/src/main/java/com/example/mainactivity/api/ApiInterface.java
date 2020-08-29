@@ -2,10 +2,13 @@ package com.example.mainactivity.api;
 
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.models.User;
+import com.example.mainactivity.models.request.LoginRequest;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.Dashboard;
+import com.example.mainactivity.models.response.LoginResponse;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
 
 import java.util.List;
@@ -18,6 +21,12 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiInterface {
+    @GET("/api/send-login-otp/{phone}")
+    Call<ApiResponse> sendLoginOtp(@Path("phone") String phone);
+
+    @POST("/api/login-using-otp")
+    Call<LoginResponse<User>> loginUsingOtp(@Body LoginRequest loginRequest);
+
     @GET("/api/store-owner/dashboard/{storeOwnerId}")
     Call<Dashboard> getDashboard(@Path("storeOwnerId") String storeOwnerId);
 
