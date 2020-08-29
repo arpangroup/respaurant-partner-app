@@ -1,69 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <LinearLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="menu"
+            type="com.example.mainactivity.models.MenuItem" />
+    </data>
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:layoutDirection="rtl">
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/veg_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:theme="@style/VegSwitch"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text=""/>
+            android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layoutDirection="ltr"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginRight="16dp"
-                    android:src="@drawable/ic_veg"/>
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:layoutDirection="rtl">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/active_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="@{menu.isActive == 1 ? true : false}"
+                    android:layoutDirection="ltr"
+                    android:theme="@style/turnOnSwitch"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layoutDirection="ltr"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <TextView
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="16dp"
+                        android:src="@{menu.isVeg == 1 ? @drawable/ic_veg : @drawable/ic_nonveg }" />
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Maharani Dal Rajma + Navratna Savji + Parathas + Rice"
-                        android:textStyle="bold"
-                        android:textSize="18sp"/>
+                        android:layoutDirection="ltr"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{menu.name}"
+                            android:hint="Maharani Dal"
+                            android:textStyle="bold"
+                            android:textSize="18sp" />
 
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="₹120"
-                        android:textColor="@color/blue"
-                        android:textStyle="bold"
-                        android:textSize="18sp"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{`₹`+ menu.price}"
+                            android:hint="₹120"
+                            android:textColor="@color/blue"
+                            android:textStyle="bold"
+                            android:textSize="18sp" />
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
 
             </LinearLayout>
 
-
-
         </LinearLayout>
 
-    </LinearLayout>
 
-
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</layout>

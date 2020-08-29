@@ -1,56 +1,62 @@
 package com.example.mainactivity.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
-import androidx.databinding.BindingAdapter;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mainactivity.databinding.ItemAcceptOrderBinding;
+import com.example.mainactivity.databinding.ItemOrderPreparingBinding;
 import com.example.mainactivity.models.Order;
 
 public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderViewHolder> {
 
-    OrderInterface orderInterface;
-    public OrderListAdapter(OrderInterface orderInterface) {
+    OrderPrepareInterface orderPrepareInterface;
+    public OrderListAdapter(OrderPrepareInterface orderPrepareInterface) {
         super(Order.itemCallback);
-        this.orderInterface = orderInterface;
+        this.orderPrepareInterface = orderPrepareInterface;
     }
 
     @NonNull
     @Override
     public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        ItemAcceptOrderBinding itemAcceptOrderBinding = ItemAcceptOrderBinding.inflate(layoutInflater, parent, false);
-        itemAcceptOrderBinding.setOrderInterface(orderInterface);
-        return new OrderViewHolder(itemAcceptOrderBinding);
+        ItemOrderPreparingBinding itemOrderPreparingBinding = ItemOrderPreparingBinding.inflate(layoutInflater, parent, false);
+        //itemAcceptOrderBinding.setOrderInterface(orderInterface);
+        return new OrderViewHolder(itemOrderPreparingBinding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = getItem(position);
-        holder.itemAcceptOrderBinding.setOrder(order);
-        holder.itemAcceptOrderBinding.executePendingBindings();
+        holder.itemOrderPreparingBinding.setOrder(order);
+        holder.itemOrderPreparingBinding.setOrder(order);
+
+        holder.itemOrderPreparingBinding.executePendingBindings();
+
+
+        holder.itemOrderPreparingBinding.toggleOrderTotal.setOnClickListener(view -> {
+            if(order.getToggle() == 0)order.setToggle(1);
+            else if(order.getToggle() == 1)order.setToggle(0);
+            holder.itemOrderPreparingBinding.setOrder(order);
+        });
     }
 
     class OrderViewHolder extends RecyclerView.ViewHolder{
-        ItemAcceptOrderBinding itemAcceptOrderBinding ;
+        ItemOrderPreparingBinding itemOrderPreparingBinding ;
 
-        public OrderViewHolder(ItemAcceptOrderBinding binding) {
+        public OrderViewHolder(ItemOrderPreparingBinding binding) {
             super(binding.getRoot());
-            this.itemAcceptOrderBinding = binding;
+            this.itemOrderPreparingBinding = binding;
         }
+
+
+
     }
 
 
-    public interface OrderInterface{
-        void onIncreasePreparationTime(Order order);
-        void onDecreasePreparationTime(Order order);
-        void onRejectClick(Order order);
-        void onAcceptClick(Order order);
+    public interface OrderPrepareInterface{
     }
 
 }

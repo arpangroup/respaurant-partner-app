@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mainactivity.databinding.ItemAcceptOrderBinding;
 import com.example.mainactivity.databinding.ItemDish1Binding;
 import com.example.mainactivity.models.Dish;
 import com.example.mainactivity.models.Order;

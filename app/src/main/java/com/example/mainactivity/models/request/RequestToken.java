@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class RequestToken {
-    private String user_id;
+    private String user_id = "6";
     private String token;
     private String unique_order_id = null;
     private int order_id = 0;

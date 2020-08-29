@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/orderListFragment">
+
+    <fragment
+        android:id="@+id/acceptOrderFragment"
+        android:name="com.example.mainactivity.views.OrderAcceptFragment"
+        android:label="fragment_accept_order"
+        tools:layout="@layout/fragment_accept_order" />
+    <fragment
+        android:id="@+id/orderPrepareFragment"
+        android:name="com.example.mainactivity.views.OrderPrepareFragment"
+        android:label="fragment_prepare_order"
+        tools:layout="@layout/fragment_prepare_order" />
+    <fragment
+        android:id="@+id/orderListFragment"
+        android:name="com.example.mainactivity.views.OrderListFragment"
+        android:label="fragment_order_list"
+        tools:layout="@layout/fragment_order_list" />
+</navigation>

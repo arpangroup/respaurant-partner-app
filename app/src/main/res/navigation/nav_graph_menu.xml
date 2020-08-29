@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_menu"
+    app:startDestination="@id/menuListFragment">
+
+    <fragment
+        android:id="@+id/menuListFragment"
+        android:name="com.example.mainactivity.views.MenuListFragment"
+        android:label="fragment_menu_list"
+        tools:layout="@layout/fragment_menu_list" />
+</navigation>

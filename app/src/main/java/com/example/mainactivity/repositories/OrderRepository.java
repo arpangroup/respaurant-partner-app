@@ -9,7 +9,11 @@ import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.request.NewOrderRequest;
+import com.example.mainactivity.models.request.RequestToken;
+import com.example.mainactivity.models.response.ApiResponse;
+import com.example.mainactivity.models.response.Dashboard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -19,8 +23,10 @@ import retrofit2.Response;
 public class OrderRepository {
     private final String TAG = this.getClass().getSimpleName();
     private static OrderRepository orderRepository;
-    private final MutableLiveData<Boolean> isLoading=new MutableLiveData<>();
-
+    private MutableLiveData<Boolean> isLoading=new MutableLiveData<>();
+    private MutableLiveData<List<String>> mutableAcceptedOrders;
+    private MutableLiveData<List<String>> mutableCancelOrders;
+    private MutableLiveData<Dashboard> mutableDashboard;
     MutableLiveData<List<Order>> mutableOrderList;
 
     public static OrderRepository getInstance(){
@@ -33,33 +39,83 @@ public class OrderRepository {
     public LiveData<Boolean> getIsLoading(){
         return isLoading;
     }
-
-
+    public LiveData<Dashboard> getDashboard(String userId){
+        if(mutableDashboard == null){
+            mutableDashboard = new MutableLiveData<>();
+        }
+        loadDashboard(userId);
+        return mutableDashboard;
+    }
     public LiveData<List<Order>> getNewOrders(NewOrderRequest newOrderRequest){
         if(mutableOrderList == null){
             mutableOrderList = new MutableLiveData<>();
-            loadOrders(newOrderRequest);
+            loadNewOrdersApi(newOrderRequest);
         }
         return mutableOrderList;
     }
-
-    public void changePrepareTime(Order order){
-        Log.d(TAG, "Inside changePrepareTime() method...........");
+    public LiveData<List<String>> getAllAcceptedOrders(){
+        if(mutableAcceptedOrders == null){
+            mutableAcceptedOrders = new MutableLiveData<>();
+        }
+        return mutableAcceptedOrders;
+    }
+    public LiveData<List<String>> getAllCanceledOrders(){
+        if(mutableCancelOrders == null){
+            mutableCancelOrders = new MutableLiveData<>();
+        }
+        return mutableCancelOrders;
+    }
+    public void changePrepareTime(int orderId, int time){
         if(mutableOrderList.getValue() == null)return ;
 
-        Log.d(TAG, "PrepareTime: "+order.getRestaurant().getDeliveryTime());
-        List<Order> orderList = mutableOrderList.getValue();
+        List<Order> orderList = new ArrayList<>(mutableOrderList.getValue());
+
+        Order updatableOrder = orderList.stream().filter(order -> order.getId() == orderId).findAny().get();
+        updatableOrder.getRestaurant().setDeliveryTime(String.valueOf(time));
+
+       // Order.itemCallback.areContentsTheSame()
 
         //orderList.set(orderList.indexOf(order.get), order);
         //orderList.stream().filter(order1 -> order1.getId() == order.getId()).map(order1 -> order1 = order);
-        orderList.forEach(order1 -> {
-            if(order1.getId() == order.getId())order1.getRestaurant().setDeliveryTime(order.getRestaurant().getDeliveryTime());
-        });
+//        orderList.forEach(order1 -> {
+//            if(order1.getId() == order.getId())order1.getRestaurant().setDeliveryTime(order.getRestaurant().getDeliveryTime());
+//        });
 
+        //mutableOrderList.setValue(null);
         mutableOrderList.setValue(orderList);
     }
+    public LiveData<ApiResponse> acceptOrder(RequestToken requestToken){
+        return acceptOrderApi(requestToken);
+    }
+    public LiveData<ApiResponse> cancelOrder(RequestToken requestToken){
+        return cancelOrderApi(requestToken);
+    }
 
-    private void loadOrders(NewOrderRequest newOrderRequest){
+
+
+
+
+    /*========================================================API_CALLS==============================================*/
+    private void loadDashboard(String userId){
+        Log.d(TAG, "Inside loadDashboard()......");
+        Log.d(TAG, "UserId: "+userId);
+        ApiInterface apiInterface = ApiService.getApiService();
+        isLoading.setValue(true);
+        apiInterface.getDashboard(userId).enqueue(new Callback<Dashboard>() {
+            @Override
+            public void onResponse(Call<Dashboard> call, Response<Dashboard> response) {
+                isLoading.setValue(false);
+                mutableDashboard.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Dashboard> call, Throwable t) {
+                isLoading.setValue(false);
+                Log.d(TAG, "FAIL:"+t);
+            }
+        });
+    }
+    private void loadNewOrdersApi(NewOrderRequest newOrderRequest){
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
         apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<List<Order>>() {
@@ -75,5 +131,81 @@ public class OrderRepository {
                 isLoading.setValue(false);
             }
         });
+    }
+    private LiveData<ApiResponse> acceptOrderApi(RequestToken requestToken){
+        MutableLiveData<ApiResponse> apiResponseMutableLiveData = new MutableLiveData<>();
+        ApiInterface apiInterface = ApiService.getApiService();
+        isLoading.setValue(true);
+        apiInterface.acceptOrder(requestToken).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                isLoading.setValue(false);
+                ApiResponse apiResponse = response.body();
+
+                // Update accepted orders list
+                if(mutableAcceptedOrders == null) mutableAcceptedOrders = new MutableLiveData<>();
+                if(mutableAcceptedOrders.getValue() != null){
+                    List<String> acceptedOrderList = new ArrayList<>(mutableAcceptedOrders.getValue());
+                    acceptedOrderList.add(String.valueOf(requestToken.getOrder_id()));
+                    mutableAcceptedOrders.setValue(acceptedOrderList);
+                }
+
+                apiResponseMutableLiveData.setValue(apiResponse);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                isLoading.setValue(false);
+            }
+        });
+        return apiResponseMutableLiveData;
+    }
+    private LiveData<ApiResponse> cancelOrderApi(RequestToken requestToken){
+        MutableLiveData<ApiResponse> apiResponseMutableLiveData = new MutableLiveData<>();
+        ApiInterface apiInterface = ApiService.getApiService();
+        isLoading.setValue(true);
+        apiInterface.cancelOrder(requestToken).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                isLoading.setValue(false);
+                ApiResponse apiResponse = response.body();
+
+
+                // Update accepted orders list
+                if(mutableCancelOrders == null) mutableCancelOrders = new MutableLiveData<>();
+                if(mutableCancelOrders.getValue() != null){
+                    List<String> acceptedOrderList = new ArrayList<>(mutableCancelOrders.getValue());
+                    acceptedOrderList.add(String.valueOf(requestToken.getOrder_id()));
+                    mutableCancelOrders.setValue(acceptedOrderList);
+                }
+
+                apiResponseMutableLiveData.setValue(apiResponse);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                isLoading.setValue(false);
+            }
+        });
+        return apiResponseMutableLiveData;
+    }
+    private LiveData<ApiResponse> makeOrderReadyApi(RequestToken requestToken){
+        MutableLiveData<ApiResponse> apiResponseMutableLiveData = new MutableLiveData<>();
+        ApiInterface apiInterface = ApiService.getApiService();
+        isLoading.setValue(true);
+        apiInterface.makeOrderReady(requestToken).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                isLoading.setValue(false);
+                ApiResponse apiResponse = response.body();
+                apiResponseMutableLiveData.setValue(apiResponse);
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                isLoading.setValue(false);
+            }
+        });
+        return apiResponseMutableLiveData;
     }
 }

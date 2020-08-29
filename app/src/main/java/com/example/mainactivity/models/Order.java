@@ -1,5 +1,7 @@
 package com.example.mainactivity.models;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -75,6 +77,10 @@ public class Order {
     private User user;
 
 
+    /*========================================================================*/
+    private int toggle = 1;
+
+
     @BindingAdapter(value = "setDishes")
     public static void setDishes(RecyclerView recyclerView, List<Dish> dishes){
         if(dishes != null){
@@ -93,7 +99,7 @@ public class Order {
         @Override
         public boolean areItemsTheSame(@NonNull Order oldItem, @NonNull Order newItem) {
             //return oldItem.getId() == newItem.getId() && oldItem.getRestaurant().getDeliveryTime().equals(newItem.getRestaurant().getDeliveryTime());
-            return oldItem.getRestaurant().getDeliveryTime().equals(newItem.getRestaurant().getDeliveryTime());
+            return oldItem.getId() == newItem.getId() ;
         }
 
         @Override

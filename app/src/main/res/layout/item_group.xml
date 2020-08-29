@@ -1,81 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-       <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:orientation="vertical">
-           <LinearLayout
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layoutDirection="rtl"
-               android:padding="16dp"
-               android:orientation="horizontal">
-               <Button
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_alignParentRight="true"
-                   android:text="EDIT"
-                   android:textStyle="bold"
-                   android:textColor="@color/blue"
-                   android:paddingLeft="12dp"
-                   android:background="@color/transferent"/>
-               <LinearLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layoutDirection="ltr"
-                   android:layout_gravity="center"
-                   android:orientation="vertical">
-                   <TextView
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_marginLeft="16dp"
-                       android:text="Soups and Salad"
-                       android:textStyle="bold"
-                       android:textSize="18sp"/>
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layoutDirection="ltr"
-                       android:orientation="horizontal">
-                       <TextView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:layout_marginLeft="16dp"
-                           android:text="21 Items"
-                           android:textColor="@color/blue"
-                           android:textStyle="bold"
-                           android:textSize="18sp"/>
-                       <ImageView
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
-                           app:tint="@color/blue" />
-                   </LinearLayout>
-               </LinearLayout>
-           </LinearLayout>
-           <androidx.recyclerview.widget.RecyclerView
-               android:id="@+id/dish_recycler"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_marginTop="3dp"
-               android:nestedScrollingEnabled="false"
-               android:layout_marginLeft="16.7dp"
-               android:layout_marginRight="16.7dp"
-               android:visibility="visible" />
-       </LinearLayout>
+    xmlns:tools="http://schemas.android.com/tools">
 
-    </androidx.cardview.widget.CardView>
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="category"
+            type="com.example.mainactivity.models.ItemCategory" />
 
-    <View
+        <variable
+            name="parentInterface"
+            type="com.example.mainactivity.adapters.ItemCategoryAdapter.ItemCategoryInterface" />
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="12dp"
-        android:background="@color/lightsilver" />
-</LinearLayout >
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="rtl"
+                    android:padding="16dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="EDIT"
+                        android:textStyle="bold"
+                        android:textColor="@color/blue"
+                        android:paddingLeft="12dp"
+                        android:background="@color/transferent" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layoutDirection="ltr"
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:text="@{category.name}"
+                            android:hint="Soups and Salad"
+                            android:textStyle="bold"
+                            android:textSize="18sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layoutDirection="ltr"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="16dp"
+                                android:text="@{category.menuItems.size() + ` Item`}"
+                                android:hint="21 Items"
+                                android:textColor="@color/blue"
+                                android:textStyle="bold"
+                                android:textSize="18sp" />
+
+                            <ImageView
+                                android:id="@+id/toggle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="8dp"
+                                android:src="@drawable/ic_baseline_keyboard_arrow_down_24"
+                                android:rotation="@{category.toggle == 1 ? 0 : -180 }"
+                                app:tint="@color/blue" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:visibility="@{category.toggle == 1 ? View.GONE : View.VISIBLE }"
+                    android:id="@+id/dish_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_menu" />
+<!--                app:setMenus="@{category.menuItems}"-->
+<!--                app:setParentAdapter="@{parentInterface}"-->
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:background="@color/lightsilver" />
+    </LinearLayout>
+</layout>
