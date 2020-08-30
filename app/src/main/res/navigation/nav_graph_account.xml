@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_account"
+    app:startDestination="@id/accountListFragment">
+
+    <fragment
+        android:id="@+id/accountListFragment"
+        android:name="com.example.mainactivity.views.account.AccountListFragment"
+        android:label="fragment_account_list"
+        tools:layout="@layout/fragment_account_list" >
+        <action
+            android:id="@+id/action_accountListFragment_to_editRestaurantFragment"
+            app:destination="@id/editRestaurantFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editRestaurantFragment"
+        android:name="com.example.mainactivity.views.EditRestaurantFragment"
+        android:label="fragment_edit_restaurant"
+        tools:layout="@layout/fragment_edit_restaurant" />
+</navigation>

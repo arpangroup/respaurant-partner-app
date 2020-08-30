@@ -27,15 +27,5 @@ public class MenuActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_container);
         //NavigationUI.setupActionBarWithNavController(this, navController);
 
-
-        mBinding.bottomNavigation.orderLinear.setOnClickListener(view ->{
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        });
-
-        mBinding.bottomNavigation.accountLinear.setOnClickListener(view ->{
-            startActivity(new Intent(this, MoreActivity.class));
-            finish();
-        });
     }
 }

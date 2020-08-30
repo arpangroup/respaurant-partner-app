@@ -70,10 +70,16 @@ public class RestaurantRepositoryStubImpl implements RestaurantRepository{
 
         List<ItemCategory> categories = Arrays.asList(
                 new ItemCategory(1, "Dinner", 1, menuItems1),
-                new ItemCategory(2, "Pasta", 1, menuItems2),
-                new ItemCategory(3, "Roll", 1,menuItems3),
-                new ItemCategory(4, "Momo", 1,menuItems4),
-                new ItemCategory(5, "Rice", 1,menuItems5)
+                new ItemCategory(2, "Pasta", 0, menuItems2),
+                new ItemCategory(3, "Roll", 0,menuItems3),
+                new ItemCategory(4, "Veg South Indian Hot Momo  For  Eat", 1,menuItems4),
+                new ItemCategory(5, "Rice", 1,menuItems5),
+                new ItemCategory(6, "Launh", 1,menuItems2),
+                new ItemCategory(7, "Drink", 1,menuItems3),
+                new ItemCategory(8, "Soup", 0,menuItems5),
+                new ItemCategory(9, "Snacks", 1,menuItems3),
+                new ItemCategory(10, "Rice", 0,menuItems5),
+                new ItemCategory(11, "South Indian", 1,menuItems5)
         );
 
         mutableMenuItems.setValue(categories);

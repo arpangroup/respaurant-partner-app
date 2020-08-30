@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:contentInsetStart="0dp"
+    android:background="@color/white">
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_arrow_back_24"
+        android:layout_marginLeft="16.7dp"/>
+    <ImageView
+        android:id="@+id/search_Img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:padding="16dp"
+        android:src="@drawable/ic_baseline_more_vert_24" />
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16.7dp"
+        android:fontFamily="@font/sfpro_display_bold"
+        android:text="EDIT ITEM"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
+
+
+</androidx.appcompat.widget.Toolbar>

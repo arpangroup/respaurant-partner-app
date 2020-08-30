@@ -61,6 +61,8 @@ public class ItemCategoryAdapter extends ListAdapter<ItemCategory, ItemCategoryA
         public ItemGroupViewHolder(ItemGroupBinding binding) {
             super(binding.getRoot());
             this.itemGroupBinding = binding;
+
+            this.itemGroupBinding.btnEdit.setOnClickListener(view -> itemCategoryInterface.onEditCategoryListner(getItem(getAdapterPosition())));
         }
     }
 

@@ -45,6 +45,10 @@ public class MenuItemAdapter extends ListAdapter<MenuItem, MenuItemAdapter.MenuI
             boolean isActive = ((SwitchCompat) view).isChecked();
             itemCategoryInterface.onSwitchClickListner(menuItem, isActive);
         });
+
+        holder.itemMenuBinding.menu.setOnClickListener(view -> {
+            itemCategoryInterface.onMenuItemClickListner(menuItem);
+        });
     }
 
 

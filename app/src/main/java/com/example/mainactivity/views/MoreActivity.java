@@ -21,14 +21,5 @@ public class MoreActivity extends AppCompatActivity {
         mBinding = ActivityMoreBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
-        mBinding.bottomNavigation.orderLinear.setOnClickListener(view ->{
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        });
-
-        mBinding.bottomNavigation.menuLinear.setOnClickListener(view ->{
-            startActivity(new Intent(this, MenuActivity.class));
-            finish();
-        });
     }
 }

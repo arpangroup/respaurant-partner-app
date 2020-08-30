@@ -9,5 +9,27 @@
         android:id="@+id/menuListFragment"
         android:name="com.example.mainactivity.views.menuitem.MenuListFragment"
         android:label="fragment_menu_list"
-        tools:layout="@layout/fragment_menu_list" />
+        tools:layout="@layout/fragment_menu_list" >
+        <action
+            android:id="@+id/action_menuListFragment_to_editItemFragment"
+            app:destination="@id/editItemFragment"
+            app:popUpTo="@id/menuListFragment" />
+        <action
+            android:id="@+id/action_menuListFragment_to_editCategoryFragment"
+            app:destination="@id/editCategoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editItemFragment"
+        android:name="com.example.mainactivity.views.menuitem.EditItemFragment"
+        android:label="fragment_edit_item"
+        tools:layout="@layout/fragment_edit_item" />
+    <fragment
+        android:id="@+id/editCategoryFragment"
+        android:name="com.example.mainactivity.views.menuitem.EditCategoryFragment"
+        android:label="fragment_edit_category"
+        tools:layout="@layout/fragment_edit_category" >
+        <action
+            android:id="@+id/action_editCategoryFragment_to_editItemFragment"
+            app:destination="@id/editItemFragment" />
+    </fragment>
 </navigation>

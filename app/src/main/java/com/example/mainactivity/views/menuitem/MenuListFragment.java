@@ -1,5 +1,6 @@
 package com.example.mainactivity.views.menuitem;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,8 @@ import com.example.mainactivity.models.MenuItem;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
+import com.example.mainactivity.views.MainActivity;
+import com.example.mainactivity.views.MoreActivity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,8 +53,8 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onViewCreated(@NonNull View rootView, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(rootView, savedInstanceState);
 
 
         // Initialize ViewModel
@@ -59,7 +62,7 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
         restaurantViewModel.init();
 
         // Initialize NavController
-        navController = Navigation.findNavController(view);
+        navController = Navigation.findNavController(rootView);
 
         // Initialize RecyclerView
         itemCategoryAdapter = new ItemCategoryAdapter(this);
@@ -78,11 +81,21 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
         });
 
 
+        mBinding.bottomNavigation.orderLinear.setOnClickListener(view -> {
+            requireActivity().startActivity(new Intent(requireActivity(), MainActivity.class));
+            requireActivity().finish();
+        });
+
+        mBinding.bottomNavigation.accountLinear.setOnClickListener(view ->{
+            requireActivity().startActivity(new Intent(requireActivity(), MoreActivity.class));
+            requireActivity().finish();
+        });
+
+
     }
 
     @Override
     public void onMenuItemClickListner(MenuItem menuItem) {
-
     }
 
     @Override
@@ -92,6 +105,7 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
 
     @Override
     public void onEditCategoryListner(ItemCategory itemCategory) {
-
+        restaurantViewModel.setCategory(itemCategory);
+        navController.navigate(R.id.action_menuListFragment_to_editCategoryFragment);
     }
 }
