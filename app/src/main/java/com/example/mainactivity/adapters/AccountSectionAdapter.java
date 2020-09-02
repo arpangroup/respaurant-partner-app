@@ -14,11 +14,15 @@ import com.example.mainactivity.databinding.Cart1Binding;
 import com.example.mainactivity.databinding.Cart2Binding;
 import com.example.mainactivity.databinding.ItemDish1Binding;
 import com.example.mainactivity.models.AccountSection;
+import com.example.mainactivity.models.ItemCategory;
+import com.example.mainactivity.models.MenuItem;
 
 public class AccountSectionAdapter extends ListAdapter<AccountSection, AccountSectionAdapter.AccountViewHolder> {
 
-    public AccountSectionAdapter() {
+    AccountSectionInterface accountSectionInterface;
+    public AccountSectionAdapter(AccountSectionInterface accountSectionInterface) {
         super(AccountSection.itemCallback);
+        this.accountSectionInterface = accountSectionInterface;
     }
 
     @NonNull
@@ -47,11 +51,13 @@ public class AccountSectionAdapter extends ListAdapter<AccountSection, AccountSe
             super(binding.getRoot());
             this.cartBinding = binding;
 
-            this.cartBinding.item.setOnClickListener(view -> {
-
-            });
+            this.itemView.setOnClickListener(view -> accountSectionInterface.onItemAccountSectionItemClick(getItem(getAdapterPosition())));
         }
     }
 
+
+    public interface AccountSectionInterface {
+        void onItemAccountSectionItemClick(AccountSection accountSection);
+    }
 
 }

@@ -13,10 +13,26 @@
         <action
             android:id="@+id/action_accountListFragment_to_editRestaurantFragment"
             app:destination="@id/editRestaurantFragment" />
+        <action
+            android:id="@+id/action_accountListFragment_to_orderHistoryFragment"
+            app:destination="@id/orderHistoryFragment" />
+        <action
+            android:id="@+id/action_accountListFragment_to_earningFragment"
+            app:destination="@id/earningFragment" />
     </fragment>
     <fragment
         android:id="@+id/editRestaurantFragment"
         android:name="com.example.mainactivity.views.EditRestaurantFragment"
         android:label="fragment_edit_restaurant"
         tools:layout="@layout/fragment_edit_restaurant" />
+    <fragment
+        android:id="@+id/orderHistoryFragment"
+        android:name="com.example.mainactivity.views.order.OrderHistoryFragment"
+        android:label="fragment_order_history"
+        tools:layout="@layout/fragment_order_history" />
+    <fragment
+        android:id="@+id/earningFragment"
+        android:name="com.example.mainactivity.views.account.EarningFragment"
+        android:label="fragment_earning"
+        tools:layout="@layout/fragment_earning" />
 </navigation>

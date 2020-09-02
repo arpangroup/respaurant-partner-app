@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ import com.example.mainactivity.views.menuitem.MenuActivity;
 import java.util.Arrays;
 import java.util.List;
 
-public class AccountListFragment extends Fragment {
+public class AccountListFragment extends Fragment implements AccountSectionAdapter.AccountSectionInterface {
     private final String TAG = this.getClass().getSimpleName();
 
     private FragmentAccountListBinding mBinding;
@@ -61,16 +62,22 @@ public class AccountListFragment extends Fragment {
         initClicks();
 
         // Initialize RecyclerView
-        accountSectionAdapter = new AccountSectionAdapter();
+        accountSectionAdapter = new AccountSectionAdapter(this);
         mBinding.sectionRecycler.setAdapter(accountSectionAdapter);
         List<AccountSection> sections = Arrays.asList(
             new AccountSection(1, "Schedule Restaurant Open", "Schedule off time in advance", R.drawable.ic_baseline_access_time_24),
             new AccountSection(2, "Order History","View all previous orders",  R.drawable.ic_baseline_shopping_cart_24),
-            new AccountSection(3, "Earning","View all earnings",  R.drawable.ic_baseline_shopping_cart_24),
+            new AccountSection(3, "Earning","View all earnings",  R.drawable.ic_baseline_payment_24),
             new AccountSection(4, "Support","Raise support ",  R.drawable.ic_baseline_help_outline_24),
             new AccountSection(5, "Logout","Signout from your current account",  R.drawable.ic_baseline_power_settings_new_24)
         );
         accountSectionAdapter.submitList(sections);
+
+
+        restaurantViewModel.getRestaurantDetails().observe(getViewLifecycleOwner(), restaurant -> {
+            mBinding.restaurantName.setText(restaurant.getName());
+            mBinding.desc.setText(restaurant.getAddress());
+        });
 
 
     }
@@ -90,7 +97,25 @@ public class AccountListFragment extends Fragment {
         mBinding.layoutRestaurant.setOnClickListener(view -> {
             navController.navigate(R.id.action_accountListFragment_to_editRestaurantFragment);
         });
+
+
     }
 
 
+
+    @Override
+    public void onItemAccountSectionItemClick(AccountSection accountSection) {
+        switch (accountSection.getId()){
+            case 1:
+                break;
+            case 2:
+                navController.navigate(R.id.action_accountListFragment_to_orderHistoryFragment);
+                break;
+            case 3:
+                navController.navigate(R.id.action_accountListFragment_to_earningFragment);
+                break;
+            default:
+                break;
+        }
+    }
 }

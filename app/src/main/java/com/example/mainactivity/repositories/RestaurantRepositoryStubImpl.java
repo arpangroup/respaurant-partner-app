@@ -7,6 +7,7 @@ import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
+import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
 
 import java.util.ArrayList;
@@ -37,6 +38,12 @@ public class RestaurantRepositoryStubImpl implements RestaurantRepository{
     public LiveData<Boolean> getIsLoading(){
         return isLoading;
     }
+
+    @Override
+    public LiveData<Restaurant> getRestaurantDetails(String userId) {
+        return null;
+    }
+
     @Override
     public LiveData<List<ItemCategory>> getRestaurantItems(String userId){
         if(mutableMenuItems == null){

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
+import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.repositories.RestaurantRepository;
 import com.example.mainactivity.repositories.RestaurantRepositoryImpl;
@@ -25,12 +26,16 @@ public class RestaurantViewModel extends ViewModel {
         if (mItems != null){
             return;
         }
-        restaurantRepository = RestaurantRepositoryStubImpl.getInstance();
+        restaurantRepository = RestaurantRepositoryImpl.getInstance();
     }
 
     public LiveData<Boolean> getIsLoading(){
         LiveData<Boolean> isLoading=restaurantRepository.getIsLoading();
         return isLoading;
+    }
+    public LiveData<Restaurant> getRestaurantDetails(){
+        String userId = new RequestToken().getUser_id();
+        return restaurantRepository.getRestaurantDetails(userId);
     }
     public LiveData<List<ItemCategory>> getRestaurantsMenuItems(){
         String userId = new RequestToken().getUser_id();

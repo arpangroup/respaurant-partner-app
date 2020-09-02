@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
@@ -50,6 +51,9 @@ public class OrderViewModel extends ViewModel {
     }
 
     public void setFilterOrders(List<Order> orders){
+        if(mutableOrders == null){
+            mutableOrders = new MutableLiveData<>();
+        }
         mutableOrders.setValue(orders);
     }
     public LiveData<List<Order>> getAllOrders(){

@@ -2,6 +2,7 @@ package com.example.mainactivity.api;
 
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.User;
 import com.example.mainactivity.models.request.LoginRequest;
 import com.example.mainactivity.models.request.NewOrderRequest;
@@ -10,6 +11,7 @@ import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.models.response.LoginResponse;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -26,6 +28,9 @@ public interface ApiInterface {
 
     @POST("/api/login-using-otp")
     Call<LoginResponse<User>> loginUsingOtp(@Body LoginRequest loginRequest);
+
+    @GET("/api/store-owner/stores/{storeOwnerId}")
+    Call<List<Restaurant>> getRestaurants(@Path("storeOwnerId") String storeOwnerId);
 
     @GET("/api/store-owner/dashboard/{storeOwnerId}")
     Call<Dashboard> getDashboard(@Path("storeOwnerId") String storeOwnerId);

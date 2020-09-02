@@ -7,6 +7,7 @@ import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
+import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     private static RestaurantRepositoryImpl restaurantRepository;
     private MutableLiveData<Boolean> isLoading=new MutableLiveData<>();
     private MutableLiveData<List<ItemCategory>> mutableMenuItems;
+    private MutableLiveData<Restaurant> mutableRestaurant;
 
 
     public static RestaurantRepositoryImpl getInstance(){
@@ -34,6 +36,16 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     public LiveData<Boolean> getIsLoading(){
         return isLoading;
     }
+
+    @Override
+    public LiveData<Restaurant> getRestaurantDetails(String userId) {
+        if(mutableRestaurant == null){
+            mutableRestaurant = new MutableLiveData<>();
+        }
+        loadRestaurant(userId);
+        return mutableRestaurant;
+    }
+
     @Override
     public LiveData<List<ItemCategory>> getRestaurantItems(String userId){
         if(mutableMenuItems == null){
@@ -45,6 +57,25 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
 
 
     /*========================================================API_CALLS==============================================*/
+    private void loadRestaurant(String userId){
+        ApiInterface apiInterface = ApiService.getApiService();
+        isLoading.setValue(true);
+        apiInterface.getRestaurants(userId).enqueue(new Callback<List<Restaurant>>() {
+            @Override
+            public void onResponse(Call<List<Restaurant>> call, Response<List<Restaurant>> response) {
+                isLoading.setValue(false);
+                List<Restaurant> restaurants = response.body();
+                if(restaurants != null){
+                    mutableRestaurant.setValue(restaurants.get(0));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Restaurant>> call, Throwable t) {
+                isLoading.setValue(false);
+            }
+        });
+    }
     private void loadRestaurantsMenuApi(String userId){
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
