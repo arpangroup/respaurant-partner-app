@@ -21,6 +21,7 @@ import com.example.mainactivity.databinding.FragmentEditItemBinding;
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -72,7 +73,9 @@ public class EditCategoryFragment extends Fragment implements ItemCategoryAdapte
 
     @Override
     public void onSwitchClickListener(MenuItem menuItem, boolean isActive) {
-
+        restaurantViewModel.toggleMenuItem(menuItem.getId()).observe(getViewLifecycleOwner(), apiResponse -> {
+            Snackbar.make(requireView(), apiResponse.getMessage(), Snackbar.LENGTH_LONG).show();
+        });
     }
 
     @Override

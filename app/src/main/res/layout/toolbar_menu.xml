@@ -44,6 +44,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp">
@@ -90,6 +91,41 @@
 
             </HorizontalScrollView>
         </LinearLayout>
+        <RadioGroup
+            android:id="@+id/toolbar_radiogroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+            <RadioButton
+                android:id="@+id/radiobutton_all_items"
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/radio_button_ui"
+                android:textColor="@drawable/radio_text_selector"
+                android:button="@null"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:layout_marginRight="16dp"
+                android:text="All Items (4)"/>
+            <RadioButton
+                android:id="@+id/radiobutton_out_of_stock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/radio_button_ui"
+                android:textColor="@drawable/radio_text_selector"
+                android:button="@null"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="Out of Stocks (20)"/>
+
+
+        </RadioGroup>
 
     </LinearLayout>
 

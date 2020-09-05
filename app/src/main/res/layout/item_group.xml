@@ -47,6 +47,7 @@
                         android:background="@color/transferent" />
 
                     <androidx.appcompat.widget.SwitchCompat
+                        android:visibility="gone"
                         android:layoutDirection="ltr"
                         android:checked="@{category.isEnabled == 1 ? true : false}"
                         android:layout_width="wrap_content"

@@ -103,9 +103,7 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
     @Override
     public void onSwitchClickListener(MenuItem menuItem, boolean isActive) {
         restaurantViewModel.toggleMenuItem(menuItem.getId()).observe(getViewLifecycleOwner(), apiResponse -> {
-           Log.d(TAG, "................API-RESPONSE............................");
-           Log.d(TAG, ""+apiResponse);
-           Log.d(TAG, "............................................");
+            refresh();
         });
 
     }
