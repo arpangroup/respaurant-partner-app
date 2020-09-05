@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.Toast;
 
 import com.example.mainactivity.R;
@@ -26,6 +27,9 @@ import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.MainActivity;
 import com.example.mainactivity.views.MoreActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MenuListFragment extends Fragment implements ItemCategoryAdapter.ItemCategoryInterface{
     private final String TAG = this.getClass().getSimpleName();
 
@@ -33,6 +37,13 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
     RestaurantViewModel restaurantViewModel;
     private ItemCategoryAdapter itemCategoryAdapter;
     private NavController navController;
+    private List<ItemCategory> mItemCategoryList;
+
+    public static enum FilterTpe {
+        ALL,
+        OUT_OF_STACK
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,12 +78,18 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
         });
 
         restaurantViewModel.getRestaurantsMenuItems().observe(getViewLifecycleOwner(), itemCategories -> {
-            System.out.println("----------------------------------------------------");
-            itemCategories.forEach(itemCategory -> System.out.println(itemCategory));
-            System.out.println("----------------------------------------------------");
-            itemCategoryAdapter.submitList(itemCategories);
+            mItemCategoryList = itemCategories;
+            restaurantViewModel.setFilterMenus(mItemCategoryList);
         });
 
+        restaurantViewModel.getAllFilteredMenus().observe(getViewLifecycleOwner(), categoryList -> {
+            mBinding.toolbar.radiobuttonAllItems.setText("All Items (" + getMenuItemSize(mItemCategoryList) +")");
+
+            List<ItemCategory> outOfStockItems = filterItems(categoryList,  FilterTpe.OUT_OF_STACK);
+            mBinding.toolbar.radiobuttonOutOfStock.setText("Out of Stock (" + getMenuItemSize(outOfStockItems) +")");
+
+            itemCategoryAdapter.submitList(categoryList);
+        });
 
         mBinding.bottomNavigation.orderLinear.setOnClickListener(view -> {
             requireActivity().startActivity(new Intent(requireActivity(), MainActivity.class));
@@ -91,6 +108,21 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
                     mBinding.swiperefreshLayout.setRefreshing(false);
                 }
             }, 1000);
+        });
+
+        mBinding.toolbar.radiobuttonAllItems.setOnCheckedChangeListener((compoundButton, b) -> {
+            if(compoundButton.isChecked()){
+                List<ItemCategory> filterItems = filterItems(mItemCategoryList, FilterTpe.ALL);
+                mBinding.toolbar.radiobuttonAllItems.setText("All Items (" + getMenuItemSize(filterItems) +")");
+                restaurantViewModel.setFilterMenus(filterItems);
+            }
+        });
+        mBinding.toolbar.radiobuttonOutOfStock.setOnCheckedChangeListener((compoundButton, b) -> {
+            if(compoundButton.isChecked()){
+                List<ItemCategory> filterItems = filterItems(mItemCategoryList, FilterTpe.OUT_OF_STACK);
+                mBinding.toolbar.radiobuttonOutOfStock.setText("Out of Stock (" + getMenuItemSize(filterItems) +")");
+                restaurantViewModel.setFilterMenus(filterItems);
+            }
         });
 
 
@@ -118,4 +150,25 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
         Log.d(TAG,  "refreshing.......");
         restaurantViewModel.getRestaurantsMenuItems();
     }
+
+    private List<ItemCategory> filterItems(List<ItemCategory> categoryList,  FilterTpe  filterTpe){
+        List<ItemCategory> filterCategories = new ArrayList<>();
+        if (filterTpe == FilterTpe.ALL)filterCategories = categoryList;
+        if(filterTpe == FilterTpe.OUT_OF_STACK){
+            // ie., filter items, which are disabled
+            List<ItemCategory> categories = new ArrayList<>();
+            categoryList.forEach(itemCategory -> {
+                itemCategory.getMenuItems().forEach(menuItem -> {
+                    if(menuItem.getIsActive()  == 0) categories.add(itemCategory);
+                });
+            });
+            filterCategories = categories;
+        }
+        return filterCategories;
+    }
+
+    private int getMenuItemSize(List<ItemCategory> categoryList){
+        return categoryList.stream().mapToInt(itemCategory -> itemCategory.getMenuItems().size()).sum();
+    }
+
 }

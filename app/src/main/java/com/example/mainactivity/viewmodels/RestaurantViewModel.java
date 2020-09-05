@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
+import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.request.DisableCategoryRequest;
 import com.example.mainactivity.models.request.DisableItemRequest;
@@ -20,7 +21,8 @@ import java.util.List;
 public class RestaurantViewModel extends ViewModel {
     private final String TAG = this.getClass().getSimpleName();
     private RestaurantRepository restaurantRepository;
-    private MutableLiveData<ItemCategory> categoryMutableLiveData;
+    private ItemCategory mSelectedCategory = null;
+    private MutableLiveData<List<ItemCategory>> mutableItemCategories = null;
     private MutableLiveData<MenuItem> menuMutableLiveData;
 
     private LiveData<List<MenuItem>> mItems;
@@ -46,16 +48,15 @@ public class RestaurantViewModel extends ViewModel {
     }
 
     public void setCategory(ItemCategory category){
-        if (categoryMutableLiveData == null){
-            categoryMutableLiveData = new MutableLiveData<>();
-        }
-        categoryMutableLiveData.setValue(category);
+        mSelectedCategory = category;
     }
-    public LiveData<ItemCategory> getCategory(){
-        if (categoryMutableLiveData == null){
-            categoryMutableLiveData = new MutableLiveData<>();
-        }
-       return categoryMutableLiveData;
+    public LiveData<ItemCategory> getSelectedCategory(){
+        MutableLiveData<ItemCategory> mutableLiveData = null;
+       if(mSelectedCategory != null){
+           mutableLiveData = new MutableLiveData<>();
+           mutableLiveData.setValue(mSelectedCategory);
+       }
+       return mutableLiveData;
     }
     public void setMenuItem(MenuItem menuItem){
         if (menuMutableLiveData == null){
@@ -68,6 +69,19 @@ public class RestaurantViewModel extends ViewModel {
             menuMutableLiveData = new MutableLiveData<>();
         }
         return menuMutableLiveData;
+    }
+
+    public void setFilterMenus(List<ItemCategory> categoryList){
+        if(mutableItemCategories == null){
+            mutableItemCategories = new MutableLiveData<>();
+        }
+        mutableItemCategories.setValue(categoryList);
+    }
+    public LiveData<List<ItemCategory>> getAllFilteredMenus(){
+        if(mutableItemCategories == null){
+            mutableItemCategories = new MutableLiveData<>();
+        }
+        return mutableItemCategories;
     }
 
     public LiveData<ApiResponse> toggleMenuItem(int itemId){

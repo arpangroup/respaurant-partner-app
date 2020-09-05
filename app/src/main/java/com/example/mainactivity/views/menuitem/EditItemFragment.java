@@ -50,7 +50,7 @@ public class EditItemFragment extends Fragment {
         navController = Navigation.findNavController(view);
 
         restaurantViewModel.getMenuItem().observe(getViewLifecycleOwner(), menuItem -> {
-            ItemCategory category = restaurantViewModel.getCategory().getValue();
+            ItemCategory category = restaurantViewModel.getSelectedCategory().getValue();
             mBinding.toolbar.title.setText(menuItem.getName());
             mBinding.etItemName.setText(menuItem.getName());
             mBinding.etDescription.setText(menuItem.getDesc());

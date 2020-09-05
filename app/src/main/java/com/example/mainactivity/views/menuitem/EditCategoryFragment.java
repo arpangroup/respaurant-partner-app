@@ -58,7 +58,7 @@ public class EditCategoryFragment extends Fragment implements ItemCategoryAdapte
 
         // Initialize RecyclerView
         menuItemAdapter = new MenuItemAdapter(this);
-        restaurantViewModel.getCategory().observe(getViewLifecycleOwner(), itemCategory -> {
+        restaurantViewModel.getSelectedCategory().observe(getViewLifecycleOwner(), itemCategory -> {
             mBinding.toolbar.title.setText(itemCategory.getName());
             menuItemAdapter.submitList(itemCategory.getMenuItems());
             mBinding.menuRecycler.setAdapter(menuItemAdapter);
