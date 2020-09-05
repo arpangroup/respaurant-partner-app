@@ -23,7 +23,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="16.7dp"
             android:layout_marginRight="16.7dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="40dp"
             android:orientation="vertical">
 
             <!--ItemName-->
@@ -53,8 +53,12 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/sfpro_text_medium"
                     android:hint="Item Description"
+                    android:minLines="2"
+                    android:maxLines="5"
+                    android:scrollHorizontally="false"
+                    android:scrollbars="vertical"
                     android:text=""
-                    android:inputType="text"/>
+                    android:inputType="textMultiLine"/>
             </com.google.android.material.textfield.TextInputLayout>
             <!--MarkPrice-->
             <com.google.android.material.textfield.TextInputLayout
@@ -69,7 +73,7 @@
                     android:fontFamily="@font/sfpro_text_medium"
                     android:hint="Mark Price"
                     android:text=""
-                    android:inputType="text"/>
+                    android:inputType="numberDecimal"/>
             </com.google.android.material.textfield.TextInputLayout>
             <!--SellingPrice-->
             <com.google.android.material.textfield.TextInputLayout
@@ -84,7 +88,7 @@
                     android:fontFamily="@font/sfpro_text_medium"
                     android:hint="Selling Price"
                     android:text=""
-                    android:inputType="text"/>
+                    android:inputType="numberDecimal"/>
             </com.google.android.material.textfield.TextInputLayout>
             <!--Category-->
             <com.google.android.material.textfield.TextInputLayout
@@ -99,6 +103,7 @@
                     android:fontFamily="@font/sfpro_text_medium"
                     android:hint="Category"
                     android:text=""
+                    android:enabled="false"
                     android:inputType="number"/>
             </com.google.android.material.textfield.TextInputLayout>
             <!--Image-->
@@ -112,6 +117,7 @@
                     android:layoutDirection="rtl"
                     android:orientation="horizontal">
                     <Button
+                        android:id="@+id/btn_change_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@color/transferent"
@@ -192,7 +198,7 @@
         </LinearLayout>
     </ScrollView>
     <Button
-        android:id="@+id/btn_register"
+        android:id="@+id/btn_update"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"

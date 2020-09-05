@@ -17,10 +17,14 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -60,8 +64,7 @@ public interface ApiInterface {
     @GET("/api/store-owner/stores/{storeOwnerId}")
     Call<List<Restaurant>> getRestaurants(@Path("storeOwnerId") String storeOwnerId);
 
-    @POST("/api/store-owner/store/edit/save")
-    Call<ApiResponse> updateRestaurant(@Body Restaurant restaurant);
+
 
 
 
@@ -74,6 +77,23 @@ public interface ApiInterface {
     @POST("/api/store-owner/itemcategory/disable")
     Call<ApiResponse> disableCategory(@Body DisableCategoryRequest disableCategoryRequest);
 
+    @Multipart
+    @POST("/api/store-owner/store/edit/save")
+    Call<ApiResponse> updateRestaurant(
+            @Part("user_id") RequestBody userId,
+            @Part("restaurant_id") RequestBody restaurantId,
+            @Part("item_category_id") RequestBody itemCategoryId,
+            @Part("item_id") RequestBody itemId,
+            @Part("name") RequestBody name,
+            @Part("desc") RequestBody desc,
+            @Part("price") RequestBody price,
+            @Part("old_price") RequestBody oldPrice,
+            @Part("is_recommended") RequestBody isRecommended,
+            @Part("is_popular") RequestBody isPopular,
+            @Part("is_new") RequestBody isNew,
+            @Part("is_veg") RequestBody isVeg,
+            @Part MultipartBody.Part image
+    );
 
 
 
