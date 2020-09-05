@@ -4,6 +4,8 @@ import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.User;
+import com.example.mainactivity.models.request.DisableCategoryRequest;
+import com.example.mainactivity.models.request.DisableItemRequest;
 import com.example.mainactivity.models.request.LoginRequest;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
@@ -29,9 +31,6 @@ public interface ApiInterface {
     @POST("/api/login-using-otp")
     Call<LoginResponse<User>> loginUsingOtp(@Body LoginRequest loginRequest);
 
-    @GET("/api/store-owner/stores/{storeOwnerId}")
-    Call<List<Restaurant>> getRestaurants(@Path("storeOwnerId") String storeOwnerId);
-
     @GET("/api/store-owner/dashboard/{storeOwnerId}")
     Call<Dashboard> getDashboard(@Path("storeOwnerId") String storeOwnerId);
 
@@ -54,12 +53,30 @@ public interface ApiInterface {
     Call<List<Object>> searchOrder(@Query("user_id") String userId, @Query("query") String query);
 
 
-
+    /*=============================================================*/
     @GET("/api/store-owner/items/{storeOwnerId}")
     Call<RestaurantItemResponse> getAllItems(@Path("storeOwnerId") String storeOwnerId);
 
-    @POST("/api/get-restaurant-items/{restaurant_slug}")
-    Call<ItemCategory> getRestaurantItems(@Path("restaurant_slug") String slug);
+    @GET("/api/store-owner/stores/{storeOwnerId}")
+    Call<List<Restaurant>> getRestaurants(@Path("storeOwnerId") String storeOwnerId);
+
+    @POST("/api/store-owner/store/edit/save")
+    Call<ApiResponse> updateRestaurant(@Body Restaurant restaurant);
+
+
+
+    @POST("/api/store-owner/store/disable/{restaurantId}")
+    Call<ApiResponse> disableRestaurant(@Body RequestToken requestToken);
+
+    @POST("/api/store-owner/item/disable")
+    Call<ApiResponse> disableItem(@Body DisableItemRequest disableItemRequest);
+
+    @POST("/api/store-owner/itemcategory/disable")
+    Call<ApiResponse> disableCategory(@Body DisableCategoryRequest disableCategoryRequest);
+
+
+
+
 
 
 }

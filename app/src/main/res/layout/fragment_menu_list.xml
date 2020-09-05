@@ -12,15 +12,21 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar_menu"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/menu_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh_layout"
         android:layout_below="@+id/toolbar"
         android:layout_above="@+id/bottomNavigation"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_group"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/menu_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_group"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <RelativeLayout
         android:id="@+id/progressbar"
         android:visibility="gone"

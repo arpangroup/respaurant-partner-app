@@ -10,17 +10,15 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mainactivity.databinding.ItemDish1Binding;
 import com.example.mainactivity.databinding.ItemMenuBinding;
-import com.example.mainactivity.models.Dish;
 import com.example.mainactivity.models.MenuItem;
 
 public class MenuItemAdapter extends ListAdapter<MenuItem, MenuItemAdapter.MenuItemViewHolder> {
 
     ItemCategoryAdapter.ItemCategoryInterface itemCategoryInterface;
-    public MenuItemAdapter() {
-        super(MenuItem.itemCallback);
-    }
+//    public MenuItemAdapter() {
+//        super(MenuItem.itemCallback);
+//    }
 
     /* If any Parent adapter use this adapter as ChildAdapter */
     public MenuItemAdapter(ItemCategoryAdapter.ItemCategoryInterface itemCategoryInterface){
@@ -42,12 +40,16 @@ public class MenuItemAdapter extends ListAdapter<MenuItem, MenuItemAdapter.MenuI
         holder.itemMenuBinding.setMenu(menuItem);
 
         holder.itemMenuBinding.activeSwitch.setOnClickListener(view -> {
-            boolean isActive = ((SwitchCompat) view).isChecked();
-            itemCategoryInterface.onSwitchClickListner(menuItem, isActive);
+            if(itemCategoryInterface != null){
+                boolean isActive = ((SwitchCompat) view).isChecked();
+                itemCategoryInterface.onSwitchClickListener(menuItem, isActive);
+            }
         });
 
         holder.itemMenuBinding.menu.setOnClickListener(view -> {
-            itemCategoryInterface.onMenuItemClickListner(menuItem);
+            if(itemCategoryInterface != null){
+                itemCategoryInterface.onMenuItemClickListener(menuItem);
+            }
         });
     }
 
@@ -60,8 +62,5 @@ public class MenuItemAdapter extends ListAdapter<MenuItem, MenuItemAdapter.MenuI
             this.itemMenuBinding = binding;
         }
     }
-
-
-
 
 }

@@ -7,7 +7,10 @@ import androidx.lifecycle.ViewModel;
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
 import com.example.mainactivity.models.Restaurant;
+import com.example.mainactivity.models.request.DisableCategoryRequest;
+import com.example.mainactivity.models.request.DisableItemRequest;
 import com.example.mainactivity.models.request.RequestToken;
+import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.repositories.RestaurantRepository;
 import com.example.mainactivity.repositories.RestaurantRepositoryImpl;
 import com.example.mainactivity.repositories.RestaurantRepositoryStubImpl;
@@ -65,6 +68,19 @@ public class RestaurantViewModel extends ViewModel {
             menuMutableLiveData = new MutableLiveData<>();
         }
         return menuMutableLiveData;
+    }
+
+    public LiveData<ApiResponse> toggleMenuItem(int itemId){
+        DisableItemRequest disableItemRequest = new DisableItemRequest(itemId);
+        return restaurantRepository.toggleMenuItem(disableItemRequest);
+    }
+    public LiveData<ApiResponse> toggleRestaurant(){
+        RequestToken requestToken  = new RequestToken();
+        return restaurantRepository.toggleRestaurant(requestToken);
+    }
+    public LiveData<ApiResponse> toggleCategory(int categoryId){
+        DisableCategoryRequest disableCategoryRequest  = new DisableCategoryRequest(categoryId);
+        return restaurantRepository.toggleCategory(disableCategoryRequest);
     }
 
 }

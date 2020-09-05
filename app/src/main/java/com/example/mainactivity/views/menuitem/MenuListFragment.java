@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,21 +18,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.mainactivity.R;
-import com.example.mainactivity.adapters.DishListAdapter;
 import com.example.mainactivity.adapters.ItemCategoryAdapter;
-import com.example.mainactivity.adapters.OrderAcceptListAdapter;
-import com.example.mainactivity.databinding.FragmentAcceptOrderBinding;
 import com.example.mainactivity.databinding.FragmentMenuListBinding;
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
-import com.example.mainactivity.models.Order;
-import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.MainActivity;
 import com.example.mainactivity.views.MoreActivity;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class MenuListFragment extends Fragment implements ItemCategoryAdapter.ItemCategoryInterface{
     private final String TAG = this.getClass().getSimpleName();
@@ -91,21 +84,40 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
             requireActivity().finish();
         });
 
+        mBinding.swiperefreshLayout.setOnRefreshListener(() -> {
+            final Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                if(mBinding.swiperefreshLayout.isRefreshing()) {
+                    mBinding.swiperefreshLayout.setRefreshing(false);
+                }
+            }, 1000);
+        });
+
 
     }
 
     @Override
-    public void onMenuItemClickListner(MenuItem menuItem) {
+    public void onMenuItemClickListener(MenuItem menuItem) {
     }
 
     @Override
-    public void onSwitchClickListner(MenuItem menuItem, boolean isActive) {
-        Toast.makeText(requireActivity(), "SWITCH CLICKED: "+isActive, Toast.LENGTH_SHORT).show();
+    public void onSwitchClickListener(MenuItem menuItem, boolean isActive) {
+        restaurantViewModel.toggleMenuItem(menuItem.getId()).observe(getViewLifecycleOwner(), apiResponse -> {
+           Log.d(TAG, "................API-RESPONSE............................");
+           Log.d(TAG, ""+apiResponse);
+           Log.d(TAG, "............................................");
+        });
+
     }
 
     @Override
-    public void onEditCategoryListner(ItemCategory itemCategory) {
+    public void onEditCategoryListener(ItemCategory itemCategory) {
         restaurantViewModel.setCategory(itemCategory);
         navController.navigate(R.id.action_menuListFragment_to_editCategoryFragment);
+    }
+
+    private void refresh(){
+        Log.d(TAG,  "refreshing.......");
+        restaurantViewModel.getRestaurantsMenuItems();
     }
 }

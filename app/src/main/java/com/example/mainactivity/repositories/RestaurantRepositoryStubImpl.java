@@ -8,6 +8,10 @@ import com.example.mainactivity.api.ApiService;
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
 import com.example.mainactivity.models.Restaurant;
+import com.example.mainactivity.models.request.DisableCategoryRequest;
+import com.example.mainactivity.models.request.DisableItemRequest;
+import com.example.mainactivity.models.request.RequestToken;
+import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
 
 import java.util.ArrayList;
@@ -51,6 +55,21 @@ public class RestaurantRepositoryStubImpl implements RestaurantRepository{
             loadRestaurantsMenuApi(userId);
         }
         return mutableMenuItems;
+    }
+
+    @Override
+    public LiveData<ApiResponse> toggleMenuItem(DisableItemRequest disableItemRequest) {
+        return null;
+    }
+
+    @Override
+    public LiveData<ApiResponse> toggleRestaurant(RequestToken requestToken) {
+        return null;
+    }
+
+    @Override
+    public LiveData<ApiResponse> toggleCategory(DisableCategoryRequest disableCategoryRequest) {
+        return null;
     }
 
 

@@ -65,18 +65,18 @@ public class EditCategoryFragment extends Fragment implements ItemCategoryAdapte
     }
 
     @Override
-    public void onMenuItemClickListner(MenuItem menuItem) {
+    public void onMenuItemClickListener(MenuItem menuItem) {
         restaurantViewModel.setMenuItem(menuItem);
         navController.navigate(R.id.action_editCategoryFragment_to_editItemFragment);
     }
 
     @Override
-    public void onSwitchClickListner(MenuItem menuItem, boolean isActive) {
+    public void onSwitchClickListener(MenuItem menuItem, boolean isActive) {
 
     }
 
     @Override
-    public void onEditCategoryListner(ItemCategory itemCategory) {
+    public void onEditCategoryListener(ItemCategory itemCategory) {
 
     }
 }

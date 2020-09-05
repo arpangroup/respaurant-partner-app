@@ -104,6 +104,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:nestedScrollingEnabled="false"
+                    app:setMenus="@{category.menuItems}"
+                    app:setParent="@{parentInterface}"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/item_menu" />
 <!--                app:setMenus="@{category.menuItems}"-->

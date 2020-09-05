@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import com.google.gson.annotations.SerializedName;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -13,6 +14,7 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 @Accessors(chain = true)
 public class MenuItem {
     @SerializedName("id")
@@ -23,6 +25,9 @@ public class MenuItem {
 
     @SerializedName("item_category_id")
     private int itemCategoryId;
+
+    @SerializedName("category_name")
+    private String categoryName;
 
     @SerializedName("name")
     private String name;
@@ -67,12 +72,12 @@ public class MenuItem {
     public static DiffUtil.ItemCallback<MenuItem> itemCallback = new DiffUtil.ItemCallback<MenuItem>() {
         @Override
         public boolean areItemsTheSame(@NonNull MenuItem oldItem, @NonNull MenuItem newItem) {
-            return false;
+            return oldItem.getId() == newItem.getId() ;
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull MenuItem oldItem, @NonNull MenuItem newItem) {
-            return false;
+            return oldItem.equals(newItem);
         }
     };
 

@@ -4,18 +4,12 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.BindingAdapter;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.databinding.ItemGroupBinding;
-import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
-import com.example.mainactivity.models.Order;
-
-import java.util.List;
 
 public class ItemCategoryAdapter extends ListAdapter<ItemCategory, ItemCategoryAdapter.ItemGroupViewHolder> {
 
@@ -41,10 +35,12 @@ public class ItemCategoryAdapter extends ListAdapter<ItemCategory, ItemCategoryA
     @Override
     public void onBindViewHolder(@NonNull ItemGroupViewHolder holder, int position) {
         ItemCategory category = getItem(position);
-        menuItemAdapter.submitList(category.getMenuItems());
-        holder.itemGroupBinding.dishRecycler.setAdapter(menuItemAdapter);
-
         holder.itemGroupBinding.setCategory(category);
+        holder.itemGroupBinding.setParentInterface(itemCategoryInterface);
+        //holder.itemGroupBinding.dishRecycler.setAdapter(menuItemAdapter);
+        //menuItemAdapter.submitList(category.getMenuItems());
+        //menuItemAdapter.notifyDataSetChanged();
+
         holder.itemGroupBinding.executePendingBindings();
 
 
@@ -62,15 +58,15 @@ public class ItemCategoryAdapter extends ListAdapter<ItemCategory, ItemCategoryA
             super(binding.getRoot());
             this.itemGroupBinding = binding;
 
-            this.itemGroupBinding.btnEdit.setOnClickListener(view -> itemCategoryInterface.onEditCategoryListner(getItem(getAdapterPosition())));
+            this.itemGroupBinding.btnEdit.setOnClickListener(view -> itemCategoryInterface.onEditCategoryListener(getItem(getAdapterPosition())));
         }
     }
 
 
     public interface ItemCategoryInterface {
-        void onMenuItemClickListner(MenuItem menuItem);
-        void onSwitchClickListner(MenuItem menuItem, boolean isActive);
-        void onEditCategoryListner(ItemCategory itemCategory);
+        void onMenuItemClickListener(MenuItem menuItem);
+        void onSwitchClickListener(MenuItem menuItem, boolean isActive);
+        void onEditCategoryListener(ItemCategory itemCategory);
     }
 
 }

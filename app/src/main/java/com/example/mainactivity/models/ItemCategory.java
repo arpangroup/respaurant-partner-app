@@ -1,5 +1,7 @@
 package com.example.mainactivity.models;
 
+import android.app.Activity;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.DiffUtil;
@@ -34,11 +36,12 @@ public class ItemCategory {
         this.menuItems = menuItems;
     }
 
+    //public static ItemCategoryAdapter.ItemCategoryInterface onClickInterface;
 
-    @BindingAdapter(value = "setMenus")
-    public static void setMenus(RecyclerView recyclerView, List<MenuItem> menuItems){
+    @BindingAdapter(value = {"setMenus", "setParent"}, requireAll = false)
+    public static void setMenus(RecyclerView recyclerView, List<MenuItem> menuItems, ItemCategoryAdapter.ItemCategoryInterface onClickInterface){
         if(menuItems != null){
-            MenuItemAdapter menuItemAdapter = new MenuItemAdapter();
+            MenuItemAdapter menuItemAdapter = new MenuItemAdapter(onClickInterface);
             menuItemAdapter.submitList(menuItems);
             recyclerView.setAdapter(menuItemAdapter);
         }
