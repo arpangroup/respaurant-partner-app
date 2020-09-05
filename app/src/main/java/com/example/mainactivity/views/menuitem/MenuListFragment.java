@@ -86,7 +86,7 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
             mBinding.toolbar.radiobuttonAllItems.setText("All Items (" + getMenuItemSize(mItemCategoryList) +")");
 
             List<ItemCategory> outOfStockItems = filterItems(categoryList,  FilterTpe.OUT_OF_STACK);
-            mBinding.toolbar.radiobuttonOutOfStock.setText("Out of Stock (" + getMenuItemSize(outOfStockItems) +")");
+            mBinding.toolbar.radiobuttonOutOfStock.setText("Out of Stock (" + getOutOfStockItemSize(outOfStockItems) +")");
 
             itemCategoryAdapter.submitList(categoryList);
         });
@@ -113,14 +113,14 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
         mBinding.toolbar.radiobuttonAllItems.setOnCheckedChangeListener((compoundButton, b) -> {
             if(compoundButton.isChecked()){
                 List<ItemCategory> filterItems = filterItems(mItemCategoryList, FilterTpe.ALL);
-                mBinding.toolbar.radiobuttonAllItems.setText("All Items (" + getMenuItemSize(filterItems) +")");
+                //mBinding.toolbar.radiobuttonAllItems.setText("All Items (" + getMenuItemSize(filterItems) +")");
                 restaurantViewModel.setFilterMenus(filterItems);
             }
         });
         mBinding.toolbar.radiobuttonOutOfStock.setOnCheckedChangeListener((compoundButton, b) -> {
             if(compoundButton.isChecked()){
                 List<ItemCategory> filterItems = filterItems(mItemCategoryList, FilterTpe.OUT_OF_STACK);
-                mBinding.toolbar.radiobuttonOutOfStock.setText("Out of Stock (" + getMenuItemSize(filterItems) +")");
+                //mBinding.toolbar.radiobuttonOutOfStock.setText("Out of Stock (" + getMenuItemSize(filterItems) +")");
                 restaurantViewModel.setFilterMenus(filterItems);
             }
         });
@@ -169,6 +169,14 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
 
     private int getMenuItemSize(List<ItemCategory> categoryList){
         return categoryList.stream().mapToInt(itemCategory -> itemCategory.getMenuItems().size()).sum();
+    }
+
+    private int getOutOfStockItemSize(List<ItemCategory> categoryList){
+       long count = 0;
+       count = categoryList.stream()
+               .mapToInt(itemCategory -> itemCategory.getMenuItems().stream().filter(menuItem -> menuItem.getIsActive()==0).mapToInt(MenuItem::getId).sum())
+               .count();
+       return (int)count;
     }
 
 }
