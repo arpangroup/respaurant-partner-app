@@ -2,16 +2,19 @@ package com.example.mainactivity.repositories;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
+import com.example.mainactivity.commons.LoginType;
 import com.example.mainactivity.models.Address;
 import com.example.mainactivity.models.User;
 import com.example.mainactivity.models.request.LoginRequest;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.LoginResponse;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,11 +51,21 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
-    public LiveData<LoginResponse<User>> loginByOtp(String phone, String otp, Address defaultAddress) {
+    public LiveData<LoginResponse<User>> loginByOtp(@NonNull String phone, @NonNull String otp, Address defaultAddress) {
         if(loginResponse == null){
             loginResponse = new MutableLiveData<>();
         }
-        return loginUsingOtp(phone, otp, defaultAddress);
+        LoginRequest loginRequest = new LoginRequest(phone, otp, defaultAddress, LoginType.OTP);
+        return loginNow(loginRequest);
+    }
+
+    @Override
+    public LiveData<LoginResponse<User>> loginByMobileAndPassword(@NonNull String phone, @NonNull String password, Address defaultAddress) {
+        if(loginResponse == null){
+            loginResponse = new MutableLiveData<>();
+        }
+        LoginRequest loginRequest = new LoginRequest(phone, password, defaultAddress, LoginType.MOBILE_AND_PASSWORD);
+        return loginNow(loginRequest);
     }
 
     @Override
@@ -93,14 +106,12 @@ public class AuthRepositoryImpl implements AuthRepository {
         });
         return sendOtpResponse;
     }
-    private LiveData<LoginResponse<User>> loginUsingOtp(String phone, String otp, Address defaultAddress){
-        Log.d(TAG, "Inside loginUsingOtp()......");
-        LoginRequest loginRequest = new LoginRequest(phone, otp, defaultAddress);
-        Log.d(TAG, "REQUEST: "+loginRequest);
+    private LiveData<LoginResponse<User>> loginNow(LoginRequest loginRequest){
         isLoading.setValue(true);
-
+        Log.d(TAG, "Inside loginNow()......................");
+        Log.d(TAG, "LOGIN_REQUEST: "+ new Gson().toJson(loginRequest));
         ApiInterface apiInterface = ApiService.getApiService();
-        apiInterface.loginUsingOtp(loginRequest).enqueue(new Callback<LoginResponse<User>>() {
+        apiInterface.login(loginRequest).enqueue(new Callback<LoginResponse<User>>() {
             @Override
             public void onResponse(Call<LoginResponse<User>> call, Response<LoginResponse<User>> response) {
                 isLoading.setValue(false);

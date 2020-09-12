@@ -1,5 +1,6 @@
 package com.example.mainactivity.repositories;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -13,8 +14,9 @@ import java.util.List;
 
 public interface AuthRepository {
     public LiveData<Boolean> getIsLoading();
-    public LiveData<ApiResponse> sendLoginOtp(String phone);
-    public LiveData<LoginResponse<User>> loginByOtp(String phone, String otp, Address defaultAddress);
+    public LiveData<ApiResponse> sendLoginOtp(@NonNull String phone);
+    public LiveData<LoginResponse<User>> loginByOtp(@NonNull String phone, @NonNull String otp, Address defaultAddress);
+    public LiveData<LoginResponse<User>> loginByMobileAndPassword(@NonNull String phone, @NonNull String password, Address defaultAddress);
     public LiveData<LoginResponse<User>> getLoginResponse();
     public void logout();
 }

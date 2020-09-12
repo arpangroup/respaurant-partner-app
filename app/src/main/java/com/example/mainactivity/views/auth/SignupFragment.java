@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mainactivity.R;
-import com.example.mainactivity.databinding.FragmentOtpSentBinding;
 import com.example.mainactivity.databinding.FragmentSignupBinding;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 

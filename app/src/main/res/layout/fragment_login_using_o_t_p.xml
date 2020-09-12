@@ -3,11 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+
+    </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        tools:context=".views.auth.OtpVerifyFragment">
+        tools:context=".views.auth.LoginUsingOTPFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -109,6 +112,7 @@
                         android:id="@+id/et1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:fontFamily="@font/sfpro_text_medium"
@@ -116,6 +120,7 @@
                         android:inputType="number"
                         android:maxLength="1"
                         android:textColor="@color/black"
+                        android:background="@drawable/gray_et_background"
                         android:textCursorDrawable="@drawable/color_cursor"
                         android:textSize="26.7sp" />
 
@@ -123,6 +128,7 @@
                         android:id="@+id/et2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:fontFamily="@font/sfpro_text_medium"
@@ -130,6 +136,7 @@
                         android:inputType="number"
                         android:maxLength="1"
                         android:textColor="@color/black"
+                        android:background="@drawable/gray_et_background"
                         android:textCursorDrawable="@drawable/color_cursor"
                         android:textSize="26.7sp" />
 
@@ -137,6 +144,7 @@
                         android:id="@+id/et3"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:fontFamily="@font/sfpro_text_medium"
@@ -144,6 +152,7 @@
                         android:inputType="number"
                         android:maxLength="1"
                         android:textColor="@color/black"
+                        android:background="@drawable/gray_et_background"
                         android:textCursorDrawable="@drawable/color_cursor"
                         android:textSize="26.7sp" />
 
@@ -151,6 +160,7 @@
                         android:id="@+id/et4"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:fontFamily="@font/sfpro_text_medium"
@@ -158,6 +168,7 @@
                         android:inputType="number"
                         android:maxLength="1"
                         android:textColor="@color/black"
+                        android:background="@drawable/gray_et_background"
                         android:textCursorDrawable="@drawable/color_cursor"
                         android:textSize="26.7sp" />
 
@@ -165,6 +176,7 @@
                         android:id="@+id/et5"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:fontFamily="@font/sfpro_text_medium"
@@ -172,38 +184,81 @@
                         android:inputType="number"
                         android:maxLength="1"
                         android:textColor="@color/black"
+                        android:background="@drawable/gray_et_background"
                         android:textCursorDrawable="@drawable/color_cursor"
                         android:textSize="26.7sp" />
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txt_counter"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:layout_marginTop="12dp"
-                    android:fontFamily="@font/sfpro_text_medium"
-                    android:textAlignment="center"
-                    android:text="0:27" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:textAlignment="center"
+                        android:layout_marginRight="8dp"
+                        android:text="Auto reading OTP " />
+
+                    <TextView
+                        android:id="@+id/txt_counter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:textAlignment="center"
+                        android:text="0:27" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_lock_24"
+                        android:layout_marginRight="24dp"
+                        app:tint="@color/blue" />
+
+                    <TextView
+                        android:id="@+id/login_with_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:padding="8dp"
+                        android:textColor="@color/blue"
+                        android:text="LOGIN WITH PASSWORD" />
+                </LinearLayout>
+
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp">
 
                     <Button
-                        android:visibility="gone"
-                        android:id="@+id/txt_verify"
+                        android:visibility="visible"
+                        android:id="@+id/btn_verify"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16.7dp"
                         android:layout_marginRight="16.7dp"
-                        android:layout_marginTop="32dp"
                         android:enabled="false"
                         android:background="@drawable/ripple"
                         android:fontFamily="@font/sfpro_text_medium"
                         android:paddingTop="12dp"
                         android:paddingBottom="12dp"
-                        android:text="ENTER OTP"
+                        android:text="VERIFY"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="18.3sp" />
@@ -251,7 +306,7 @@
 
                 <RelativeLayout
                     android:id="@+id/layout_alert"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
@@ -289,6 +344,7 @@
 
             </LinearLayout>
         </LinearLayout>
+
 
     </RelativeLayout>
 </layout>

@@ -19,21 +19,21 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.mainactivity.R;
-import com.example.mainactivity.databinding.FragmentOtpSentBinding;
+import com.example.mainactivity.databinding.FragmentMobileLoginBinding;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.views.MainActivity;
 
-public class OtpSentFragment extends Fragment {
+public class MobileLoginFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
 
-    private FragmentOtpSentBinding mBinding;
+    private FragmentMobileLoginBinding mBinding;
     AuthenticationViewModel authenticationViewModel;
     NavController navController;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mBinding = FragmentOtpSentBinding.inflate(inflater, container, false);
+        mBinding = FragmentMobileLoginBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
 
@@ -78,20 +78,19 @@ public class OtpSentFragment extends Fragment {
             if(phone != null) {
                 mBinding.btnSendOtp.setBackgroundColor(Color.parseColor("#E3E3E3"));
                 authenticationViewModel.setPhoneNumber(phone);
-                //authenticationViewModel.sendLoginOtp(phone);
-                //navController.navigate(R.id.action_loginSendOtpFragment_to_loginUsingOtpFragment);
+                navController.navigate(R.id.action_otpSentFragment_to_loginUsingPasswordFragment);
 
-                authenticationViewModel.sendLoginOtp(phone).observe(getViewLifecycleOwner(), apiResponse -> {
-                    if(apiResponse.isSuccess()){
-                        navController.navigate(R.id.action_otpSentFragment_to_otpVerifyFragment);
-                    }
-                    else {
-                        if(authenticationViewModel.getIsLoading().getValue() == false){
-                            String message = apiResponse.getMessage();
-                            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+//                authenticationViewModel.sendLoginOtp(phone).observe(getViewLifecycleOwner(), apiResponse -> {
+//                    if(apiResponse.isSuccess()){
+//                        navController.navigate(R.id.action_loginUsingPasswordFragment_to_loginUsingOTPFragment);
+//                    }
+//                    else {
+//                        if(authenticationViewModel.getIsLoading().getValue() == false){
+//                            String message = apiResponse.getMessage();
+//                            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
 
             }
         });

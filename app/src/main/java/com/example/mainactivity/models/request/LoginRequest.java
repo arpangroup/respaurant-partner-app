@@ -1,14 +1,20 @@
 package com.example.mainactivity.models.request;
 
 
+import com.example.mainactivity.commons.LoginType;
 import com.example.mainactivity.models.Address;
+import com.google.gson.annotations.SerializedName;
 
 import lombok.Data;
+import lombok.NonNull;
 import lombok.ToString;
 
 @Data
 @ToString
 public class LoginRequest {
+    @NonNull
+    @SerializedName("login_type")
+    private String loginType;
     private String name;
     private  String email;
     private String password;
@@ -17,6 +23,9 @@ public class LoginRequest {
     private String otp;
     private String provider;
     private Address address;
+
+    public LoginRequest() {
+    }
 
     public LoginRequest(String name, String email, String password, String accessToken, String phone, String provider, Address address) {
         this.name = name;
@@ -29,9 +38,22 @@ public class LoginRequest {
     }
 
 
-    public LoginRequest(String phone, String otp, Address defaultAddress) {
+    public LoginRequest(String phone, String otpOrPassword, Address defaultAddress, LoginType loginType) {
         this.phone = phone;
-        this.otp = otp;
         this.address = defaultAddress;
+        this.loginType = loginType.name();
+
+        switch (loginType){
+            case OTP:
+                this.otp = otpOrPassword;
+                break;
+            case MOBILE_AND_PASSWORD:
+                this.password = otpOrPassword;
+                break;
+            default:
+                break;
+        }
+
+
     }
 }

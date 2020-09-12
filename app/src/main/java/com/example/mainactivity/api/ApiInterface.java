@@ -33,7 +33,7 @@ public interface ApiInterface {
     Call<ApiResponse> sendLoginOtp(@Path("phone") String phone);
 
     @POST("/api/login-using-otp")
-    Call<LoginResponse<User>> loginUsingOtp(@Body LoginRequest loginRequest);
+    Call<LoginResponse<User>> login(@Body LoginRequest loginRequest);
 
     @GET("/api/store-owner/dashboard/{storeOwnerId}")
     Call<Dashboard> getDashboard(@Path("storeOwnerId") String storeOwnerId);
