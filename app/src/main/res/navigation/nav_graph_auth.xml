@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/otpSentFragment"
-        android:name="com.example.mainactivity.views.auth.MobileLoginFragment"
+        android:name="com.example.mainactivity.views.auth.LoginFragment"
         android:label="fragment_otp_sent"
-        tools:layout="@layout/fragment_mobile_login" >
+        tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_otpSentFragment_to_loginUsingPasswordFragment"
             app:destination="@id/loginUsingPasswordFragment"

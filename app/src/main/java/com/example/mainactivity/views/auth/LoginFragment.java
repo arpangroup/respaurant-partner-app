@@ -19,21 +19,21 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.mainactivity.R;
-import com.example.mainactivity.databinding.FragmentMobileLoginBinding;
+import com.example.mainactivity.databinding.FragmentLoginBinding;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.views.MainActivity;
 
-public class MobileLoginFragment extends Fragment {
+public class LoginFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
 
-    private FragmentMobileLoginBinding mBinding;
+    private FragmentLoginBinding mBinding;
     AuthenticationViewModel authenticationViewModel;
     NavController navController;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mBinding = FragmentMobileLoginBinding.inflate(inflater, container, false);
+        mBinding = FragmentLoginBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
 
