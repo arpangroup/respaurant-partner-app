@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:contentInsetStart="0dp"
+    android:elevation="6dp"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:padding="24dp"
+        android:src="@drawable/ic_baseline_close_24" />
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_marginLeft="16.7dp"
+        android:fontFamily="@font/sfpro_display_bold"
+        android:text="1 New Order"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
+
+
+</androidx.appcompat.widget.Toolbar>

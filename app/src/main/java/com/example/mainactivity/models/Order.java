@@ -91,7 +91,8 @@ public class Order {
     }
 
     public String getOrderDate(){
-       return FormatDate.format2(this.createdAt);
+        if(this.createdAt == null) return "";
+        return FormatDate.format2(this.createdAt);
     }
 
 
