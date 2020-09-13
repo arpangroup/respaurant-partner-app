@@ -28,6 +28,7 @@ import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.FragmentLoginUsingPasswordBinding;
 import com.example.mainactivity.models.Address;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
+import com.example.mainactivity.views.MainActivity;
 
 public class LoginUsingPasswordFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
@@ -310,9 +311,9 @@ public class LoginUsingPasswordFragment extends Fragment {
         Address defaultAddress = null;
         authenticationViewModel.loginByMobileAndPassword(phone, password, defaultAddress).observe(getViewLifecycleOwner(), userLoginResponse -> {
             if(userLoginResponse.isSuccess()){
-//                Intent intent = new Intent(requireActivity(), HomePageNavigationActivityOld.class);
-//                startActivity(intent);
-//                requireActivity().finish();
+                Intent intent = new Intent(requireActivity(), MainActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
             }else{
                 mBinding.layoutAlert.setVisibility(View.VISIBLE);
                 mBinding.btnLogin.setEnabled(true);

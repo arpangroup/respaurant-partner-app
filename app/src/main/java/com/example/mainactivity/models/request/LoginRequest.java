@@ -23,6 +23,8 @@ public class LoginRequest {
     private String otp;
     private String provider;
     private Address address;
+    @SerializedName("push_token")
+    private String pushToken;
 
     public LoginRequest() {
     }

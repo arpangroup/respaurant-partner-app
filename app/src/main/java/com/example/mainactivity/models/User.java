@@ -33,4 +33,7 @@ public class User {
     private String createdAt;
     @SerializedName("updated_at")
     private String updatedAt;
+
+    @SerializedName("push_token")
+    private String pushToken;
 }

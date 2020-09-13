@@ -20,7 +20,6 @@ public class AuthenticationViewModel extends ViewModel {
     private MutableLiveData<Address> mCurrentAddress = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoggedIn = new MutableLiveData<>();
     private MutableLiveData<String> mutablePhoneNumber = new MutableLiveData<>();
-    private String firebaseToken = null;
     private static int LOGIN_ATTEMPT = 0;
     private MutableLiveData<Integer> mutableLoginAttempt = new MutableLiveData<>(0);
 
@@ -44,11 +43,13 @@ public class AuthenticationViewModel extends ViewModel {
     }
     public LiveData<LoginResponse<User>> loginByOtp(@NonNull String phone, @NonNull String otp, Address defaultAddress){
         mutableLoginAttempt.setValue(++LOGIN_ATTEMPT);
-        return authRepository.loginByOtp(phone, otp, defaultAddress);
+        String pushToken = authRepository.getPushNotificationToken();
+        return authRepository.loginByOtp(phone, otp, defaultAddress, pushToken);
     }
     public LiveData<LoginResponse<User>> loginByMobileAndPassword(@NonNull String phone, @NonNull String password, Address defaultAddress){
         mutableLoginAttempt.setValue(++LOGIN_ATTEMPT);
-        return authRepository.loginByOtp(phone, password, defaultAddress);
+        String pushToken = authRepository.getPushNotificationToken();
+        return authRepository.loginByMobileAndPassword(phone, password, defaultAddress, pushToken);
     }
     public LiveData<LoginResponse<User>> getLoginResponse(){
         return authRepository.getLoginResponse();
@@ -60,18 +61,19 @@ public class AuthenticationViewModel extends ViewModel {
     public LiveData<String> getPhoneNumber(){
         return mutablePhoneNumber;
     }
+    public LiveData<Boolean> isLoggedIn(){
+        return authRepository.isLoggedIn();
+    }
     public void logout(){
         authRepository.logout();
         onCleared();
     }
-
+    public LiveData<Boolean> isFirebaseTokenAvailable(){
+        return authRepository.isPushNotificationTokenAvailable();
+    }
     public void setFirebaseToken(String firebaseToken){
-        this.firebaseToken = firebaseToken;
+        authRepository.setPushNotificationToken(firebaseToken);
     }
-    public String getFirebaseToken(){
-        return this.firebaseToken;
-    }
-
     public LiveData<Integer> getLoginAttempt() {
         return mutableLoginAttempt;
     }

@@ -1,5 +1,6 @@
 package com.example.mainactivity.views.account;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -21,9 +22,11 @@ import com.example.mainactivity.adapters.ItemCategoryAdapter;
 import com.example.mainactivity.databinding.FragmentAccountListBinding;
 import com.example.mainactivity.databinding.FragmentMenuListBinding;
 import com.example.mainactivity.models.AccountSection;
+import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.MainActivity;
 import com.example.mainactivity.views.MoreActivity;
+import com.example.mainactivity.views.auth.AuthActivity;
 import com.example.mainactivity.views.menuitem.MenuActivity;
 
 import java.util.Arrays;
@@ -33,6 +36,7 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     private final String TAG = this.getClass().getSimpleName();
 
     private FragmentAccountListBinding mBinding;
+    AuthenticationViewModel authenticationViewModel;
     RestaurantViewModel restaurantViewModel;
     private AccountSectionAdapter accountSectionAdapter;
     private NavController navController;
@@ -54,7 +58,9 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
 
 
         // Initialize ViewModel
+        authenticationViewModel = new ViewModelProvider(requireActivity()).get(AuthenticationViewModel.class);
         restaurantViewModel = new ViewModelProvider(requireActivity()).get(RestaurantViewModel.class);
+        authenticationViewModel.init();
         restaurantViewModel.init();
 
         // Initialize NavController
@@ -114,8 +120,29 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
             case 3:
                 navController.navigate(R.id.action_accountListFragment_to_earningFragment);
                 break;
+            case 4:
+                break;
+            case 5:
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+                builder.setTitle("Are you sure !");
+                builder.setMessage("You are about to delete the saved address from database. Do you really want to proceed ?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", (dialog, which) -> handleLogout());
+                builder.setNegativeButton("No", (dialog, which) -> {
+                    //Toast.makeText(getApplicationContext(), "You've changed your mind to delete all records", Toast.LENGTH_SHORT).show();
+                });
+                builder.show();
+                break;
             default:
                 break;
         }
+    }
+    private void handleLogout(){
+        authenticationViewModel.logout();
+
+        Intent intentLogin = new Intent(requireActivity(), AuthActivity.class);
+        intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentLogin);
+        requireActivity().finish();
     }
 }

@@ -14,6 +14,7 @@ import com.example.mainactivity.models.User;
 import com.example.mainactivity.models.request.LoginRequest;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.LoginResponse;
+import com.example.mainactivity.sharedpref.UserSession;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -26,6 +27,8 @@ public class AuthRepositoryImpl implements AuthRepository {
 
 
     private final MutableLiveData<Boolean> isLoading=new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isLoggedIn = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isPushNotificationAvailable = new MutableLiveData<>(false);
     private MutableLiveData<ApiResponse> sendOtpResponse = new MutableLiveData<>();
     private MutableLiveData<LoginResponse<User>> loginResponse = new MutableLiveData<>();
 
@@ -51,20 +54,22 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
-    public LiveData<LoginResponse<User>> loginByOtp(@NonNull String phone, @NonNull String otp, Address defaultAddress) {
+    public LiveData<LoginResponse<User>> loginByOtp(@NonNull String phone, @NonNull String otp, Address defaultAddress, String pushToken) {
         if(loginResponse == null){
             loginResponse = new MutableLiveData<>();
         }
         LoginRequest loginRequest = new LoginRequest(phone, otp, defaultAddress, LoginType.OTP);
+        loginRequest.setPushToken(pushToken);
         return loginNow(loginRequest);
     }
 
     @Override
-    public LiveData<LoginResponse<User>> loginByMobileAndPassword(@NonNull String phone, @NonNull String password, Address defaultAddress) {
+    public LiveData<LoginResponse<User>> loginByMobileAndPassword(@NonNull String phone, @NonNull String password, Address defaultAddress, String pushToken) {
         if(loginResponse == null){
             loginResponse = new MutableLiveData<>();
         }
         LoginRequest loginRequest = new LoginRequest(phone, password, defaultAddress, LoginType.MOBILE_AND_PASSWORD);
+        loginRequest.setPushToken(pushToken);
         return loginNow(loginRequest);
     }
 
@@ -74,13 +79,41 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
+    public LiveData<Boolean> isLoggedIn() {
+        if(UserSession.isLoggedIn()){
+            isLoggedIn.setValue(true);
+        }else {
+            isLoggedIn.setValue(false);
+        }
+        return isLoggedIn;
+    }
+
+    @Override
     public void logout() {
-        //UserSession.logOut();
+        isLoading.setValue(true);
+        UserSession.logOut();
+        isLoggedIn.setValue(false);
         isLoading.setValue(false);
         sendOtpResponse = new MutableLiveData<>();
         loginResponse= new MutableLiveData<>();
     }
 
+    @Override
+    public void setPushNotificationToken(@NonNull String token) {
+        UserSession.setPushNotificationToken(token);
+    }
+
+    @Override
+    public String getPushNotificationToken() {
+        return UserSession.getPushNotificationToken();
+    }
+
+    @Override
+    public LiveData<Boolean> isPushNotificationTokenAvailable() {
+        Boolean result = UserSession.isPushNotificationAvailable();
+        isPushNotificationAvailable.setValue(result);
+        return isPushNotificationAvailable;
+    }
 
 
     private LiveData<ApiResponse> sendOtp(String phone){
@@ -118,6 +151,14 @@ public class AuthRepositoryImpl implements AuthRepository {
                 try{
                     LoginResponse<User> resp  = response.body();
                     Log.d(TAG, "RESPONSE: "+resp);
+                    if (resp != null && resp.isSuccess()) {
+                        UserSession.setUserData(resp.getData());
+                        isLoggedIn.setValue(true);
+                        String pushToken = resp.getData().getPushToken();
+                        if(pushToken != null){
+                            UserSession.setPushNotificationToken(pushToken);
+                        }
+                    }
                     loginResponse.setValue(resp);
                 }catch (Exception e){
                     e.printStackTrace();

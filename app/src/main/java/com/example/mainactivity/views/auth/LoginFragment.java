@@ -1,18 +1,26 @@
 package com.example.mainactivity.views.auth;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +30,10 @@ import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.FragmentLoginBinding;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.views.MainActivity;
+
+import static android.Manifest.permission.READ_PHONE_NUMBERS;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.READ_SMS;
 
 public class LoginFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
@@ -47,7 +59,6 @@ public class LoginFragment extends Fragment {
 
         // Initialize NavController
         navController = Navigation.findNavController(rootView);
-
 
         mBinding.etPhone.addTextChangedListener(new TextWatcher() {
             @Override

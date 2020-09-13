@@ -57,13 +57,15 @@ public class MessagingService extends FirebaseMessagingService {
                 String orderJson = remoteMessage.getData().get("order");
                 Order order = new Gson().fromJson(orderJson, Order.class);
                 Log.d(TAG, "ID: "+order.getId());
-                if(AcceptOrderActivity.ACTIVE){
-                    Log.d(TAG, "Sending Broadcat Message......");
-                    sendMessageToUi(orderJson);
-                }else{
-                    Log.d(TAG, "Opening new Activity..........");
-                    openNewOrderDialog(orderJson);
-                }
+                sendMessageToUi(orderJson);
+                openNewOrderDialog(orderJson);
+//                if(AcceptOrderActivity.ACTIVE){
+//                    Log.d(TAG, "Sending Broadcat Message......");
+//                    sendMessageToUi(orderJson);
+//                }else{
+//                    Log.d(TAG, "Opening new Activity..........");
+//                    openNewOrderDialog(orderJson);
+//                }
                 break;
             case UNKNOWN_SOURCE:
                 break;
@@ -96,9 +98,6 @@ public class MessagingService extends FirebaseMessagingService {
         Intent fullScreenIntent = new Intent(this, AcceptOrderActivity.class);
         TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
         taskStackBuilder.addNextIntentWithParentStack(fullScreenIntent);
-        //fullScreenIntent.putExtra(Constants.NOTIFICATION_IDS, notificationId);
-//        fullScreenIntent.putExtra("ORDER_ID", order.getId());
-//        fullScreenIntent.putExtra("TITLE", order.getUniqueOrderId());
         fullScreenIntent.putExtra("ORDER", orderJson);
         return PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -119,12 +118,10 @@ public class MessagingService extends FirebaseMessagingService {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.notify(App.NOTIFICATION_ID_NEW_ORDER, notification);
         }else{
+            Log.d(TAG, "############# Device below Q ############");
             Intent intent = new Intent(this, AcceptOrderActivity.class);
-//            intent.putExtra("ORDER_ID", order.getId());
-//            intent.putExtra("TITLE", order.getUniqueOrderId());
-
-            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
-            taskStackBuilder.addNextIntentWithParentStack(intent);
+//            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
+//            taskStackBuilder.addNextIntentWithParentStack(intent);
 
             intent.putExtra("ORDER", orderJson);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

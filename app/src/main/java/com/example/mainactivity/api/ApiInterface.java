@@ -32,7 +32,10 @@ public interface ApiInterface {
     @GET("/api/send-login-otp/{phone}")
     Call<ApiResponse> sendLoginOtp(@Path("phone") String phone);
 
-    @POST("/api/login-using-otp")
+//    @POST("/api/login-using-otp")
+//    Call<LoginResponse<User>> login(@Body LoginRequest loginRequest);
+
+    @POST("/api/login-new")
     Call<LoginResponse<User>> login(@Body LoginRequest loginRequest);
 
     @GET("/api/store-owner/dashboard/{storeOwnerId}")
