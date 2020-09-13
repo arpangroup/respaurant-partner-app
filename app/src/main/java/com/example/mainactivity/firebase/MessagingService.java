@@ -59,13 +59,13 @@ public class MessagingService extends FirebaseMessagingService {
                 Log.d(TAG, "ID: "+order.getId());
                 sendMessageToUi(orderJson);
                 openNewOrderDialog(orderJson);
-//                if(AcceptOrderActivity.ACTIVE){
-//                    Log.d(TAG, "Sending Broadcat Message......");
-//                    sendMessageToUi(orderJson);
-//                }else{
-//                    Log.d(TAG, "Opening new Activity..........");
-//                    openNewOrderDialog(orderJson);
-//                }
+                if(AcceptOrderActivity.ACTIVE){
+                    Log.d(TAG, "Sending Broadcat Message......");
+                    sendMessageToUi(orderJson);
+                }else{
+                    Log.d(TAG, "Opening new Activity..........");
+                    openNewOrderDialog(orderJson);
+                }
                 break;
             case UNKNOWN_SOURCE:
                 break;
@@ -120,8 +120,8 @@ public class MessagingService extends FirebaseMessagingService {
         }else{
             Log.d(TAG, "############# Device below Q ############");
             Intent intent = new Intent(this, AcceptOrderActivity.class);
-//            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
-//            taskStackBuilder.addNextIntentWithParentStack(intent);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
+            taskStackBuilder.addNextIntentWithParentStack(intent);
 
             intent.putExtra("ORDER", orderJson);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

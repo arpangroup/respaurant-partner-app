@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 public class AcceptOrderActivity extends AppCompatActivity implements OrderAcceptListAdapter.OrderAcceptInterface{
     private final String TAG = this.getClass().getSimpleName();
-//    public static boolean ACTIVE = false;
+    public static boolean ACTIVE = false;
     ActivityAcceptOrderBinding mBinding;
     private MediaPlayer mMediaPlayer;
 
@@ -53,7 +53,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
             orderViewModel.setNewOrder(orderObj);
             setupMediaPlayer();
-            //ACTIVE = true;
+            ACTIVE = true;
         }
     };
 
@@ -66,14 +66,14 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     protected void onStop() {
         super.onStop();
-        //ACTIVE = false;
+        ACTIVE = false;
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //ACTIVE = false;
+        ACTIVE = false;
     }
 
 
@@ -102,13 +102,14 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         //Log.d("MessagingService", "Inside onCreate() of AcceptOrderActivity..................");
         //Log.d("MessagingService", "ORDER_ID: "+orderId);
         //Log.d("MessagingService", "TITLE: "+title);
-//       if(!ACTIVE){
-//       }
-        String orderJson = getIntent().getStringExtra("ORDER");
-        Order orderObj = new Gson().fromJson(orderJson, Order.class);
-        orderViewModel.setNewOrder(orderObj);
+       if(!ACTIVE){
+           String orderJson = getIntent().getStringExtra("ORDER");
+           Order orderObj = new Gson().fromJson(orderJson, Order.class);
+           orderViewModel.setNewOrder(orderObj);
 
-        setupMediaPlayer();
+           setupMediaPlayer();
+       }
+
 
 
 
@@ -140,7 +141,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //ACTIVE = false;
+        ACTIVE = false;
         if(mMediaPlayer != null){
             mMediaPlayer.stop();
             mMediaPlayer.release();

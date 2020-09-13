@@ -27,7 +27,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.order.AcceptOrderActivity" android:parentActivityName="com.example.mainactivity.views.MainActivity">
+        <activity android:name=".views.order.AcceptOrderActivity" android:parentActivityName="com.example.mainactivity.views.MainActivity" android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.mainactivity.views.MainActivity"/>
