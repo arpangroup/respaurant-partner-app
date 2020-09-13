@@ -28,6 +28,7 @@ import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AcceptOrderActivity extends AppCompatActivity implements OrderAcceptListAdapter.OrderAcceptInterface{
     private final String TAG = this.getClass().getSimpleName();
@@ -111,6 +112,10 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
        }
 
 
+//        orderViewModel.setNewOrder(new Order(1, "ORD-hebehdhcb-shjsdh001"));
+//        orderViewModel.setNewOrder(new Order(2, "ORD-hebehdhcb-shjsdh002"));
+//        orderViewModel.setNewOrder(new Order(3, "ORD-hebehdhcb-shjsdh003"));
+//        orderViewModel.setNewOrder(new Order(4, "ORD-hebehdhcb-shjsdh004"));
 
 
         orderViewModel.getNewOrders().observe(this, orders -> {
@@ -156,21 +161,35 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
     @Override
     public void onIncreasePreparationTime(Order order) {
-
+        Toast.makeText(this, "Click: INCREASE", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDecreasePreparationTime(Order order) {
-
+        Toast.makeText(this, "Click: DECREASE", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRejectClick(Order order) {
-
+        Toast.makeText(this, "CLICK: REJECT", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onAcceptClick(Order order) {
+        Toast.makeText(this, "CLICK: ACCEPT", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAutoCancelOrder(Order order) {
+        try{
+            Toast.makeText(this, "Order Cancelled: "+order.getId(), Toast.LENGTH_SHORT).show();
+            List<Order> orders = orderViewModel.getAllOrders().getValue();
+            orders.removeIf(orderObj -> orderObj.getId() == order.getId());
+            orderAcceptListAdapter.submitList(orders);
+            orderAcceptListAdapter.notifyItemRemoved(order.getId());
+        }catch (Exception e){
+
+        }
 
     }
 }

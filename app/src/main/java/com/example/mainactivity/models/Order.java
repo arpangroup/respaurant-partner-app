@@ -76,9 +76,14 @@ public class Order {
     @SerializedName("user")
     private User user;
 
+    public Order(int id, String uniqueOrderId) {
+        this.id = id;
+        this.uniqueOrderId = uniqueOrderId;
+    }
 
     /*========================================================================*/
     private int toggle = 1;
+    private boolean isAutoCancelled = false;
 
 
     @BindingAdapter(value = "setDishes")

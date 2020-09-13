@@ -24,6 +24,7 @@ import com.example.mainactivity.databinding.ActivityMainBinding;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.viewmodels.OrderViewModel;
+import com.example.mainactivity.views.order.AcceptOrderActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_container);
         //NavigationUI.setupActionBarWithNavController(this, navController);
+        //startActivity(new Intent(this, AcceptOrderActivity.class));
 
         if (!Settings.canDrawOverlays(this)) {
             requestPermission();

@@ -89,4 +89,9 @@ public class OrderAcceptFragment extends Fragment implements OrderAcceptListAdap
         //navController.navigate(R.id.action_acceptOrderFragment_to_orderPrepareFragment);
         //((OrderActivity)requireActivity()).changeToolbarTag(2);
     }
+
+    @Override
+    public void onAutoCancelOrder(Order order) {
+
+    }
 }

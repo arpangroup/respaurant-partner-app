@@ -183,18 +183,19 @@
                             android:layout_marginLeft="16dp">
 
                             <ProgressBar
+                                android:id="@+id/progressBarAccept"
                                 android:progressDrawable="@drawable/green_progress_drawable"
                                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="42dp" />
 
                             <LinearLayout
-                                android:id="@+id/txt_accept"
+                                android:id="@+id/layout_accept"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_marginLeft="16dp"
                                 android:gravity="center"
                                 android:padding="12dp"
+                                android:background="#979DD59F"
                                 android:orientation="horizontal">
 
                                 <TextView

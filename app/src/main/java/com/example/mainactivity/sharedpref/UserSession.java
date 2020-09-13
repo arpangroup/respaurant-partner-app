@@ -67,12 +67,11 @@ public class UserSession {
         }
     }
     public static boolean setPushNotificationToken(String token){
-        SharedPreferences sharedPref = mContext.getSharedPreferences(USER_SESSION,0);
         try{
             setStr(PUSH_TOKEN, token);
             return true;
         }catch (Exception e){
-            Log.e(TAG, "Error in setUserData() method in UserSession  "+e);
+            Log.e(TAG, "Error in setPushNotificationToken() method in UserSession  "+e);
             return false;
         }
     }
@@ -108,6 +107,7 @@ public class UserSession {
         }
     }
     public static void logOut(){
+        setStr(PUSH_TOKEN, null);
         clearSharedPreference();
     }
 
