@@ -39,11 +39,11 @@ public class RestaurantViewModel extends ViewModel {
         return isLoading;
     }
     public LiveData<Restaurant> getRestaurantDetails(){
-        String userId = new RequestToken().getUser_id();
+        int userId = new RequestToken().getUser_id();
         return restaurantRepository.getRestaurantDetails(userId);
     }
     public LiveData<List<ItemCategory>> getRestaurantsMenuItems(){
-        String userId = new RequestToken().getUser_id();
+        int userId = new RequestToken().getUser_id();
         return restaurantRepository.getRestaurantItems(userId);
     }
 

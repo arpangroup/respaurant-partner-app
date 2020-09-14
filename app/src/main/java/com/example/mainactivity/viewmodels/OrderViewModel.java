@@ -79,7 +79,7 @@ public class OrderViewModel extends ViewModel {
         return isLoading;
     }
     public LiveData<Dashboard> getDashboard(){
-         String userId = new RequestToken().getUser_id();
+         int userId = new RequestToken().getUser_id();
          return orderRepository.getDashboard(userId);
     }
     public LiveData<List<Order>> getNewOrdersFromApi(){

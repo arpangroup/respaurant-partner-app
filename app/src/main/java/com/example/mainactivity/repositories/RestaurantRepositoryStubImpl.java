@@ -44,12 +44,12 @@ public class RestaurantRepositoryStubImpl implements RestaurantRepository{
     }
 
     @Override
-    public LiveData<Restaurant> getRestaurantDetails(String userId) {
+    public LiveData<Restaurant> getRestaurantDetails(int userId) {
         return null;
     }
 
     @Override
-    public LiveData<List<ItemCategory>> getRestaurantItems(String userId){
+    public LiveData<List<ItemCategory>> getRestaurantItems(int userId){
         if(mutableMenuItems == null){
             mutableMenuItems = new MutableLiveData<>();
             loadRestaurantsMenuApi(userId);
@@ -74,7 +74,7 @@ public class RestaurantRepositoryStubImpl implements RestaurantRepository{
 
 
     /*========================================================API_CALLS==============================================*/
-    private void loadRestaurantsMenuApi(String userId){
+    private void loadRestaurantsMenuApi(int userId){
         isLoading.setValue(true);
         MenuItem menuItem1 = new MenuItem().setId(1).setName("Dal Makhani").setIsActive(1).setPrice("100").setIsVeg(1);
         MenuItem menuItem2 = new MenuItem().setId(2).setName("Alu Paratha").setIsActive(0).setPrice("200").setIsVeg(0);

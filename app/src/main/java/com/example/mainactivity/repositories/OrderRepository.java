@@ -39,7 +39,7 @@ public class OrderRepository {
     public LiveData<Boolean> getIsLoading(){
         return isLoading;
     }
-    public LiveData<Dashboard> getDashboard(String userId){
+    public LiveData<Dashboard> getDashboard(int userId){
         if(mutableDashboard == null){
             mutableDashboard = new MutableLiveData<>();
         }
@@ -96,7 +96,7 @@ public class OrderRepository {
 
 
     /*========================================================API_CALLS==============================================*/
-    private void loadDashboard(String userId){
+    private void loadDashboard(int userId){
         Log.d(TAG, "Inside loadDashboard()......");
         Log.d(TAG, "UserId: "+userId);
         ApiInterface apiInterface = ApiService.getApiService();

@@ -15,8 +15,8 @@ import java.util.List;
 
 public interface RestaurantRepository {
     public LiveData<Boolean> getIsLoading();
-    public LiveData<Restaurant> getRestaurantDetails(String userId);
-    public LiveData<List<ItemCategory>> getRestaurantItems(String userId);
+    public LiveData<Restaurant> getRestaurantDetails(int userId);
+    public LiveData<List<ItemCategory>> getRestaurantItems(int userId);
     public LiveData<ApiResponse> toggleMenuItem(DisableItemRequest disableItemRequest);
     public LiveData<ApiResponse> toggleRestaurant(RequestToken requestToken);
     public LiveData<ApiResponse> toggleCategory(DisableCategoryRequest disableCategoryRequest);

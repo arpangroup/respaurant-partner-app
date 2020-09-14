@@ -39,7 +39,7 @@ public interface ApiInterface {
     Call<LoginResponse<User>> login(@Body LoginRequest loginRequest);
 
     @GET("/api/store-owner/dashboard/{storeOwnerId}")
-    Call<Dashboard> getDashboard(@Path("storeOwnerId") String storeOwnerId);
+    Call<Dashboard> getDashboard(@Path("storeOwnerId") int storeOwnerId);
 
     @POST("/api/store-owner/orders/get-new-orders")
     Call<List<Order>> getNewOrders(@Body NewOrderRequest newOrderRequest);
@@ -62,10 +62,10 @@ public interface ApiInterface {
 
     /*=============================================================*/
     @GET("/api/store-owner/items/{storeOwnerId}")
-    Call<RestaurantItemResponse> getAllItems(@Path("storeOwnerId") String storeOwnerId);
+    Call<RestaurantItemResponse> getAllItems(@Path("storeOwnerId") int storeOwnerId);
 
     @GET("/api/store-owner/stores/{storeOwnerId}")
-    Call<List<Restaurant>> getRestaurants(@Path("storeOwnerId") String storeOwnerId);
+    Call<List<Restaurant>> getRestaurants(@Path("storeOwnerId") int storeOwnerId);
 
 
 

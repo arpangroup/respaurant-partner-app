@@ -47,7 +47,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     }
 
     @Override
-    public LiveData<Restaurant> getRestaurantDetails(String userId) {
+    public LiveData<Restaurant> getRestaurantDetails(int userId) {
         if(mutableRestaurant == null){
             mutableRestaurant = new MutableLiveData<>();
         }
@@ -56,7 +56,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     }
 
     @Override
-    public LiveData<List<ItemCategory>> getRestaurantItems(String userId){
+    public LiveData<List<ItemCategory>> getRestaurantItems(int userId){
         if(mutableMenuItems == null){
             mutableMenuItems = new MutableLiveData<>();
         }
@@ -81,7 +81,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
 
 
     /*========================================================API_CALLS==============================================*/
-    private void loadRestaurant(String userId){
+    private void loadRestaurant(int userId){
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
         apiInterface.getRestaurants(userId).enqueue(new Callback<List<Restaurant>>() {
@@ -100,7 +100,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
             }
         });
     }
-    private void loadRestaurantsMenuApi(String userId){
+    private void loadRestaurantsMenuApi(int userId){
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
         apiInterface.getAllItems(userId).enqueue(new Callback<RestaurantItemResponse>() {
