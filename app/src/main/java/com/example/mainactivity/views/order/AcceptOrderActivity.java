@@ -22,8 +22,10 @@ import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderAcceptListAdapter;
 import com.example.mainactivity.databinding.ActivityAcceptOrderBinding;
 import com.example.mainactivity.databinding.FragmentAcceptOrderBinding;
+import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.google.gson.Gson;
 
@@ -39,6 +41,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     OrderViewModel orderViewModel;
     private OrderAcceptListAdapter orderAcceptListAdapter;
     private NavController navController;
+    private int mNewOrderCount = 0;
 
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -88,6 +91,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         mBinding = ActivityAcceptOrderBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
+        UserSession userSession = new UserSession(this);
 
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         orderViewModel.init();
@@ -119,6 +123,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
 
         orderViewModel.getNewOrders().observe(this, orders -> {
+            mNewOrderCount = orders.size();
             //System.out.println("==========================ORDERS================================\n");
             //orders.forEach(order -> System.out.println("ID: "+order.getId() +", Title: "+order.getUniqueOrderId()));
             //Log.d(TAG, "ORDER: "+orders.get(0));
@@ -175,8 +180,17 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     }
 
     @Override
-    public void onAcceptClick(Order order) {
+    public void onAcceptClick(Order order, ItemOrderAcceptBinding binding) {
         Toast.makeText(this, "CLICK: ACCEPT", Toast.LENGTH_SHORT).show();
+        binding.layoutProgress.setVisibility(View.VISIBLE);
+        orderViewModel.acceptOrder(order.getId()).observe(this, apiResponse -> {
+            System.out.println("====================ORDER_ACCEPT_RESPONSE======================");
+            System.out.println(apiResponse);
+            if(apiResponse.isSuccess()){
+                binding.layoutProgress.setVisibility(View.GONE);
+                finish();//closing the popup
+            }
+        });
     }
 
     @Override

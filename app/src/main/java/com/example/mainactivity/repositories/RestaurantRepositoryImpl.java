@@ -15,6 +15,7 @@ import com.example.mainactivity.models.request.DisableItemRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,6 +134,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     private LiveData<ApiResponse> toggleItemActive(DisableItemRequest disableItemRequest){
         MutableLiveData<ApiResponse> mutableApiResponse = new MutableLiveData<>();
         ApiInterface apiInterface = ApiService.getApiService();
+        Log.d(TAG, "Inside toggleItemActive().....");
+        Log.d(TAG, "REQUEST: "+new Gson().toJson(disableItemRequest));
         isLoading.setValue(true);
         apiInterface.disableItem(disableItemRequest).enqueue(new Callback<ApiResponse>() {
             @Override

@@ -67,8 +67,7 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
                 notifyItemChanged(getAdapterPosition());
             });
             itemAcceptOrderBinding.layoutAccept.setOnClickListener(view -> {
-                orderAcceptInterface.onAcceptClick(getItem(getAdapterPosition()));
-                notifyItemChanged(getAdapterPosition());
+                orderAcceptInterface.onAcceptClick(getItem(getAdapterPosition()), binding);
             });
 
         }
@@ -79,7 +78,7 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
         void onIncreasePreparationTime(Order order);
         void onDecreasePreparationTime(Order order);
         void onRejectClick(Order order);
-        void onAcceptClick(Order order);
+        void onAcceptClick(Order order, ItemOrderAcceptBinding binding);
         void onAutoCancelOrder(Order order);
     }
 
@@ -102,14 +101,6 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
             }
         }.start();
     }
-    private void updateCancelTimer(long mTimeLeftInMills, OrderViewHolder holder){
-        int minutes = (int) (mTimeLeftInMills / 1000) /60;// divided by 60 seconds
-        int seconds = (int) (mTimeLeftInMills / 1000) % 60;
-
-        String timeLeftFormatted = String.format(Locale.getDefault(), "%01d:%02d", minutes, seconds);
-        holder.itemAcceptOrderBinding.txtCounter.setText("("+ timeLeftFormatted +")");
-
-    }
     private void startProgressBar(OrderViewHolder holder){
         final int[] counter = {0};
         Timer t = new Timer();
@@ -126,6 +117,14 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
         };
         int period = Constants.ORDER_ACCEPT_WAITING_TIME / 100;
         t.schedule(timerTask, 0, period);//1% in every 100ms
+    }
+    private void updateCancelTimer(long mTimeLeftInMills, OrderViewHolder holder){
+        int minutes = (int) (mTimeLeftInMills / 1000) /60;// divided by 60 seconds
+        int seconds = (int) (mTimeLeftInMills / 1000) % 60;
+
+        String timeLeftFormatted = String.format(Locale.getDefault(), "%01d:%02d", minutes, seconds);
+        holder.itemAcceptOrderBinding.txtCounter.setText("("+ timeLeftFormatted +")");
+
     }
 
     private void disableAcceptButton(OrderViewHolder holder, int position){

@@ -6,4 +6,5 @@ public class Constants {
 
 //    public static final int ORDER_ACCEPT_WAITING_TIME = 1000*60*1;//1-minute
     public static final int ORDER_ACCEPT_WAITING_TIME = 1000*30;//30-sec
+    public static final int ORDER_READY_WAITING_TIME = 1000*60*15;//15-min
 }

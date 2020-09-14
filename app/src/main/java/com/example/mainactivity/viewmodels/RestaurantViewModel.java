@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.MenuItem;
-import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.request.DisableCategoryRequest;
 import com.example.mainactivity.models.request.DisableItemRequest;
@@ -14,7 +13,6 @@ import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.repositories.RestaurantRepository;
 import com.example.mainactivity.repositories.RestaurantRepositoryImpl;
-import com.example.mainactivity.repositories.RestaurantRepositoryStubImpl;
 
 import java.util.List;
 
@@ -39,11 +37,11 @@ public class RestaurantViewModel extends ViewModel {
         return isLoading;
     }
     public LiveData<Restaurant> getRestaurantDetails(){
-        int userId = new RequestToken().getUser_id();
+        int userId = new RequestToken().getUserId();
         return restaurantRepository.getRestaurantDetails(userId);
     }
     public LiveData<List<ItemCategory>> getRestaurantsMenuItems(){
-        int userId = new RequestToken().getUser_id();
+        int userId = new RequestToken().getUserId();
         return restaurantRepository.getRestaurantItems(userId);
     }
 

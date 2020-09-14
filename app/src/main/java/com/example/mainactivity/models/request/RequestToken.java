@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class RequestToken {
     @SerializedName("user_id")
-    private int user_id ;//149:Arpan Restaurant Owner<====VegieCorner
+    private int userId ;//149:Arpan Restaurant Owner<====VegieCorner
     @SerializedName("restaurant_id")
     private int restaurantId ;//1: VeggieeCorner
     private String token;
@@ -22,11 +22,19 @@ public class RequestToken {
     public RequestToken(int orderId) {
         //this.user_id = "149";
         this.order_id = orderId;
+        try{
+            if(UserSession.isLoggedIn()){
+                this.userId = UserSession.getUserData().getId();
+                this.token = UserSession.getUserData().getAuthToken();
+
+            }
+        }catch (Exception e){
+        }
     }
     public RequestToken() {
         try{
             if(UserSession.isLoggedIn()){
-                this.user_id = UserSession.getUserData().getId();
+                this.userId = UserSession.getUserData().getId();
                 this.token = UserSession.getUserData().getAuthToken();
 
             }

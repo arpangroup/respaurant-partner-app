@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.FragmentLoginUsingPasswordBinding;
 import com.example.mainactivity.models.Address;
+import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.views.MainActivity;
 
@@ -314,6 +315,10 @@ public class LoginUsingPasswordFragment extends Fragment {
                 Intent intent = new Intent(requireActivity(), MainActivity.class);
                 startActivity(intent);
                 requireActivity().finish();
+                System.out.println("=========================LOGIN_RESPONSE========================");
+                System.out.println(userLoginResponse);
+                System.out.println("REQUEST_TOKEN:"+new RequestToken());
+
             }else{
                 mBinding.layoutAlert.setVisibility(View.VISIBLE);
                 mBinding.btnLogin.setEnabled(true);

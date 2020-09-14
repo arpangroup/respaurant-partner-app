@@ -36,7 +36,13 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
     OrderViewModel orderViewModel;
     private OrderListAdapter orderListAdapter;
     private NavController navController;
-    private Dashboard mDashboard;
+    //private Dashboard mDashboard;
+    private List<Order> mOrders =  new ArrayList<>();
+
+    @Override
+    public void onAutoCancelOrder(Order order) {
+
+    }
 
     public static enum OrderType {
         ALL,
@@ -70,9 +76,15 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         mBinding.orderRecycler.setAdapter(orderListAdapter);
 
 
-        orderViewModel.getDashboard().observe(requireActivity(), dashboard -> {
-            mDashboard = dashboard;
-            orderViewModel.setFilterOrders(dashboard.getAllOrders());
+//        orderViewModel.getDashboard().observe(requireActivity(), dashboard -> {
+//            mDashboard = dashboard;
+//            orderViewModel.setFilterOrders(dashboard.getAllOrders());
+//        });
+
+        orderViewModel.getAllAcceptedOrders().observe(requireActivity(), orders -> {
+            mOrders = orders;
+            mBinding.toolbar.tagAll.setText("All ("+orders.size() +")");
+            orderViewModel.setFilterOrders(orders);
         });
 
         orderViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
@@ -125,7 +137,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             mBinding.toolbar.tagPreparing.setBackgroundResource(R.drawable.rounded_red_border);
             mBinding.toolbar.tagPreparing.setTextColor(ContextCompat.getColor(requireActivity(), R.color.holo_red_dark));
 
-            List<Order> filterOrders = filterOrders(mDashboard.getAllOrders(), orderType);
+            List<Order> filterOrders = filterOrders(mOrders, orderType);
             orderViewModel.setFilterOrders(filterOrders);
             return;
         }
@@ -134,7 +146,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             mBinding.toolbar.tagReady.setBackgroundResource(R.drawable.rounded_red_border);
             mBinding.toolbar.tagReady.setTextColor(ContextCompat.getColor(requireActivity(), R.color.holo_red_dark));
 
-            List<Order> filterOrders = filterOrders(mDashboard.getAllOrders(), orderType);
+            List<Order> filterOrders = filterOrders(mOrders, orderType);
             orderViewModel.setFilterOrders(filterOrders);
             return;
         }
@@ -143,7 +155,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             mBinding.toolbar.tagPicked.setBackgroundResource(R.drawable.rounded_red_border);
             mBinding.toolbar.tagPicked.setTextColor(ContextCompat.getColor(requireActivity(), R.color.holo_red_dark));
 
-            List<Order> filterOrders = filterOrders(mDashboard.getAllOrders(), orderType);
+            List<Order> filterOrders = filterOrders(mOrders, orderType);
             orderViewModel.setFilterOrders(filterOrders);
             return;
         }

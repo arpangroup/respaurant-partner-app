@@ -163,7 +163,7 @@ public class EditItemFragment extends Fragment {
     private MultipartBody.Part getImage(Uri fileUri){
         RequestToken requestToken = new RequestToken();
         //RequestBody requestBodyUserId = RequestBody.create(MultipartBody.FORM, "1");
-        RequestBody requestBodyUserId = RequestBody.create(MediaType.parse("multipart/form-data"), requestToken.getUser_id()+"");
+        RequestBody requestBodyUserId = RequestBody.create(MediaType.parse("multipart/form-data"), requestToken.getUserId()+"");
         //String name = et_name.getText().toString();
         //RequestBody requestBodyUserName = RequestBody.create(MediaType.parse("multipart/form-data"), name);
 

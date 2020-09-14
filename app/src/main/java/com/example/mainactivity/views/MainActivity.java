@@ -82,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orderViewModel.loadAllAcceptedOrders();
+    }
 
     private void requestPermission() {
         // Check if Android M or higher

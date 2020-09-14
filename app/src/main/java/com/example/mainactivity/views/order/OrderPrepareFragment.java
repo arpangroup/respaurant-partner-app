@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.example.mainactivity.adapters.OrderListAdapter;
 import com.example.mainactivity.databinding.FragmentPrepareOrderBinding;
+import com.example.mainactivity.models.Order;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 
 public class OrderPrepareFragment extends Fragment implements OrderListAdapter.OrderPrepareInterface {
@@ -52,6 +53,11 @@ public class OrderPrepareFragment extends Fragment implements OrderListAdapter.O
             //Log.d(TAG, "ORDER: "+orders.get(0));
             orderListAdapter.submitList(orders);
         });
+
+    }
+
+    @Override
+    public void onAutoCancelOrder(Order order) {
 
     }
 }

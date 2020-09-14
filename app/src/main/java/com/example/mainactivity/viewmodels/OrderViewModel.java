@@ -79,9 +79,18 @@ public class OrderViewModel extends ViewModel {
         return isLoading;
     }
     public LiveData<Dashboard> getDashboard(){
-         int userId = new RequestToken().getUser_id();
+         int userId = new RequestToken().getUserId();
          return orderRepository.getDashboard(userId);
     }
+
+    public void loadAllAcceptedOrders(){
+        RequestToken requestToken = new RequestToken();
+        orderRepository.loadAcceptedOrders(requestToken);
+    }
+    public LiveData<List<Order>> getAllAcceptedOrders(){
+        return orderRepository.getAllAcceptedOrders();
+    }
+
     public LiveData<List<Order>> getNewOrdersFromApi(){
         NewOrderRequest newOrderRequest = new NewOrderRequest(6, getListedOrderIds());
         return orderRepository.getNewOrders(newOrderRequest);

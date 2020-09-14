@@ -99,6 +99,34 @@ public class Order {
         if(this.createdAt == null) return "";
         return FormatDate.format2(this.createdAt);
     }
+    public String getAcceptedOrderStatus(){
+        String statusStr = "";
+        switch (this.orderStatusId){
+            case 1:
+                statusStr = "PLACED";//ORDER-PLACED
+                break;
+            case 2:
+                //ORDER_RECEIVED: i.e, restaurant preparing the order
+                statusStr = "PREPARING"; //ORDER_RECEIVED
+                break;
+            case 3:
+                statusStr = "READY";//DELIVERY ASSIGNED
+                break;
+            case 4:
+                statusStr = "PICKED-UP";
+                break;
+            case 5:
+                statusStr = "DELIVERED";
+                break;
+            case 6:
+                statusStr = "CANCELLED";
+                break;
+            case 7:
+                statusStr = "SELF-PICKUP";
+                break;
+        }
+        return statusStr;
+    }
 
 
     public static DiffUtil.ItemCallback<Order> itemCallback = new DiffUtil.ItemCallback<Order>() {

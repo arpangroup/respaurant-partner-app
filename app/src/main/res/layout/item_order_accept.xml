@@ -15,6 +15,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -54,6 +55,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@{order.user.name}"
+                            android:maxLength="20"
                             android:textColor="@color/blue"
                             android:textStyle="bold"
                             android:textSize="16sp" />
@@ -177,7 +179,8 @@
                             android:textColor="@color/holo_red_dark"
                             android:background="@drawable/rounded_red_border" />
 
-                        <FrameLayout
+                        <RelativeLayout
+                            android:id="@+id/layout_accept"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp">
@@ -190,7 +193,6 @@
                                 android:layout_height="42dp" />
 
                             <LinearLayout
-                                android:id="@+id/layout_accept"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
@@ -215,7 +217,7 @@
                                     android:textColor="@color/white" />
 
                             </LinearLayout>
-                        </FrameLayout>
+                        </RelativeLayout>
 
 
                     </LinearLayout>
@@ -229,5 +231,18 @@
                 android:layout_height="12dp"
                 android:background="@color/lightsilver" />
         </LinearLayout>
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/layout_progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.3"
+            android:background="#BFBFBF">
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha="1"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </layout>

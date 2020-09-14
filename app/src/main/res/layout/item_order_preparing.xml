@@ -40,6 +40,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{order.orderDate}"
+                        android:hint="10:23 pm"
                         android:textStyle="bold"
                         android:textSize="18sp" />
 
@@ -52,16 +53,40 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@{order.uniqueOrderId.substring(9)}"
+                            android:hint="SRJI-8DL81QKYA"
                             android:textStyle="bold"
                             android:textSize="16sp" />
-
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@{order.user.name}"
-                            android:textColor="@color/blue"
-                            android:textStyle="bold"
-                            android:textSize="16sp" />
+                            android:layoutDirection="ltr"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{order.user.name}"
+                                android:hint="John Doe"
+                                android:maxLength="20"
+                                android:textColor="@color/blue"
+                                android:textStyle="bold"
+                                android:textSize="16sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="8dp"
+                                android:background="@drawable/rectangle_gray"
+                                android:fontFamily="@font/sfpro_display_medium"
+                                android:text="@{order.acceptedOrderStatus}"
+                                android:hint="STATUS"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="4dp"
+                                android:textColor="@color/silver"
+                                android:textStyle="bold"
+                                android:textSize="16sp" />
+                        </LinearLayout>
                     </LinearLayout>
 
 
@@ -276,7 +301,7 @@
                                         android:layout_marginLeft="8dp"
                                         android:background="@drawable/rectangle_gray"
                                         android:fontFamily="@font/sfpro_display_medium"
-                                        android:hint="PAID"
+                                        android:text="@{order.paymentMode.equals(`COD`) ? `COD` : `PAID`}"
                                         android:paddingLeft="12dp"
                                         android:paddingRight="12dp"
                                         android:paddingTop="4dp"
@@ -362,16 +387,17 @@
                         android:layout_marginRight="16dp"
                         android:layout_marginBottom="32dp">
                         <ProgressBar
+                            android:id="@+id/progressBarOrderReady"
                             android:progressDrawable="@drawable/green_progress_drawable"
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="52dp"/>
                         <LinearLayout
+                            android:id="@+id/layout_accept"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="16dp"
                             android:gravity="center"
-                            android:padding="12dp"
+                            android:background="#979DD59F"
                             android:orientation="horizontal">
                             <TextView
                                 android:layout_width="wrap_content"

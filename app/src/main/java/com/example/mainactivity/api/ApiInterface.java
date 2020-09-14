@@ -44,6 +44,10 @@ public interface ApiInterface {
     @POST("/api/store-owner/orders/get-new-orders")
     Call<List<Order>> getNewOrders(@Body NewOrderRequest newOrderRequest);
 
+
+    @POST("/api/store-owner/orders/get-accepted-orders")
+    Call<List<Order>> getAcceptedOrders(@Body RequestToken requestToken);
+
     @POST("/api/store-owner/orders/accept-order")
     Call<ApiResponse> acceptOrder(@Body RequestToken requestToken);
 

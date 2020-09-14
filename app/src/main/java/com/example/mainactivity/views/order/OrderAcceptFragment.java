@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderAcceptListAdapter;
 import com.example.mainactivity.databinding.FragmentAcceptOrderBinding;
+import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 
@@ -80,7 +81,7 @@ public class OrderAcceptFragment extends Fragment implements OrderAcceptListAdap
     }
 
     @Override
-    public void onAcceptClick(Order order) {
+    public void onAcceptClick(Order order, ItemOrderAcceptBinding binding) {
 //        orderViewModel.acceptOrder(order.getId()).observe(getViewLifecycleOwner(), apiResponse -> {
 //            if(apiResponse.isSuccess()){
 //                navController.navigate(R.id.action_acceptOrderFragment_to_orderPrepareFragment);
