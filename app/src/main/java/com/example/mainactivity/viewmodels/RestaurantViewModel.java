@@ -86,9 +86,9 @@ public class RestaurantViewModel extends ViewModel {
         DisableItemRequest disableItemRequest = new DisableItemRequest(itemId);
         return restaurantRepository.toggleMenuItem(disableItemRequest);
     }
-    public LiveData<ApiResponse> toggleRestaurant(){
+    public LiveData<ApiResponse> toggleRestaurant(boolean status){
         RequestToken requestToken  = new RequestToken();
-        return restaurantRepository.toggleRestaurant(requestToken);
+        return restaurantRepository.toggleRestaurant(requestToken, status);
     }
     public LiveData<ApiResponse> toggleCategory(int categoryId){
         DisableCategoryRequest disableCategoryRequest  = new DisableCategoryRequest(categoryId);

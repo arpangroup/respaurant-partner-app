@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.User;
 import com.google.gson.Gson;
 
@@ -13,7 +14,9 @@ public class UserSession {
     private static Context mContext;
     public static final String USER_SESSION = "USER_SESSION";
     public static final String USER_DATA = "USER_DATA";
+    public static final String RESTAURANT_DATA = "RESTAURANT_DATA";
     public static final String PUSH_TOKEN = "PUSH_TOKEN";
+    public static final String ACCEPTING_ORDER = "ACCEPTING_ORDER";
     //public static final SharedPreferences sharedPref = mContext.getSharedPreferences("curito_prefs",0);
 
     public UserSession(Context context) {
@@ -55,7 +58,6 @@ public class UserSession {
         return result;
     }
     public static boolean setUserData(User user){
-        SharedPreferences sharedPref = mContext.getSharedPreferences(USER_SESSION,0);
         try{
             String userStr = new Gson().toJson(user);
             setStr(USER_DATA, userStr);
@@ -93,6 +95,62 @@ public class UserSession {
             return null;
         }
     }
+
+
+
+    public static boolean setRestaurantData(Restaurant restaurant){
+        try{
+            String restaurantJSon = new Gson().toJson(restaurant);
+            setStr(RESTAURANT_DATA, restaurantJSon);
+            return true;
+        }catch (Exception e){
+            Log.e(TAG, "Error in setUserData() method in UserSession  "+e);
+            return false;
+        }
+    }
+    public static Restaurant getRestaurantData(){
+        Restaurant restaurant =  null;
+        try{
+            String str = getStr(RESTAURANT_DATA);
+            restaurant = new Gson().fromJson(str, Restaurant.class);
+            return restaurant;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static boolean isRestaurantActive(){
+        Restaurant restaurant = new Restaurant();
+        try{
+            restaurant  =  getRestaurantData();
+            if(restaurant == null) return false;
+            else if (restaurant.getIsActive() == 1){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public static boolean toggleRestaurantActive(boolean isActive){
+        Restaurant restaurant = getRestaurantData();
+        if(restaurant != null){
+            if(isActive){
+                restaurant.setIsActive(1);
+            }else{
+                restaurant.setIsActive(0);
+            }
+            setRestaurantData(restaurant);
+            return true;
+        }
+        return false;
+
+    }
+
+
 
 
 

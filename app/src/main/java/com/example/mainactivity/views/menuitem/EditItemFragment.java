@@ -84,6 +84,8 @@ public class EditItemFragment extends Fragment {
         //mBinding.etMarkPrice.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "999")});
         //mBinding.etSellingPrice.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "999")});
 
+        mBinding.toolbar.more.setVisibility(View.GONE);
+
 
         restaurantViewModel.getMenuItem().observe(getViewLifecycleOwner(), menuItem -> {
             ItemCategory category = restaurantViewModel.getSelectedCategory().getValue();
@@ -93,7 +95,9 @@ public class EditItemFragment extends Fragment {
             mBinding.etMarkPrice.setText(menuItem.getOldPrice());
             mBinding.etSellingPrice.setText(menuItem.getPrice());
             mBinding.etCategory.setText(category.getName());
-            mBinding.image.setImageResource(R.drawable.foodimg_1);
+            //mBinding.image.setImageResource(R.drawable.foodimg_1);
+            Picasso.get().load(Constants.WEBSITE_URL + menuItem.getImage()).into(mBinding.image);
+
             mBinding.switchRecommended.setChecked(menuItem.getIsRecommended() == 1);
             mBinding.switchPopular.setChecked(menuItem.getIsPopular() == 1);
             mBinding.switchNew.setChecked(menuItem.getIsNew() == 1);

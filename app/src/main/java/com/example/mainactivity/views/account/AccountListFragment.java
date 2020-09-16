@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -44,6 +45,8 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     private AccountSectionAdapter accountSectionAdapter;
     private NavController navController;
 
+    private final MutableLiveData<Boolean>isRestaurantLoaded = new MutableLiveData<>(false);
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +62,6 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     public void onViewCreated(@NonNull View rootView, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
 
-
         // Initialize ViewModel
         authenticationViewModel = new ViewModelProvider(requireActivity()).get(AuthenticationViewModel.class);
         restaurantViewModel = new ViewModelProvider(requireActivity()).get(RestaurantViewModel.class);
@@ -69,32 +71,29 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         // Initialize NavController
         navController = Navigation.findNavController(rootView);
         initClicks();
-
-        // Initialize RecyclerView
-        accountSectionAdapter = new AccountSectionAdapter(this);
-        mBinding.sectionRecycler.setAdapter(accountSectionAdapter);
-        List<AccountSection> sections = Arrays.asList(
-            new AccountSection(1, "Schedule Restaurant Open", "Schedule off time in advance", R.drawable.ic_baseline_access_time_24),
-            new AccountSection(2, "Order History","View all previous orders",  R.drawable.ic_baseline_shopping_cart_24),
-            new AccountSection(3, "Earning","View all earnings",  R.drawable.ic_baseline_payment_24),
-            new AccountSection(4, "Support","Raise support ",  R.drawable.ic_baseline_help_outline_24),
-            new AccountSection(5, "Logout","Signout from your current account",  R.drawable.ic_baseline_power_settings_new_24)
-        );
-        accountSectionAdapter.submitList(sections);
+        initRecyclerView();
 
 
-        mBinding.toolbar.restaurantOnOfSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            if(isChecked){
-                startForeGroundService();
-            }else{
-                stopForegroundService();
+        isRestaurantLoaded.observe(requireActivity(), isLoaded -> {
+            if(isLoaded){
+                mBinding.toolbar.restaurantOnOfSwitch.setEnabled(true);
             }
         });
 
 
+        mBinding.toolbar.restaurantOnOfSwitch.setOnClickListener(view -> {
+            Log.d(TAG, "CLICKED");
+            boolean status = mBinding.toolbar.restaurantOnOfSwitch.isChecked();
+            restaurantViewModel.toggleRestaurant(status);
+        });
+
         restaurantViewModel.getRestaurantDetails().observe(getViewLifecycleOwner(), restaurant -> {
             mBinding.restaurantName.setText(restaurant.getName());
             mBinding.desc.setText(restaurant.getAddress());
+            if(restaurant.getIsActive() == 1)mBinding.toolbar.restaurantOnOfSwitch.setChecked(true);
+            else mBinding.toolbar.restaurantOnOfSwitch.setChecked(false);
+
+            isRestaurantLoaded.setValue(true);
         });
 
 
@@ -117,6 +116,18 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         });
 
 
+    }
+    private void initRecyclerView(){
+        accountSectionAdapter = new AccountSectionAdapter(this);
+        mBinding.sectionRecycler.setAdapter(accountSectionAdapter);
+        List<AccountSection> sections = Arrays.asList(
+                new AccountSection(1, "Schedule Restaurant Open", "Schedule off time in advance", R.drawable.ic_baseline_access_time_24),
+                new AccountSection(2, "Order History","View all previous orders",  R.drawable.ic_baseline_shopping_cart_24),
+                new AccountSection(3, "Earning","View all earnings",  R.drawable.ic_baseline_payment_24),
+                new AccountSection(4, "Support","Raise support ",  R.drawable.ic_baseline_help_outline_24),
+                new AccountSection(5, "Logout","Signout from your current account",  R.drawable.ic_baseline_power_settings_new_24)
+        );
+        accountSectionAdapter.submitList(sections);
     }
 
 

@@ -18,6 +18,6 @@ public interface RestaurantRepository {
     public LiveData<Restaurant> getRestaurantDetails(int userId);
     public LiveData<List<ItemCategory>> getRestaurantItems(int userId);
     public LiveData<ApiResponse> toggleMenuItem(DisableItemRequest disableItemRequest);
-    public LiveData<ApiResponse> toggleRestaurant(RequestToken requestToken);
+    public LiveData<ApiResponse> toggleRestaurant(RequestToken requestToken, boolean status);
     public LiveData<ApiResponse> toggleCategory(DisableCategoryRequest disableCategoryRequest);
 }

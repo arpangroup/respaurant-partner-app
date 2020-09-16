@@ -15,6 +15,7 @@ import com.example.mainactivity.models.request.DisableItemRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
+import com.example.mainactivity.sharedpref.UserSession;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -52,7 +53,13 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
         if(mutableRestaurant == null){
             mutableRestaurant = new MutableLiveData<>();
         }
-        loadRestaurant(userId);
+
+        if(UserSession.getRestaurantData() != null){
+            Restaurant restaurant = UserSession.getRestaurantData();
+            mutableRestaurant.setValue(restaurant);
+        }else{
+            loadRestaurant(userId);
+        }
         return mutableRestaurant;
     }
 
@@ -71,8 +78,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     }
 
     @Override
-    public LiveData<ApiResponse> toggleRestaurant(RequestToken requestToken){
-        return toggleRestaurantActive(requestToken);
+    public LiveData<ApiResponse> toggleRestaurant(RequestToken requestToken, boolean status){
+        return toggleRestaurantActive(requestToken, status);
     }
 
     @Override
@@ -91,6 +98,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
                 isLoading.setValue(false);
                 List<Restaurant> restaurants = response.body();
                 if(restaurants != null){
+                    UserSession.setRestaurantData(restaurants.get(0));
                     mutableRestaurant.setValue(restaurants.get(0));
                 }
             }
@@ -155,17 +163,23 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
         });
         return mutableApiResponse;
     }
-    private LiveData<ApiResponse> toggleRestaurantActive(RequestToken requestToken){
+    private LiveData<ApiResponse> toggleRestaurantActive(RequestToken requestToken, boolean status){
         final MutableLiveData<ApiResponse> mutableApiResponse = new MutableLiveData<>();
         ApiInterface apiInterface = ApiService.getApiService();
+        Log.d(TAG, "Inside toggleRestaurantActive().....");
+        Log.d(TAG, "REQUEST: "+new Gson().toJson(requestToken));
         isLoading.setValue(true);
         apiInterface.disableRestaurant(requestToken).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 isLoading.setValue(false);
-                ApiResponse  apiResponse = response.body();
+                ApiResponse apiResponse = response.body();
+                Log.d(TAG, "RESPONSE: "+apiResponse);
                 if(apiResponse.isSuccess()){
                     mutableApiResponse.setValue(apiResponse);
+                    boolean currentStatus = apiResponse.getMessage().equals("1") ? true : false;
+                    UserSession.toggleRestaurantActive(currentStatus);
+                    mutableRestaurant.postValue(UserSession.getRestaurantData());
                 }
 
             }

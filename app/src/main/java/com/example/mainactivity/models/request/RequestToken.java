@@ -13,7 +13,7 @@ public class RequestToken {
     @SerializedName("user_id")
     private int userId ;//149:Arpan Restaurant Owner<====VegieCorner
     @SerializedName("restaurant_id")
-    private int restaurantId ;//1: VeggieeCorner
+    private int restaurantId = 3;//1: VeggieeCorner
     private String token;
     private String unique_order_id = null;
     private int order_id = 0;
@@ -26,7 +26,9 @@ public class RequestToken {
             if(UserSession.isLoggedIn()){
                 this.userId = UserSession.getUserData().getId();
                 this.token = UserSession.getUserData().getAuthToken();
-
+                if(UserSession.getRestaurantData() != null){
+                    this.restaurantId = UserSession.getRestaurantData().getId();
+                }
             }
         }catch (Exception e){
         }

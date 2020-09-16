@@ -48,6 +48,7 @@ public class EarningFragment extends Fragment {
 
         // Initialize NavController
         navController = Navigation.findNavController(rootView);
-        mBinding.toolbar.title.setText("Earning");
+        mBinding.toolbar.title.setText("Business Insights");
+        mBinding.toolbar.more.setVisibility(View.GONE);
     }
 }

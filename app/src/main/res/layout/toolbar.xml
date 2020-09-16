@@ -5,15 +5,16 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:contentInsetStart="0dp"
+    android:elevation="8dp"
     android:background="@color/white">
     <ImageView
         android:id="@+id/back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_arrow_back_24"
+        android:src="@drawable/ic_baseline_arrow_back_ios_24"
         android:layout_marginLeft="16.7dp"/>
     <ImageView
-        android:id="@+id/search_Img"
+        android:id="@+id/more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"

@@ -66,8 +66,8 @@ public class NewOrderFetchService extends Service {
                 .setContentTitle("Fetching New Order")
                 .setContentText(passedListedOrderIds)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-//                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+//                .setAutoCancel(true)
                 .build();
 
 

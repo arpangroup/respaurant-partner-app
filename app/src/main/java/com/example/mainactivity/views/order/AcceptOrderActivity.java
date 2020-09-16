@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -33,11 +34,14 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class AcceptOrderActivity extends AppCompatActivity implements OrderAcceptListAdapter.OrderAcceptInterface{
     private final String TAG = this.getClass().getSimpleName();
     public static boolean ACTIVE = false;
     ActivityAcceptOrderBinding mBinding;
+    private boolean isMusicEnable = true;
     private MediaPlayer mMediaPlayer;
 
     OrderViewModel orderViewModel;
@@ -66,7 +70,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                 ACTIVE = true;
             }catch (Exception e){
                 e.printStackTrace();
-                Toast.makeText(context, "RECEIVER ERROR", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "RECEIVER: EXCEPTION", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -106,9 +110,11 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         orderViewModel.init();
 
+        if(orderAcceptListAdapter == null){
+            orderAcceptListAdapter = new OrderAcceptListAdapter(this);
+            mBinding.orderRecycler.setAdapter(orderAcceptListAdapter);
+        }
 
-        orderAcceptListAdapter = new OrderAcceptListAdapter(this);
-        mBinding.orderRecycler.setAdapter(orderAcceptListAdapter);
 
 
 
@@ -125,6 +131,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                setupMediaPlayer();
            }catch (Exception e){
                e.printStackTrace();
+               Toast.makeText(this, "INTENT: EXCEPTION", Toast.LENGTH_SHORT).show();
            }
 
        }
@@ -151,6 +158,15 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
             onBackPressed();
         });
 
+
+
+//        Timer timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                setupMediaPlayer();
+//            }
+//        }, 0, 3*1000);
     }
 
 
@@ -165,6 +181,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isMusicEnable = false;
         ACTIVE = false;
         if(mMediaPlayer != null){
             mMediaPlayer.stop();
@@ -176,6 +193,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        isMusicEnable = false;
     }
 
     @Override

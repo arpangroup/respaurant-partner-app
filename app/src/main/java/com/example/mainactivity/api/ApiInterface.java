@@ -75,7 +75,7 @@ public interface ApiInterface {
 
 
 
-    @POST("/api/store-owner/store/disable/{restaurantId}")
+    @POST("/api/store-owner/store/disable")
     Call<ApiResponse> disableRestaurant(@Body RequestToken requestToken);
 
     @POST("/api/store-owner/item/disable")
