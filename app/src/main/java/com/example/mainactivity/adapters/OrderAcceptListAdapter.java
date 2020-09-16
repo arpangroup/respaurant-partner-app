@@ -41,6 +41,13 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
         holder.itemAcceptOrderBinding.setOrder(order);
         holder.itemAcceptOrderBinding.executePendingBindings();
 
+        if(holder.countDownTimer != null){
+            holder.countDownTimer.cancel();
+        }
+        if(holder.timer != null){
+            holder.timer.cancel();
+        }
+
         startAcceptCountDownTimer(holder, position);
         startProgressBar(holder);
 
@@ -49,6 +56,8 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
 
     class OrderViewHolder extends RecyclerView.ViewHolder{
         ItemOrderAcceptBinding itemAcceptOrderBinding ;
+        CountDownTimer countDownTimer;
+        Timer timer;
 
         public OrderViewHolder(ItemOrderAcceptBinding binding) {
             super(binding.getRoot());
@@ -86,7 +95,7 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
     private void startAcceptCountDownTimer(OrderViewHolder holder, int position){
         final long[] mTimeLeftInMills = {Constants.ORDER_ACCEPT_WAITING_TIME};
         //mBinding.txtResend.setEnabled(false);
-        new CountDownTimer(mTimeLeftInMills[0], 1000){
+        holder.countDownTimer = new CountDownTimer(mTimeLeftInMills[0], 1000){
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimeLeftInMills[0] = millisUntilFinished;
@@ -103,7 +112,7 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
     }
     private void startProgressBar(OrderViewHolder holder){
         final int[] counter = {0};
-        Timer t = new Timer();
+        holder.timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -111,12 +120,12 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
                 holder.itemAcceptOrderBinding.progressBarAccept.setProgress(counter[0]);
 
                 if (counter[0] == Constants.ORDER_ACCEPT_WAITING_TIME){
-                    t.cancel();
+                    holder.timer.cancel();
                 }
             }
         };
         int period = Constants.ORDER_ACCEPT_WAITING_TIME / 100;
-        t.schedule(timerTask, 0, period);//1% in every 100ms
+        holder.timer.schedule(timerTask, 0, period);//1% in every 100ms
     }
     private void updateCancelTimer(long mTimeLeftInMills, OrderViewHolder holder){
         int minutes = (int) (mTimeLeftInMills / 1000) /60;// divided by 60 seconds
@@ -137,5 +146,8 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
 
     }
 
-
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+    }
 }

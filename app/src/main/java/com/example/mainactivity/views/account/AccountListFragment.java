@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.AccountSectionAdapter;
@@ -22,6 +24,7 @@ import com.example.mainactivity.adapters.ItemCategoryAdapter;
 import com.example.mainactivity.databinding.FragmentAccountListBinding;
 import com.example.mainactivity.databinding.FragmentMenuListBinding;
 import com.example.mainactivity.models.AccountSection;
+import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.MainActivity;
@@ -80,6 +83,15 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         accountSectionAdapter.submitList(sections);
 
 
+        mBinding.toolbar.restaurantOnOfSwitch.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if(isChecked){
+                startForeGroundService();
+            }else{
+                stopForegroundService();
+            }
+        });
+
+
         restaurantViewModel.getRestaurantDetails().observe(getViewLifecycleOwner(), restaurant -> {
             mBinding.restaurantName.setText(restaurant.getName());
             mBinding.desc.setText(restaurant.getAddress());
@@ -106,6 +118,21 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
 
 
     }
+
+
+    private void startForeGroundService(){
+        //String inputStr = et1.getText().toString();
+        Intent intent = new Intent(getActivity(), NewOrderFetchService.class);
+        //intent.putExtra("intentExtra", inputStr);
+
+        //startService(intent);
+        ContextCompat.startForegroundService(getActivity(), intent);
+    }
+    private void stopForegroundService(){
+        Intent intent = new Intent(requireActivity(), NewOrderFetchService.class);
+        requireActivity().stopService(intent);
+    }
+
 
 
 

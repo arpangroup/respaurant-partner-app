@@ -27,7 +27,8 @@ public class OrderViewModel extends ViewModel {
     private MutableLiveData<List<Order>> mutableOrders = null;
 
     private List<Order> ordersNotAccepted = new ArrayList<>();
-    private MutableLiveData<List<Order>> newOrders = new MutableLiveData<>(new ArrayList<>());
+    private List<Order> newOrders = new ArrayList<>();
+    private MutableLiveData<List<Order>> mutableNewOrders = new MutableLiveData<>(newOrders);
 
     public void init(){
         if (mutableOrders != null){
@@ -39,38 +40,30 @@ public class OrderViewModel extends ViewModel {
 
 
 
-    public void setNewOrder(Order order){
+    public void setNewOrder(List<Order> orders){
         Log.d("MessagingService", "Adding new order to view model");
-//        newOrders.getValue().add(order);
-//
-//        List<Order> orders = newOrders.getValue();
-//        orders.add(order);
-//
-//        newOrders = new MutableLiveData<>();
-//        newOrders.postValue(orders);
-
-        ordersNotAccepted.add(order);
-        newOrders.postValue(ordersNotAccepted);
+        newOrders.addAll(orders);
+        mutableNewOrders.setValue(newOrders);
     }
     public void removeNewOrder(Order order){
-        if(newOrders != null) {
-            List<Order>  orders = newOrders.getValue();
-
-            if (orders != null) {
-                orders.removeIf(orderObj -> orderObj.getId() == order.getId());
-            }
-            newOrders.setValue(orders);
-
-        }
-        newOrders.getValue().add(order);
+//        if(newOrders != null) {
+//            List<Order>  orders = newOrders.getValue();
+//
+//            if (orders != null) {
+//                orders.removeIf(orderObj -> orderObj.getId() == order.getId());
+//            }
+//            newOrders.setValue(orders);
+//
+//        }
+//        newOrders.getValue().add(order);
     }
     public LiveData<List<Order>> getNewOrders(){
         if(newOrders == null){
-            newOrders = new MutableLiveData<>();
+            newOrders = new ArrayList<>();
         }
-        System.out.println("==========================GET ORDERS================================\n");
-        newOrders.getValue().forEach(orderObj -> System.out.println("ID: "+orderObj.getId() +", Title: "+orderObj.getUniqueOrderId()));
-        return newOrders;
+        //System.out.println("==========================GET ORDERS================================\n");
+        //newOrders.getValue().forEach(orderObj -> System.out.println("ID: "+orderObj.getId() +", Title: "+orderObj.getUniqueOrderId()));
+        return mutableNewOrders;
     }
 
 

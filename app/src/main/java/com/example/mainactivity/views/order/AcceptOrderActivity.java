@@ -25,9 +25,11 @@ import com.example.mainactivity.databinding.FragmentAcceptOrderBinding;
 import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,29 +44,35 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     private OrderAcceptListAdapter orderAcceptListAdapter;
     private NavController navController;
     private int mNewOrderCount = 0;
+    TypeToken<List<Order>> convertType = new TypeToken<List<Order>>() {};
+
 
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //int id =  intent.getIntExtra("ORDER_ID", 0);
-            //String title =  intent.getStringExtra("TITLE");
-            //Log.d("MessagingService", "onReceive()......");
-            //Log.d("MessagingService", "ID: "+id);
-            String orderJson = intent.getStringExtra("ORDER");
-            Order orderObj = new Gson().fromJson(orderJson, Order.class);
-            //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
+            try{
+                String ordersJson = intent.getStringExtra(NewOrderFetchService.INTENT_EXTRA_OUTPUT_NEW_ORDERS);
+                System.out.println("==================RECEIVED==========================");
+                System.out.println(ordersJson);
+                System.out.println("====================================================");
+                List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
+                //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, orders.size() +" New order received", Toast.LENGTH_SHORT).show();
 
-            orderViewModel.setNewOrder(orderObj);
-            setupMediaPlayer();
-            ACTIVE = true;
+                orderViewModel.setNewOrder(orders);
+                setupMediaPlayer();
+                ACTIVE = true;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     };
 
     @Override
     protected void onStart() {
         super.onStart();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(MessagingService.SERVICE_MESSAGE));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(NewOrderFetchService.NEW_ORDER_FETCH_SERVICE_MESSAGE));
     }
 
     @Override
@@ -108,11 +116,15 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         //Log.d("MessagingService", "ORDER_ID: "+orderId);
         //Log.d("MessagingService", "TITLE: "+title);
        if(!ACTIVE){
-           String orderJson = getIntent().getStringExtra("ORDER");
-           Order orderObj = new Gson().fromJson(orderJson, Order.class);
-           orderViewModel.setNewOrder(orderObj);
+           try{
+               String ordersJson = getIntent().getStringExtra(NewOrderFetchService.INTENT_EXTRA_OUTPUT_NEW_ORDERS);
+               List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
+               orderViewModel.setNewOrder(orders);
+               setupMediaPlayer();
+           }catch (Exception e){
+               e.printStackTrace();
+           }
 
-           setupMediaPlayer();
        }
 
 
@@ -123,13 +135,13 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
 
         orderViewModel.getNewOrders().observe(this, orders -> {
-            mNewOrderCount = orders.size();
+            //mNewOrderCount = orders.size();
             //System.out.println("==========================ORDERS================================\n");
             //orders.forEach(order -> System.out.println("ID: "+order.getId() +", Title: "+order.getUniqueOrderId()));
             //Log.d(TAG, "ORDER: "+orders.get(0));
             orderAcceptListAdapter.submitList(orders);
             mBinding.toolbar.title.setText(orders.size() +" New Order");
-            orderAcceptListAdapter.notifyDataSetChanged();
+            //orderAcceptListAdapter.notifyDataSetChanged();
         });
 
 

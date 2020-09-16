@@ -19,8 +19,10 @@ import com.google.firebase.messaging.FirebaseMessaging;
 public class App extends Application {
     public static final String CHANNEL_ID_NEW_ORDER = "channel_new_orders";
     public static final String CHANNEL_ID_PUSH_NOTIFICATION = "channel_push_notifications";
+    public static final String CHANNEL_ID_NEW_ORDER_FETCH_SERVICE = "channel_new_order_fetch_service";
     public static final String CHANNEL_NAME_NEW_ORDER = "channel new orders";
     public static final String CHANNEL_NAME_PUSH_NOTIFICATION = "channel push notifications";
+    public static final String CHANNEL_NAME_NEW_ORDER_FETCH_SERVICE = "channel new order fetch service";
     public static final int NOTIFICATION_ID_NEW_ORDER = 600;
 
     @Override
@@ -39,6 +41,12 @@ public class App extends Application {
                     NotificationManager.IMPORTANCE_HIGH
                     );
 
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID_NEW_ORDER_FETCH_SERVICE,
+                    CHANNEL_NAME_NEW_ORDER_FETCH_SERVICE,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+
             NotificationChannel notificationChannelPushNotification = new NotificationChannel(
                     CHANNEL_ID_PUSH_NOTIFICATION,
                     CHANNEL_NAME_PUSH_NOTIFICATION,
@@ -55,12 +63,14 @@ public class App extends Application {
 
             notificationChannelNewOrder.setDescription("This is New Order Notification Channel");
             notificationChannelPushNotification.setDescription("This is Push Notifications channel");
+            serviceChannel.setDescription("This is New Order Fetch Service channel");
 
             // Register the channels with Notification Framework
             //NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(notificationChannelNewOrder);
-            notificationManager.createNotificationChannel(notificationChannelPushNotification);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(notificationChannelNewOrder);
+            manager.createNotificationChannel(notificationChannelPushNotification);
+            manager.createNotificationChannel(serviceChannel);
 
         }
     }
