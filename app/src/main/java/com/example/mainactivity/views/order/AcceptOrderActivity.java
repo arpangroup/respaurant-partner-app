@@ -59,12 +59,14 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                 List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
                 //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
                 Toast.makeText(context, orders.size() +" New order received", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
 
                 orderViewModel.setNewOrder(orders);
                 setupMediaPlayer();
                 ACTIVE = true;
             }catch (Exception e){
                 e.printStackTrace();
+                Toast.makeText(context, "RECEIVER ERROR", Toast.LENGTH_SHORT).show();
             }
         }
     };
