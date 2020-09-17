@@ -82,6 +82,11 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         ACTIVE = false;
@@ -105,7 +110,6 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         mBinding = ActivityAcceptOrderBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
-        UserSession userSession = new UserSession(this);
 
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         orderViewModel.init();
@@ -124,17 +128,16 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         //Log.d("MessagingService", "ORDER_ID: "+orderId);
         //Log.d("MessagingService", "TITLE: "+title);
        if(!ACTIVE){
-           try{
-               String ordersJson = getIntent().getStringExtra(NewOrderFetchService.INTENT_EXTRA_OUTPUT_NEW_ORDERS);
-               List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
-               orderViewModel.setNewOrder(orders);
-               setupMediaPlayer();
-           }catch (Exception e){
-               e.printStackTrace();
-               Toast.makeText(this, "INTENT: EXCEPTION", Toast.LENGTH_SHORT).show();
-           }
-
        }
+        try{
+            String ordersJson = getIntent().getStringExtra(NewOrderFetchService.INTENT_EXTRA_OUTPUT_NEW_ORDERS);
+            List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
+            orderViewModel.setNewOrder(orders);
+            setupMediaPlayer();
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(this, "INTENT: EXCEPTION", Toast.LENGTH_SHORT).show();
+        }
 
 
 //        orderViewModel.setNewOrder(new Order(1, "ORD-hebehdhcb-shjsdh001"));

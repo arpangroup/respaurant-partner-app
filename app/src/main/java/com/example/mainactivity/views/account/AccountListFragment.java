@@ -2,6 +2,7 @@ package com.example.mainactivity.views.account;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,10 +23,12 @@ import android.widget.Toast;
 import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.AccountSectionAdapter;
 import com.example.mainactivity.adapters.ItemCategoryAdapter;
+import com.example.mainactivity.commons.Actions;
 import com.example.mainactivity.databinding.FragmentAccountListBinding;
 import com.example.mainactivity.databinding.FragmentMenuListBinding;
 import com.example.mainactivity.models.AccountSection;
 import com.example.mainactivity.services.NewOrderFetchService;
+import com.example.mainactivity.sharedpref.ServiceTracker;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.MainActivity;
@@ -85,6 +88,14 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
             Log.d(TAG, "CLICKED");
             boolean status = mBinding.toolbar.restaurantOnOfSwitch.isChecked();
             restaurantViewModel.toggleRestaurant(status);
+
+            if(status){
+                Log.d(TAG, "START THE FOREGROUND SERVICE ON DEMAND");
+                actionOnService(Actions.START);
+            }else{
+                Log.d(TAG, "STOP THE FOREGROUND SERVICE ON DEMAND");
+                actionOnService(Actions.STOP);
+            }
         });
 
         restaurantViewModel.getRestaurantDetails().observe(getViewLifecycleOwner(), restaurant -> {
@@ -131,6 +142,7 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     }
 
 
+    /*
     private void startForeGroundService(){
         //String inputStr = et1.getText().toString();
         Intent intent = new Intent(getActivity(), NewOrderFetchService.class);
@@ -142,6 +154,21 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     private void stopForegroundService(){
         Intent intent = new Intent(requireActivity(), NewOrderFetchService.class);
         requireActivity().stopService(intent);
+    }
+    */
+    private void actionOnService(Actions action){
+        if(ServiceTracker.getServiceState(requireActivity()) == ServiceTracker.ServiceState.STOPPED && action == Actions.STOP) return;
+        Intent intent = new Intent(getActivity(), NewOrderFetchService.class);
+        intent.setAction(action.name());
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            Log.d(TAG, "Starting the service in >=26 Mode");
+            ContextCompat.startForegroundService(requireActivity(), intent);
+            return;
+        }else{
+            Log.d(TAG, "Starting the service in < 26 Mode");
+            requireActivity().startService(intent);
+        }
+
     }
 
 

@@ -1,14 +1,19 @@
 package com.example.mainactivity.services;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -18,9 +23,13 @@ import com.example.mainactivity.App;
 import com.example.mainactivity.R;
 import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
+import com.example.mainactivity.commons.Actions;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.models.User;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
+import com.example.mainactivity.sharedpref.ServiceTracker;
+import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.views.MoreActivity;
 import com.example.mainactivity.views.order.AcceptOrderActivity;
 import com.google.gson.Gson;
@@ -43,69 +52,145 @@ public class NewOrderFetchService extends Service {
     boolean isLoading = false;
     private static final long ORDER_FETCH_INTERVAL = 1000 * 5;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d(TAG, "onCreate()");
-    }
-
+    private PowerManager.WakeLock wakeLock = null;
+    private boolean isServiceStarted = false;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //return super.onStartCommand(intent, flags, startId);
-        String passedListedOrderIds = intent.getStringExtra(INTENT_EXTRA_INPUT_LISTED_ORDERS);
-//        if(passedListedOrderIds != null){
-//            String[] ids = passedListedOrderIds.split(", ");
-//        }
+        Log.d(TAG, "onStartCommand executed with startId: "+startId);
+        if(intent  != null){
+            String action = intent.getAction();
+            Log.d(TAG, "Using an Intent with action "+action);
+            if(action != null){
+                if(action.equals(Actions.START.name()))startService();
+                else if(action.equals(Actions.STOP.name()))stopService();
+                else Log.d(TAG, "This should never happen. No action in the received intent");
+            }
+        }else{
+            Log.d(TAG, "with a null intent. It has been probably restarted by the system.");
+        }
 
-        Intent notificationIntent = new Intent(this, MoreActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        startService();
 
-
-        Notification notification = new NotificationCompat.Builder(this, App.CHANNEL_ID_NEW_ORDER_FETCH_SERVICE)
-                .setContentTitle("Fetching New Order")
-                .setContentText(passedListedOrderIds)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentIntent(pendingIntent)
-//                .setAutoCancel(true)
-                .build();
-
-
-        doInBackground();
-        startForeground(1, notification);
+//        Notification notification = createNotification();
+//        startForeground(1, notification);
 
         //do heavy work in a background thread
         //stopSelf()
 
-        return START_NOT_STICKY;
+        // by returning this we make sure the service is restarted if the system kills the service
+        return START_STICKY;
     }
 
-    private void doInBackground() {
-        int userId = new RequestToken().getUserId();
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "onCreate()");
+        Notification notification = createNotification();
 
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                NewOrderRequest newOrderRequest = new NewOrderRequest(userId, listedOrderIds);
-                //NewOrderRequest newOrderRequest = new NewOrderRequest(userId, new ArrayList<>());
-                if(!isLoading){
-                    fetchNewOrders(newOrderRequest);
-                }
-            }
-        }, 0, ORDER_FETCH_INTERVAL);
+        startForeground(1, notification);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy()");
+        Toast.makeText(this, "Service destroyed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        Intent restartServiceIntent  = new Intent(getApplicationContext(), NewOrderFetchService.class);
+        restartServiceIntent.setPackage(getPackageName());
+
+        PendingIntent restartServicePendingIntent = PendingIntent.getService(this, 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
+        getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmService =(AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() +1000, restartServicePendingIntent);
+    }
+
+    private void startService(){
+        if(isServiceStarted) return;
+        Log.d(TAG, "Starting the foreground service task");
+        Toast.makeText(this, "Service starting its task", Toast.LENGTH_SHORT).show();
+        isServiceStarted = true;
+        ServiceTracker.setServiceState(this, ServiceTracker.ServiceState.STARTED);
+
+        // we need this lock so our service gets not affected by Doze Mode
+        PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        //wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "whatever");
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NewOrderFetchService::lock");
+        wakeLock.acquire();
+
+        // we're starting a loop in a coroutine
+        doInBackground();
+    }
+    private void stopService(){
+        Log.d(TAG, "Stopping the foreground service");
+        Toast.makeText(this, "Service stopping", Toast.LENGTH_SHORT).show();
+
+        try{
+            if(wakeLock.isHeld()){
+                wakeLock.release();
+            }
+            stopForeground(true);
+            stopSelf();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d(TAG, "Service stopped without being started: "+e.getMessage());
+        }
+        isServiceStarted = false;
+        ServiceTracker.setServiceState(this, ServiceTracker.ServiceState.STOPPED);
+    }
+
+    private Notification createNotification(){
+        Intent notificationIntent = new Intent(this, MoreActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this, App.CHANNEL_ID_NEW_ORDER_FETCH_SERVICE)
+                .setContentTitle("Fetching New Order")
+                .setContentText("Fetching....")
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentIntent(pendingIntent)
+                .setTicker("Ticker Text")
+                .setPriority(Notification.PRIORITY_HIGH)// for under android 26 compatibility
+                .setChannelId(App.CHANNEL_ID_NEW_ORDER_FETCH_SERVICE)
+                .setAutoCancel(false)
+                .build();
+
+        return notification;
+
+    }
+
+    private void doInBackground() {
+        User user = UserSession.getUserData(this);
+        Timer timer = new Timer();
+
+        if(user != null){
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    NewOrderRequest newOrderRequest = new NewOrderRequest(user.getId(), listedOrderIds);
+                    //NewOrderRequest newOrderRequest = new NewOrderRequest(userId, new ArrayList<>());
+                    while (isServiceStarted){
+                        if(!isLoading){
+                            fetchNewOrders(newOrderRequest);
+                        }
+                    }
+                }
+            }, 0, ORDER_FETCH_INTERVAL);
+        }else{
+            Log.d(TAG, "USER IS NULL");
+            Toast.makeText(this, "USER IS NULL", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
     private void fetchNewOrders(NewOrderRequest newOrderRequest){
         isLoading = true;
         ApiInterface apiInterface = ApiService.getApiService();
+        Log.d(TAG, "FETCHING NEW ORDER........");
         apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<List<Order>>() {
             @Override
             public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
@@ -178,6 +263,8 @@ public class NewOrderFetchService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG,  "Some component want to bind with the service");
+        // We don't provide binding, so return null
         return null;
     }
 }

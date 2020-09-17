@@ -53,7 +53,12 @@
             </intent-filter>
         </service>
 
-        <service android:name=".services.NewOrderFetchService"/>
+        <service
+            android:name=".services.NewOrderFetchService"
+            android:enabled="true"
+            android:exported="false"
+            android:stopWithTask="false"
+            />
     </application>
 
 </manifest>

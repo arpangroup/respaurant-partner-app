@@ -95,6 +95,14 @@ public class UserSession {
             return null;
         }
     }
+    public static User getUserData(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(USER_SESSION,0);
+        String userJson = sharedPref.getString(USER_DATA, null);
+        if(userJson != null){
+            return new Gson().fromJson(userJson, User.class);
+        }
+        return null;
+    }
 
 
 

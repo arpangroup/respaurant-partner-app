@@ -4,6 +4,7 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
@@ -44,7 +45,7 @@ public class App extends Application {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID_NEW_ORDER_FETCH_SERVICE,
                     CHANNEL_NAME_NEW_ORDER_FETCH_SERVICE,
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
             );
 
             NotificationChannel notificationChannelPushNotification = new NotificationChannel(
@@ -64,6 +65,10 @@ public class App extends Application {
             notificationChannelNewOrder.setDescription("This is New Order Notification Channel");
             notificationChannelPushNotification.setDescription("This is Push Notifications channel");
             serviceChannel.setDescription("This is New Order Fetch Service channel");
+            serviceChannel.enableLights(true);
+            serviceChannel.setLightColor(Color.RED);
+            serviceChannel.enableVibration(true);
+            serviceChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
 
             // Register the channels with Notification Framework
             //NotificationManager notificationManager = getSystemService(NotificationManager.class);
