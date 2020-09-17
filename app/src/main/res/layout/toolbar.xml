@@ -30,7 +30,7 @@
         android:fontFamily="@font/sfpro_display_bold"
         android:text="EDIT ITEM"
         android:textColor="@color/black"
-        android:textSize="15sp" />
+        android:textSize="24sp" />
 
 
 </androidx.appcompat.widget.Toolbar>
