@@ -236,6 +236,7 @@ public class NewOrderFetchService extends Service {
                     .setCategory(NotificationCompat.CATEGORY_CALL)
                     .setFullScreenIntent(pendingIntent, true)
                     .setAutoCancel(true)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setOngoing(true);
             Notification notification = builder.build();
 

@@ -23,7 +23,8 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="16.7dp"
             android:layout_marginRight="16.7dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginTop="16dp"
             android:orientation="vertical">
 
             <!--Store Name-->
@@ -56,6 +57,7 @@
                     android:text=""
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
+
             <!--Image-->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -83,61 +85,122 @@
                         android:textColor="@color/silver"
                         android:textSize="18sp" />
                 </LinearLayout>
-                <ImageView
-                    android:id="@+id/image"
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:scaleType="centerCrop"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/foodimg_1" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/gray" />
+                    app:cardCornerRadius="8dp"
+                    android:layout_margin="5dp"
+                    android:elevation="0dp">
+                    <ImageView
+                        android:id="@+id/image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:src="@drawable/foodimg_1" />
+                </androidx.cardview.widget.CardView>
 
 
 
             </LinearLayout>
-            <!--Approx Delivery Time-->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_delivery_time_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:errorEnabled="true">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_delivery_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/sfpro_text_medium"
-                    android:hint="Approx Delivery Time"
-                    android:text=""
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <!--Approx Price for Two-->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_approx_price_two_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:errorEnabled="true">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_price_for_two"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/sfpro_text_medium"
-                    android:hint="Selling Price"
-                    android:text=""
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
 
-            <View
+
+            <!--ContactNumber-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_input_contact_number_layout"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="22.3dp"
-                android:background="@color/viewline"
-                android:layout_marginLeft="16.7dp"
-                android:layout_marginRight="16.7dp" />
+                android:layout_height="wrap_content"
+                app:errorEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_contact_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sfpro_text_medium"
+                    android:hint="Contact Number"
+                    android:text=""
+                    android:inputType="phone"/>
+            </com.google.android.material.textfield.TextInputLayout>
+            <!--Opening and Closing Time -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+                <!--OpeningTime-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_opening_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_opening_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Opening Time"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--ClosingTime-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_closing_time"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_closing_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Closing Time"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!--ApproxDeliveryTime and ApproxPriceForTwo-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+                <!--Approx Delivery Time-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_delivery_time_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_delivery_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Approx Delivery Time"
+                        android:text=""
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--Approx Price for Two-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_approx_price_two_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_price_range"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Approx Price for Two"
+                        android:text=""
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
             <!--Full Address-->
             <com.google.android.material.textfield.TextInputLayout
@@ -154,30 +217,57 @@
                     android:text=""
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
-            <!--PinCode-->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_pincode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:errorEnabled="true">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_pincode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/sfpro_text_medium"
-                    android:hint="Full Address"
-                    android:text=""
-                    android:inputType="number"/>
-            </com.google.android.material.textfield.TextInputLayout>
+            <!--PinCode and LandMark-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <!--PinCode-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_pincode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_pincode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="PIN Code"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--LandMark-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_landmark"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_landmark"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Land Mark"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+            <!--Latitude and Longitude -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
                 android:orientation="horizontal">
                 <!--Latitude-->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/text_input_latitude"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     app:errorEnabled="true">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_latitude"
@@ -191,27 +281,22 @@
                 <!--Longitude-->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/text_input_longitude"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     app:errorEnabled="true">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_longitude"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/sfpro_text_medium"
-                        android:hint="Latitude"
+                        android:hint="Longitude"
                         android:text=""
                         android:inputType="number"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="22.3dp"
-                android:background="@color/viewline"
-                android:layout_marginLeft="16.7dp"
-                android:layout_marginRight="16.7dp" />
+
 
             <!--Certificate-->
             <com.google.android.material.textfield.TextInputLayout
@@ -228,26 +313,208 @@
                     android:text=""
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
-            <!--Store Charge-->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_store_charge_layout"
+
+            <!--StoreCharge and isPureVeg -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:errorEnabled="true">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_store_charge"
+                android:weightSum="2"
+                android:orientation="horizontal">
+                <!--Store Charge-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_store_charge_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_store_charge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Store Charge\nPacking/Extra"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--IsPureVeg-->
+                <CheckBox
+                    android:id="@+id/is_pure_veg"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Is PureVeg?"/>
+            </LinearLayout>
+
+            <!--CommissionRate and DeliveryType -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+                <!--DeliveryRadius-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_commission_rate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_commission_rate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Commission Rate"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--DeliveryType-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_delivery_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_delivery_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Delivery Type"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+
+            <!--DeliveryRadius and DeliveryRange -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+                <!--DeliveryRadius-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_delivery_radius"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_delivery_radius"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Delivery Radius"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--DeliveryCharge-->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/text_input_delivery_charge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:errorEnabled="true">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_delivery_charge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sfpro_text_medium"
+                        android:hint="Delivery Charge"
+                        android:text=""
+                        android:inputType="number"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- DynamicDeliveryCharge-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/sfpro_text_medium"
-                    android:hint="Store Charge"
-                    android:text=""
-                    android:inputType="number"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:weightSum="2"
+                    android:orientation="horizontal">
+                    <!--BaseDeliveryCharge-->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/text_input_base_delivery_charge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:errorEnabled="true">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_base_delivery_charge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/sfpro_text_medium"
+                            android:hint="Base Delivery Charge"
+                            android:text=""
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <!--BaseDeliveryDistance-->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/text_input_base_delivery_distance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:errorEnabled="true">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_base_delivery_distance"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/sfpro_text_medium"
+                            android:hint="Base Delivery Distance"
+                            android:text=""
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:orientation="horizontal">
+                    <!--ExtraDeliveryCharge-->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/text_input_extra_delivery_charge"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:errorEnabled="true">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_extra_delivery_charge"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/sfpro_text_medium"
+                            android:hint="Extra Delivery Charge"
+                            android:text=""
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <!--ExtraDeliveryDistance-->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/text_input_extra_delivery_distance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:errorEnabled="true">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_extra_delivery_distance"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/sfpro_text_medium"
+                            android:hint="Extra Delivery Distance"
+                            android:text=""
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
             <!--Min Order Price-->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_input_min_order_price_layout"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 app:errorEnabled="true">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_min_order_price"
@@ -258,6 +525,8 @@
                     android:text=""
                     android:inputType="number"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+
 
 
         </LinearLayout>

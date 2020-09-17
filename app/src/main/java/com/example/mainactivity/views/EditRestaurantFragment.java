@@ -28,6 +28,7 @@ import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.databinding.FragmentEditCategoryBinding;
 import com.example.mainactivity.databinding.FragmentEditRestaurantBinding;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
+import com.squareup.picasso.Picasso;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -65,6 +66,42 @@ public class EditRestaurantFragment extends Fragment {
 
         // Initialize RecyclerView
         //menuItemAdapter = new MenuItemAdapter(this);
+
+        restaurantViewModel.getRestaurantDetails().observe(requireActivity(), restaurant -> {
+            mBinding.toolbar.title.setText(restaurant.getName());
+            mBinding.etStoreName.setText(restaurant.getName());
+            mBinding.etDescription.setText(restaurant.getName());
+            mBinding.image.setImageResource(R.drawable.foodimg_1);
+            Picasso.get().load(Constants.WEBSITE_URL + restaurant.getImage()).into(mBinding.image);
+            mBinding.etContactNumber.setText(restaurant.getContactNumber());
+            mBinding.etOpeningTime.setText(restaurant.getOpeningTime());
+            mBinding.etClosingTime.setText(restaurant.getClosingTime());
+            mBinding.etDeliveryTime.setText(restaurant.getDeliveryTime());
+            mBinding.etPriceRange.setText(restaurant.getPriceRange());
+            mBinding.etAddress.setText(restaurant.getAddress());
+            mBinding.etLandmark.setText(restaurant.getLandmark());
+            mBinding.etPincode.setText(restaurant.getPinCode());
+            mBinding.etLatitude.setText(restaurant.getLatitude());
+            mBinding.etLongitude.setText(restaurant.getLongitude());
+            mBinding.etCertificate.setText(restaurant.getCertificate());
+            mBinding.etStoreCharge.setText(restaurant.getRestaurantCharges());
+            if(restaurant.getIsPureVeg() == 1)mBinding.isPureVeg.setChecked(true);
+            mBinding.etCommissionRate.setText(restaurant.getCommissionRate());
+            if(restaurant.getDeliveryType() == 1)mBinding.etDeliveryType.setText("Delivery");
+            else if(restaurant.getDeliveryType() == 2)mBinding.etDeliveryType.setText("Self PickUp");
+            else mBinding.etDeliveryType.setText("Both Delivery & Self Pickup");
+            mBinding.etDeliveryRadius.setText(restaurant.getDeliveryRadius());
+            mBinding.etDeliveryCharge.setText(restaurant.getDeliveryCharges());
+            mBinding.etBaseDeliveryCharge.setText(restaurant.getBaseDeliveryCharge());
+            mBinding.etBaseDeliveryDistance.setText(restaurant.getBaseDeliveryDistance()+"");
+            mBinding.etExtraDeliveryCharge.setText(restaurant.getExtraDeliveryCharge());
+            mBinding.etExtraDeliveryDistance.setText(restaurant.getExtraDeliveryDistance()+"");
+
+
+
+            mBinding.etMinOrderPrice.setText(restaurant.getMinOrderPrice());
+        });
+
 
         mBinding.btnChangeImage.setOnClickListener(view -> {
             verifyPermissions();

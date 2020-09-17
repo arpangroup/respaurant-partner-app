@@ -11,6 +11,8 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -66,6 +68,7 @@ public class App extends Application {
             notificationChannelPushNotification.setDescription("This is Push Notifications channel");
             serviceChannel.setDescription("This is New Order Fetch Service channel");
             serviceChannel.enableLights(true);
+            serviceChannel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
             serviceChannel.setLightColor(Color.RED);
             serviceChannel.enableVibration(true);
             serviceChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
