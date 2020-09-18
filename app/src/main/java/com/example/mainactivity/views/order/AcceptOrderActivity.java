@@ -1,7 +1,6 @@
 package com.example.mainactivity.views.order;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
@@ -12,8 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,20 +19,17 @@ import android.widget.Toast;
 import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderAcceptListAdapter;
 import com.example.mainactivity.databinding.ActivityAcceptOrderBinding;
-import com.example.mainactivity.databinding.FragmentAcceptOrderBinding;
 import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
-import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.models.User;
 import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.viewmodels.OrderViewModel;
+import com.example.mainactivity.views.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class AcceptOrderActivity extends AppCompatActivity implements OrderAcceptListAdapter.OrderAcceptInterface{
     private final String TAG = this.getClass().getSimpleName();
@@ -49,6 +43,9 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     private NavController navController;
     private int mNewOrderCount = 0;
     TypeToken<List<Order>> convertType = new TypeToken<List<Order>>() {};
+
+    private User mUser = null;
+
 
 
 
@@ -110,6 +107,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         mBinding = ActivityAcceptOrderBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
+        mUser = UserSession.getUserData(this);
 
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         orderViewModel.init();
@@ -147,13 +145,12 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
 
         orderViewModel.getNewOrders().observe(this, orders -> {
-            //mNewOrderCount = orders.size();
-            //System.out.println("==========================ORDERS================================\n");
-            //orders.forEach(order -> System.out.println("ID: "+order.getId() +", Title: "+order.getUniqueOrderId()));
-            //Log.d(TAG, "ORDER: "+orders.get(0));
+            if(orders.size() == 0){
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+            }
             orderAcceptListAdapter.submitList(orders);
             mBinding.toolbar.title.setText(orders.size() +" New Order");
-            //orderAcceptListAdapter.notifyDataSetChanged();
         });
 
 
@@ -201,29 +198,39 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
     @Override
     public void onIncreasePreparationTime(Order order) {
-        Toast.makeText(this, "Click: INCREASE", Toast.LENGTH_SHORT).show();
+        int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
+        preparationTime += 1;
+        orderViewModel.changeDeliveryTimeOfNotAcceptedOrder(order.getId(), preparationTime);
     }
 
     @Override
     public void onDecreasePreparationTime(Order order) {
-        Toast.makeText(this, "Click: DECREASE", Toast.LENGTH_SHORT).show();
+        int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
+        preparationTime -= 1;
+        if(preparationTime < 1) preparationTime = 0;
+        orderViewModel.changeDeliveryTimeOfNotAcceptedOrder(order.getId(), preparationTime);
     }
 
     @Override
     public void onRejectClick(Order order) {
-        Toast.makeText(this, "CLICK: REJECT", Toast.LENGTH_SHORT).show();
+        orderViewModel.cancelOrder(order,  mUser.getId(), "REJECT_BY_RESTAURANT").observe(this, apiResponse -> {
+            if(apiResponse.isSuccess()){
+                orderViewModel.removeOrderFromNewOrderList(order);
+            }
+        });
     }
+
+
 
     @Override
     public void onAcceptClick(Order order, ItemOrderAcceptBinding binding) {
-        Toast.makeText(this, "CLICK: ACCEPT", Toast.LENGTH_SHORT).show();
         binding.layoutProgress.setVisibility(View.VISIBLE);
-        orderViewModel.acceptOrder(order).observe(this, apiResponse -> {
+        orderViewModel.acceptOrder(order, mUser.getId()).observe(this, apiResponse -> {
             System.out.println(apiResponse);
             if(apiResponse.isSuccess()){
-                orderViewModel.removeNewOrder(order);
+                orderViewModel.removeOrderFromNewOrderList(order);
                 binding.layoutProgress.setVisibility(View.GONE);
-                finish();//closing the popup
+
             }
         });
     }
@@ -231,7 +238,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     public void onAutoCancelOrder(Order order) {
         try{
-            Toast.makeText(this, "Order Cancelled: "+order.getId(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Order Cancelled: "+order.getId(), Toast.LENGTH_SHORT).show();
 //            List<Order> orders = orderViewModel.getAllOrders().getValue();
 //            orders.removeIf(orderObj -> orderObj.getId() == order.getId());
 //            orderAcceptListAdapter.submitList(orders);

@@ -70,8 +70,8 @@ public class Order {
     private List<Dish> orderitems;
 
 
-//    @SerializedName("delivery_details")
-//    private DeliveryGuy deliveryDetails;
+    @SerializedName("delivery_details")
+    private DeliveryGuy deliveryDetails;
 
     @SerializedName("user")
     private User user;
@@ -110,10 +110,10 @@ public class Order {
                 statusStr = "PREPARING"; //ORDER_RECEIVED
                 break;
             case 3:
-                statusStr = "READY";//DELIVERY ASSIGNED
+                statusStr = "DELIVERY ASSIGNED";//DELIVERY ASSIGNED
                 break;
             case 4:
-                statusStr = "PICKED-UP";
+                statusStr = "PICKED-UP";//ON_THE_WAY
                 break;
             case 5:
                 statusStr = "DELIVERED";
@@ -122,7 +122,7 @@ public class Order {
                 statusStr = "CANCELLED";
                 break;
             case 7:
-                statusStr = "SELF-PICKUP";
+                statusStr = "READY";
                 break;
         }
         return statusStr;

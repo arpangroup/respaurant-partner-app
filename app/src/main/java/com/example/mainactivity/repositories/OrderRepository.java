@@ -8,14 +8,17 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.models.User;
+import com.example.mainactivity.models.request.AcceptOrderRequest;
 import com.example.mainactivity.models.request.NewOrderRequest;
+import com.example.mainactivity.models.request.OrderCancelRequest;
+import com.example.mainactivity.models.request.ReadyOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.Dashboard;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,7 +32,7 @@ public class OrderRepository {
     private MutableLiveData<List<Order>> mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<List<String>> mutableCancelOrders;
     private MutableLiveData<Dashboard> mutableDashboard;
-    MutableLiveData<List<Order>> mutableOrderList;
+    MutableLiveData<List<Order>> mutableNewOrderList;
 
     public static OrderRepository getInstance(){
         if (orderRepository == null){
@@ -49,11 +52,11 @@ public class OrderRepository {
         return mutableDashboard;
     }
 
-    public void loadAcceptedOrders(RequestToken requestToken){
+    public void loadAcceptedOrders(){
         if(mutableAcceptedOrders == null){
             mutableAcceptedOrders = new MutableLiveData<>();
         }
-        loadAllAcceptedOrdersFromApi(requestToken);
+        loadAllAcceptedOrdersFromApi();
     }
     public LiveData<List<Order>> getAllAcceptedOrders(){
         if(mutableAcceptedOrders == null){
@@ -61,17 +64,17 @@ public class OrderRepository {
         }
         return mutableAcceptedOrders;
     }
-    public LiveData<ApiResponse> acceptOrder(RequestToken requestToken, Order order){
-        return acceptOrderApi(requestToken, order);
+    public LiveData<ApiResponse> acceptOrder(Order order, int foodPrepareTime,  int userId){
+        return acceptOrderApi(order, foodPrepareTime, userId);
     }
 
 
     public LiveData<List<Order>> getNewOrders(NewOrderRequest newOrderRequest){
-        if(mutableOrderList == null){
-            mutableOrderList = new MutableLiveData<>();
+        if(mutableNewOrderList == null){
+            mutableNewOrderList = new MutableLiveData<>();
             loadNewOrdersApi(newOrderRequest);
         }
-        return mutableOrderList;
+        return mutableNewOrderList;
     }
     public LiveData<List<String>> getAllCanceledOrders(){
         if(mutableCancelOrders == null){
@@ -79,27 +82,14 @@ public class OrderRepository {
         }
         return mutableCancelOrders;
     }
-    public void changePrepareTime(int orderId, int time){
-        if(mutableOrderList.getValue() == null)return ;
-
-        List<Order> orderList = new ArrayList<>(mutableOrderList.getValue());
-
-        Order updatableOrder = orderList.stream().filter(order -> order.getId() == orderId).findAny().get();
-        updatableOrder.getRestaurant().setDeliveryTime(String.valueOf(time));
-
-       // Order.itemCallback.areContentsTheSame()
-
-        //orderList.set(orderList.indexOf(order.get), order);
-        //orderList.stream().filter(order1 -> order1.getId() == order.getId()).map(order1 -> order1 = order);
-//        orderList.forEach(order1 -> {
-//            if(order1.getId() == order.getId())order1.getRestaurant().setDeliveryTime(order.getRestaurant().getDeliveryTime());
-//        });
-
-        //mutableOrderList.setValue(null);
-        mutableOrderList.setValue(orderList);
+    public LiveData<ApiResponse> cancelOrder(Order order, int userId, String  cancelReason){
+        OrderCancelRequest orderCancelRequest = new OrderCancelRequest(order.getId(), cancelReason);
+        orderCancelRequest.setUserId(userId);
+        return cancelOrderApi(orderCancelRequest);
     }
-    public LiveData<ApiResponse> cancelOrder(RequestToken requestToken){
-        return cancelOrderApi(requestToken);
+    public LiveData<ApiResponse> makeOrderAsReady(int orderId){
+        ReadyOrderRequest readyOrderRequest = new ReadyOrderRequest(orderId);
+        return makeOrderReadyApi(readyOrderRequest);
     }
 
 
@@ -127,6 +117,8 @@ public class OrderRepository {
         });
     }
     private void loadNewOrdersApi(NewOrderRequest newOrderRequest){
+        Log.d(TAG,  "Inside loadNewOrdersApi().....");
+        Log.d(TAG, "REQUEST: "+new Gson().toJson(newOrderRequest));
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
         apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<List<Order>>() {
@@ -134,7 +126,7 @@ public class OrderRepository {
             public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
                 isLoading.setValue(false);
                 List<Order> orders = response.body();
-                mutableOrderList.setValue(orders);
+                mutableNewOrderList.setValue(orders);
             }
 
             @Override
@@ -143,7 +135,10 @@ public class OrderRepository {
             }
         });
     }
-    private void loadAllAcceptedOrdersFromApi(RequestToken requestToken){
+    private void loadAllAcceptedOrdersFromApi(){
+        RequestToken requestToken = new RequestToken();
+        Log.d(TAG,  "Inside loadAllAcceptedOrdersFromApi().....");
+        Log.d(TAG, "REQUEST: "+new Gson().toJson(requestToken));
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
         apiInterface.getAcceptedOrders(requestToken).enqueue(new Callback<List<Order>>() {
@@ -160,15 +155,20 @@ public class OrderRepository {
             }
         });
     }
-    private LiveData<ApiResponse> acceptOrderApi(RequestToken requestToken, Order order){
+    private LiveData<ApiResponse> acceptOrderApi(Order order, int foodPrepareTime, int userId){
+        AcceptOrderRequest acceptOrderRequest = new AcceptOrderRequest(order.getId(), foodPrepareTime);
+        acceptOrderRequest.setUserId(userId);
         MutableLiveData<ApiResponse> apiResponseMutableLiveData = new MutableLiveData<>();
+        Log.d(TAG, "Inside acceptOrderApi()....");
+        Log.d(TAG, "REQUEST: "+ new Gson().toJson(acceptOrderRequest));
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
-        apiInterface.acceptOrder(requestToken).enqueue(new Callback<ApiResponse>() {
+        apiInterface.acceptOrder(acceptOrderRequest).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 isLoading.setValue(false);
                 ApiResponse apiResponse = response.body();
+                Log.d(TAG, "RESPONSE: "+apiResponse);
 
                 // Update accepted orders list:
                 List<Order> acceptedOrderList = mutableAcceptedOrders.getValue();
@@ -187,24 +187,26 @@ public class OrderRepository {
         });
         return apiResponseMutableLiveData;
     }
-    private LiveData<ApiResponse> cancelOrderApi(RequestToken requestToken){
+    private LiveData<ApiResponse> cancelOrderApi(OrderCancelRequest orderCancelRequest){
         MutableLiveData<ApiResponse> apiResponseMutableLiveData = new MutableLiveData<>();
         ApiInterface apiInterface = ApiService.getApiService();
+        Log.d(TAG,  "Inside cancelOrderApi().....");
+        Log.d(TAG, "REQUEST: "+new Gson().toJson(orderCancelRequest));
         isLoading.setValue(true);
-        apiInterface.cancelOrder(requestToken).enqueue(new Callback<ApiResponse>() {
+        apiInterface.cancelOrder(orderCancelRequest).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 isLoading.setValue(false);
                 ApiResponse apiResponse = response.body();
-
+                Log.d(TAG, "RESPONSE: "+apiResponse);
 
                 // Update accepted orders list
-                if(mutableCancelOrders == null) mutableCancelOrders = new MutableLiveData<>();
-                if(mutableCancelOrders.getValue() != null){
-                    List<String> acceptedOrderList = new ArrayList<>(mutableCancelOrders.getValue());
-                    acceptedOrderList.add(String.valueOf(requestToken.getOrder_id()));
-                    mutableCancelOrders.setValue(acceptedOrderList);
-                }
+//                if(mutableCancelOrders == null) mutableCancelOrders = new MutableLiveData<>();
+//                if(mutableCancelOrders.getValue() != null){
+//                    List<String> acceptedOrderList = new ArrayList<>(mutableCancelOrders.getValue());
+//                    acceptedOrderList.add(String.valueOf(requestToken.getOrder_id()));
+//                    mutableCancelOrders.setValue(acceptedOrderList);
+//                }
 
                 apiResponseMutableLiveData.setValue(apiResponse);
             }
@@ -216,15 +218,18 @@ public class OrderRepository {
         });
         return apiResponseMutableLiveData;
     }
-    private LiveData<ApiResponse> makeOrderReadyApi(RequestToken requestToken){
+    private LiveData<ApiResponse> makeOrderReadyApi(ReadyOrderRequest readyOrderRequest){
         MutableLiveData<ApiResponse> apiResponseMutableLiveData = new MutableLiveData<>();
         ApiInterface apiInterface = ApiService.getApiService();
+        Log.d(TAG,  "Inside makeOrderReadyApi().....");
+        Log.d(TAG, "REQUEST: "+new Gson().toJson(readyOrderRequest));
         isLoading.setValue(true);
-        apiInterface.makeOrderReady(requestToken).enqueue(new Callback<ApiResponse>() {
+        apiInterface.makeOrderReady(readyOrderRequest).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 isLoading.setValue(false);
                 ApiResponse apiResponse = response.body();
+                Log.d(TAG, "RESPONSE: "+ apiResponse);
                 apiResponseMutableLiveData.setValue(apiResponse);
             }
 

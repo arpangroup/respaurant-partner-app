@@ -64,7 +64,7 @@ public class OrderAcceptFragment extends Fragment implements OrderAcceptListAdap
     public void onIncreasePreparationTime(Order order) {
         int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
         preparationTime += 1;
-        orderViewModel.changeDeliveryTime(order.getId(), preparationTime);
+        orderViewModel.changeDeliveryTimeOfNotAcceptedOrder(order.getId(), preparationTime);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class OrderAcceptFragment extends Fragment implements OrderAcceptListAdap
         int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
         preparationTime -= 1;
         if(preparationTime < 1) preparationTime = 0;
-        orderViewModel.changeDeliveryTime(order.getId(), preparationTime);
+        orderViewModel.changeDeliveryTimeOfNotAcceptedOrder(order.getId(), preparationTime);
     }
 
     @Override

@@ -60,4 +60,9 @@ public class OrderPrepareFragment extends Fragment implements OrderListAdapter.O
     public void onAutoCancelOrder(Order order) {
 
     }
+
+    @Override
+    public void onOrderReady(int position, int orderId) {
+
+    }
 }

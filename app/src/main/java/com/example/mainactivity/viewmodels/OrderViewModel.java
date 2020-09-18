@@ -37,15 +37,12 @@ public class OrderViewModel extends ViewModel {
         orderRepository = OrderRepository.getInstance();
     }
 
-
-
-
     public void setNewOrder(List<Order> orders){
         Log.d("MessagingService", "Adding new order to view model");
         newOrders.addAll(orders);
         mutableNewOrders.setValue(newOrders);
     }
-    public void removeNewOrder(Order order){
+    public void removeOrderFromNewOrderList(Order order){
         if(newOrders != null) {
             List<Order>  orders = newOrders;
             orders.removeIf(orderObj -> orderObj.getId() == order.getId());
@@ -56,11 +53,25 @@ public class OrderViewModel extends ViewModel {
         if(newOrders == null){
             newOrders = new ArrayList<>();
         }
-        //System.out.println("==========================GET ORDERS================================\n");
-        //newOrders.getValue().forEach(orderObj -> System.out.println("ID: "+orderObj.getId() +", Title: "+orderObj.getUniqueOrderId()));
         return mutableNewOrders;
     }
+    public void changeDeliveryTimeOfNotAcceptedOrder(int orderId, int time){
+        //orderRepository.changePrepareTime(orderId, time);
+        if(mutableNewOrders != null && mutableNewOrders.getValue() != null){
+            List<Order> orderList = mutableNewOrders.getValue();
 
+            Order updatableOrder = orderList.stream().filter(order -> order.getId() == orderId).findAny().get();
+            updatableOrder.getRestaurant().setDeliveryTime(String.valueOf(time));
+            mutableNewOrders.setValue(orderList);
+        }
+        //orderList.set(orderList.indexOf(order.get), order);
+        //orderList.stream().filter(order1 -> order1.getId() == order.getId()).map(order1 -> order1 = order);
+//        orderList.forEach(order1 -> {
+//            if(order1.getId() == order.getId())order1.getRestaurant().setDeliveryTime(order.getRestaurant().getDeliveryTime());
+//        });
+
+        //mutableOrderList.setValue(null);
+    }
 
     public LiveData<Boolean> getIsLoading(){
         LiveData<Boolean> isLoading=orderRepository.getIsLoading();
@@ -72,20 +83,12 @@ public class OrderViewModel extends ViewModel {
     }
 
     public void loadAllAcceptedOrders(){
-        RequestToken requestToken = new RequestToken();
-        orderRepository.loadAcceptedOrders(requestToken);
+        orderRepository.loadAcceptedOrders();
     }
     public LiveData<List<Order>> getAllAcceptedOrders(){
         return orderRepository.getAllAcceptedOrders();
     }
 
-    public LiveData<List<Order>> getNewOrdersFromApi(){
-        NewOrderRequest newOrderRequest = new NewOrderRequest(6, getListedOrderIds());
-        return orderRepository.getNewOrders(newOrderRequest);
-    }
-    public void changeDeliveryTime(int orderId, int time){
-        orderRepository.changePrepareTime(orderId, time);
-    }
     public void setFilterOrders(List<Order> orders){
         if(mutableOrders == null){
             mutableOrders = new MutableLiveData<>();
@@ -98,27 +101,15 @@ public class OrderViewModel extends ViewModel {
        }
        return mutableOrders;
     }
-    public LiveData<ApiResponse> acceptOrder(Order order){
-        RequestToken requestToken  = new RequestToken(order.getId());
-        return orderRepository.acceptOrder(requestToken, order);
+
+    public LiveData<ApiResponse> acceptOrder(Order order, int userId){
+        int foodPrepareTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
+        return orderRepository.acceptOrder(order, foodPrepareTime, userId);
     }
-    public LiveData<ApiResponse> cancelOrder(int orderId){
-        RequestToken requestToken  = new RequestToken(orderId);
-        return orderRepository.cancelOrder(requestToken);
+    public LiveData<ApiResponse> cancelOrder(Order order, int userId, String cancelReason){
+        return orderRepository.cancelOrder(order, userId, cancelReason);
     }
-
-
-
-
-    /*=================================================HANDLER_METHODS[START]==============================================*/
-    private List<String> getListedOrderIds(){
-        if(mutableOrders != null){
-            List<Order> orders = mutableOrders.getValue();
-            if(orders != null)return orders.stream().map(order -> String.valueOf(order.getId())).collect(Collectors.toList());
-        }
-        return new ArrayList<>();
+    public LiveData<ApiResponse> makeOrderAsReady(int orderId){
+        return orderRepository.makeOrderAsReady(orderId);
     }
-
-    /*=================================================HANDLER_METHODS[END]==============================================*/
-
 }

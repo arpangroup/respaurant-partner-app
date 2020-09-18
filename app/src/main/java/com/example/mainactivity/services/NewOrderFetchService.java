@@ -176,7 +176,7 @@ public class NewOrderFetchService extends Service {
                     //NewOrderRequest newOrderRequest = new NewOrderRequest(userId, new ArrayList<>());
                     while (isServiceStarted){
                         if(!isLoading){
-                            fetchNewOrders(newOrderRequest);
+                            //fetchNewOrders(newOrderRequest);
                         }
                     }
                 }
@@ -257,7 +257,6 @@ public class NewOrderFetchService extends Service {
     }
     private void sendMessageToUI(String orders){
         Intent intent = new Intent(NEW_ORDER_FETCH_SERVICE_MESSAGE);
-        //intent.putExtra(SERVICE_PAYLOAD, data);
         Log.d(TAG, "SENDING: "+orders);
         intent.putExtra(INTENT_EXTRA_OUTPUT_NEW_ORDERS, orders);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);

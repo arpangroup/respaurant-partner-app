@@ -85,7 +85,7 @@
                                 android:paddingBottom="4dp"
                                 android:textColor="@color/silver"
                                 android:textStyle="bold"
-                                android:textSize="16sp" />
+                                android:textSize="14sp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -325,7 +325,7 @@
                         android:layout_marginRight="16dp"
                         android:background="@color/lightsilver" />
                     <RelativeLayout
-                        android:visibility="@{order.orderStatusId == 3 ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{(order.orderStatusId == 3 || order.orderStatusId == 4 || order.orderStatusId == 7)&amp;(order.deliveryType ==1) ? View.VISIBLE : View.GONE}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
@@ -333,7 +333,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:background="@drawable/rounded_gray_border"
-                        android:paddingLeft="16dp"
+                        android:paddingLeft="8dp"
                         android:paddingRight="16dp"
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
@@ -345,6 +345,7 @@
                             app:cardCornerRadius="30dp"
                             android:elevation="0dp">
                             <ImageView
+                                android:id="@+id/img_delivery_guy"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:src="@drawable/human"/>
@@ -354,17 +355,20 @@
                             android:layout_toLeftOf="@+id/img_call"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="16dp"
+                            android:layout_marginLeft="12dp"
                             android:orientation="vertical">
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Prem Chandra is arriving in 3 mins"/>
+                                android:hint="John Doe is arriving in 3 mins"
+                                android:text="@{(order.orderStatusId == 3) ? order.deliveryDetails.name +` is arriving in few mins` : order.deliveryDetails.name +` is on the way to deliver` }"/>
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
-                                android:text="OTP: 7361"/>
+                                android:hint="OTP: 7361"
+                                android:text="@{(order.orderStatusId == 3 || order.orderStatusId == 4) ? `OTP: `+order.deliveryDetails.deliveryPin : `` }"/>
                         </LinearLayout>
 
                         <ImageView
@@ -380,7 +384,9 @@
 
                     </RelativeLayout>
 
-                    <FrameLayout
+                    <RelativeLayout
+                        android:visibility="@{(order.orderStatusId == 2 || order.orderStatusId == 3) ? View.VISIBLE : View.GONE}"
+                        android:id="@+id/layout_ready"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
@@ -391,11 +397,10 @@
                             android:progressDrawable="@drawable/green_progress_drawable"
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"/>
+                            android:layout_height="42dp" />
                         <LinearLayout
-                            android:id="@+id/layout_accept"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="42dp"
                             android:gravity="center"
                             android:background="#979DD59F"
                             android:orientation="horizontal">
@@ -415,7 +420,7 @@
                                 android:textColor="@color/white"/>
 
                         </LinearLayout>
-                    </FrameLayout>
+                    </RelativeLayout>
 
 
 

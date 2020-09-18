@@ -13,6 +13,7 @@ import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.databinding.ItemOrderPreparingBinding;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.util.FormatDate;
+import com.squareup.picasso.Picasso;
 
 import java.util.Date;
 import java.util.Locale;
@@ -44,6 +45,10 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
         holder.itemOrderPreparingBinding.setOrder(order);
 
         holder.itemOrderPreparingBinding.executePendingBindings();
+
+        if(order.getOrderStatusId() == 3 || order.getOrderStatusId() == 4){
+            Picasso.get().load(Constants.WEBSITE_URL + order.getDeliveryDetails().getPhoto()).into(holder.itemOrderPreparingBinding.imgDeliveryGuy);
+        }
 
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+05:30"));
         long currentTime = new Date().getTime();
@@ -85,12 +90,21 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
         public OrderViewHolder(ItemOrderPreparingBinding binding) {
             super(binding.getRoot());
             this.itemOrderPreparingBinding = binding;
+
+            //Order order =getItem(getAdapterPosition());
+            this.itemOrderPreparingBinding.layoutReady.setOnClickListener(view -> orderPrepareInterface.onOrderReady(getAdapterPosition(), getItem(getAdapterPosition()).getId()));
         }
     }
 
 
     public interface OrderPrepareInterface{
         void onAutoCancelOrder(Order order);
+        void onOrderReady(int position, int orderId);
+    }
+
+    public void updateStatus(int position, int newStatus){
+        getItem(position).setOrderStatusId(newStatus);
+        notifyItemChanged(position);
     }
 
 

@@ -4,10 +4,13 @@ import com.example.mainactivity.models.ItemCategory;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.Restaurant;
 import com.example.mainactivity.models.User;
+import com.example.mainactivity.models.request.AcceptOrderRequest;
 import com.example.mainactivity.models.request.DisableCategoryRequest;
 import com.example.mainactivity.models.request.DisableItemRequest;
 import com.example.mainactivity.models.request.LoginRequest;
 import com.example.mainactivity.models.request.NewOrderRequest;
+import com.example.mainactivity.models.request.OrderCancelRequest;
+import com.example.mainactivity.models.request.ReadyOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.Dashboard;
@@ -49,13 +52,13 @@ public interface ApiInterface {
     Call<List<Order>> getAcceptedOrders(@Body RequestToken requestToken);
 
     @POST("/api/store-owner/orders/accept-order")
-    Call<ApiResponse> acceptOrder(@Body RequestToken requestToken);
+    Call<ApiResponse> acceptOrder(@Body AcceptOrderRequest acceptOrderRequest);
 
     @POST("/api/store-owner/orders/cancel-order")
-    Call<ApiResponse> cancelOrder(@Body RequestToken requestToken);
+    Call<ApiResponse> cancelOrder(@Body OrderCancelRequest orderCancelRequest);
 
     @POST("/api/store-owner/orders/mark-order-ready")
-    Call<ApiResponse> makeOrderReady(@Body RequestToken requestToken);
+    Call<ApiResponse> makeOrderReady(@Body ReadyOrderRequest readyOrderRequest);
 
     @POST("/api/store-owner/orders/mark-selfpickup-order-completed")
     Call<ApiResponse> markSelfPickupOrderCompleted(@Body RequestToken requestToken);

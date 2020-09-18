@@ -26,6 +26,7 @@ import com.example.mainactivity.adapters.ItemCategoryAdapter;
 import com.example.mainactivity.commons.Actions;
 import com.example.mainactivity.databinding.FragmentAccountListBinding;
 import com.example.mainactivity.databinding.FragmentMenuListBinding;
+import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.AccountSection;
 import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.ServiceTracker;
@@ -35,6 +36,7 @@ import com.example.mainactivity.views.MainActivity;
 import com.example.mainactivity.views.MoreActivity;
 import com.example.mainactivity.views.auth.AuthActivity;
 import com.example.mainactivity.views.menuitem.MenuActivity;
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -90,6 +92,8 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
             restaurantViewModel.toggleRestaurant(status);
 
             if(status){
+                Intent intent = new Intent(getActivity(), MessagingService.class);
+                requireActivity().startService(intent);
                 Log.d(TAG, "START THE FOREGROUND SERVICE ON DEMAND");
                 actionOnService(Actions.START);
             }else{
