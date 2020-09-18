@@ -218,10 +218,10 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     public void onAcceptClick(Order order, ItemOrderAcceptBinding binding) {
         Toast.makeText(this, "CLICK: ACCEPT", Toast.LENGTH_SHORT).show();
         binding.layoutProgress.setVisibility(View.VISIBLE);
-        orderViewModel.acceptOrder(order.getId()).observe(this, apiResponse -> {
-            System.out.println("====================ORDER_ACCEPT_RESPONSE======================");
+        orderViewModel.acceptOrder(order).observe(this, apiResponse -> {
             System.out.println(apiResponse);
             if(apiResponse.isSuccess()){
+                orderViewModel.removeNewOrder(order);
                 binding.layoutProgress.setVisibility(View.GONE);
                 finish();//closing the popup
             }
@@ -232,10 +232,10 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     public void onAutoCancelOrder(Order order) {
         try{
             Toast.makeText(this, "Order Cancelled: "+order.getId(), Toast.LENGTH_SHORT).show();
-            List<Order> orders = orderViewModel.getAllOrders().getValue();
-            orders.removeIf(orderObj -> orderObj.getId() == order.getId());
-            orderAcceptListAdapter.submitList(orders);
-            orderAcceptListAdapter.notifyItemRemoved(order.getId());
+//            List<Order> orders = orderViewModel.getAllOrders().getValue();
+//            orders.removeIf(orderObj -> orderObj.getId() == order.getId());
+//            orderAcceptListAdapter.submitList(orders);
+//            orderAcceptListAdapter.notifyItemRemoved(order.getId());
         }catch (Exception e){
 
         }

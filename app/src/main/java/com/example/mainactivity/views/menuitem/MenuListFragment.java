@@ -39,7 +39,7 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
     private NavController navController;
     private List<ItemCategory> mItemCategoryList;
 
-    public static enum FilterTpe {
+    private static enum FilterTpe {
         ALL,
         OUT_OF_STACK
     }
@@ -67,6 +67,7 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
 
         // Initialize NavController
         navController = Navigation.findNavController(rootView);
+        initClicks();
 
         // Initialize RecyclerView
         itemCategoryAdapter = new ItemCategoryAdapter(this);
@@ -91,16 +92,6 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
             itemCategoryAdapter.submitList(categoryList);
         });
 
-        mBinding.bottomNavigation.orderLinear.setOnClickListener(view -> {
-            requireActivity().startActivity(new Intent(requireActivity(), MainActivity.class));
-            requireActivity().finish();
-        });
-
-        mBinding.bottomNavigation.accountLinear.setOnClickListener(view ->{
-            requireActivity().startActivity(new Intent(requireActivity(), MoreActivity.class));
-            requireActivity().finish();
-        });
-
         mBinding.swiperefreshLayout.setOnRefreshListener(() -> {
             final Handler handler = new Handler();
             handler.postDelayed(() -> {
@@ -110,6 +101,11 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
             }, 1000);
         });
 
+
+    }
+
+    private void initClicks(){
+        //Toolbar Click:
         mBinding.toolbar.radiobuttonAllItems.setOnCheckedChangeListener((compoundButton, b) -> {
             if(compoundButton.isChecked()){
                 List<ItemCategory> filterItems = filterItems(mItemCategoryList, FilterTpe.ALL);
@@ -124,8 +120,15 @@ public class MenuListFragment extends Fragment implements ItemCategoryAdapter.It
                 restaurantViewModel.setFilterMenus(filterItems);
             }
         });
-
-
+        //BottomNavigation Click:
+        mBinding.bottomNavigation.orderLinear.setOnClickListener(view -> {
+            requireActivity().startActivity(new Intent(requireActivity(), MainActivity.class));
+            requireActivity().finish();
+        });
+        mBinding.bottomNavigation.accountLinear.setOnClickListener(view ->{
+            requireActivity().startActivity(new Intent(requireActivity(), MoreActivity.class));
+            requireActivity().finish();
+        });
     }
 
     @Override

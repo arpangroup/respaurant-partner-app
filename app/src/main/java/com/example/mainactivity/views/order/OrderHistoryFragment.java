@@ -58,9 +58,9 @@ public class OrderHistoryFragment extends Fragment {
             orderViewModel.setFilterOrders(dashboard.getAllOrders());
         });
 
-        orderViewModel.getAllOrders().observe(getViewLifecycleOwner(), orders -> {
-            orderHistoryAdapter.submitList(orders);
-        });
+//        orderViewModel.getAllOrders().observe(getViewLifecycleOwner(), orders -> {
+//            orderHistoryAdapter.submitList(orders);
+//        });
 
         orderViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
             if(aBoolean)mBinding.progressbar.setVisibility(View.VISIBLE);

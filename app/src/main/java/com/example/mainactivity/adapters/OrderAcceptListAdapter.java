@@ -141,7 +141,7 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
         holder.itemAcceptOrderBinding.layoutAccept.setBackgroundColor(Color.parseColor("#979DD59F"));
         holder.itemAcceptOrderBinding.layoutAccept.setEnabled(false);
         holder.itemAcceptOrderBinding.layoutAccept.setOnClickListener(null);
-        orderAcceptInterface.onAutoCancelOrder(getItem(position));
+        //orderAcceptInterface.onAutoCancelOrder(getItem(position));
 
 
     }

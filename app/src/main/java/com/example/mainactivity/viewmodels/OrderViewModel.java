@@ -46,16 +46,11 @@ public class OrderViewModel extends ViewModel {
         mutableNewOrders.setValue(newOrders);
     }
     public void removeNewOrder(Order order){
-//        if(newOrders != null) {
-//            List<Order>  orders = newOrders.getValue();
-//
-//            if (orders != null) {
-//                orders.removeIf(orderObj -> orderObj.getId() == order.getId());
-//            }
-//            newOrders.setValue(orders);
-//
-//        }
-//        newOrders.getValue().add(order);
+        if(newOrders != null) {
+            List<Order>  orders = newOrders;
+            orders.removeIf(orderObj -> orderObj.getId() == order.getId());
+            mutableNewOrders.setValue(orders);
+        }
     }
     public LiveData<List<Order>> getNewOrders(){
         if(newOrders == null){
@@ -97,16 +92,15 @@ public class OrderViewModel extends ViewModel {
         }
         mutableOrders.setValue(orders);
     }
-    public LiveData<List<Order>> getAllOrders(){
+    public LiveData<List<Order>> getAllFilteredOrders(){
        if(mutableOrders == null){
            mutableOrders = new MutableLiveData<>();
-           getDashboard();
        }
        return mutableOrders;
     }
-    public LiveData<ApiResponse> acceptOrder(int orderId){
-        RequestToken requestToken  = new RequestToken(orderId);
-        return orderRepository.acceptOrder(requestToken);
+    public LiveData<ApiResponse> acceptOrder(Order order){
+        RequestToken requestToken  = new RequestToken(order.getId());
+        return orderRepository.acceptOrder(requestToken, order);
     }
     public LiveData<ApiResponse> cancelOrder(int orderId){
         RequestToken requestToken  = new RequestToken(orderId);

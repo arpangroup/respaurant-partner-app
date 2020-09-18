@@ -55,66 +55,66 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tag_all"
-                        android:layout_width="wrap_content"
+                    <RadioGroup
+                        android:id="@+id/toolbar_radiogroup"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="16dp"
-                        android:background="@drawable/rounded_red_border"
-                        android:fontFamily="@font/sfpro_text_semibold"
-                        android:letterSpacing="0.0525"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:text="All (0)"
-                        android:textColor="@color/holo_red_dark"
-                        android:textSize="11.3dp" />
-                    <TextView
-                        android:id="@+id/tag_preparing"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="16dp"
-                        android:background="@drawable/rounded_gray_border"
-                        android:fontFamily="@font/sfpro_text_semibold"
-                        android:letterSpacing="0.0525"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:text="Preparing (0)"
-                        android:textColor="@color/black"
-                        android:textSize="11.3dp" />
-                    <TextView
-                        android:id="@+id/tag_ready"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="16dp"
-                        android:background="@drawable/rounded_gray_border"
-                        android:fontFamily="@font/sfpro_text_semibold"
-                        android:letterSpacing="0.0525"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:text="Ready (0)"
-                        android:textColor="@color/black"
-                        android:textSize="11.3dp" />
-                    <TextView
-                        android:id="@+id/tag_picked"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="16dp"
-                        android:background="@drawable/rounded_gray_border"
-                        android:fontFamily="@font/sfpro_text_semibold"
-                        android:letterSpacing="0.0525"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:text="PickedUp (0)"
-                        android:textColor="@color/black"
-                        android:textSize="11.3dp" />
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+                        <RadioButton
+                            android:id="@+id/tag_all"
+                            android:checked="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/radio_button_ui"
+                            android:textColor="@drawable/radio_text_selector"
+                            android:button="@null"
+                            android:paddingLeft="24dp"
+                            android:paddingRight="24dp"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:layout_marginRight="16dp"
+                            android:text="All (0)"/>
+                        <RadioButton
+                            android:id="@+id/tag_preparing"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/radio_button_ui"
+                            android:textColor="@drawable/radio_text_selector"
+                            android:button="@null"
+                            android:paddingLeft="24dp"
+                            android:paddingRight="24dp"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:layout_marginRight="16dp"
+                            android:text="Preparing (0)"/>
+                        <RadioButton
+                            android:id="@+id/tag_ready"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/radio_button_ui"
+                            android:textColor="@drawable/radio_text_selector"
+                            android:button="@null"
+                            android:paddingLeft="24dp"
+                            android:paddingRight="24dp"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:layout_marginRight="16dp"
+                            android:text="Ready (0)"/>
+                        <RadioButton
+                            android:id="@+id/tag_picked"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/radio_button_ui"
+                            android:textColor="@drawable/radio_text_selector"
+                            android:button="@null"
+                            android:paddingLeft="24dp"
+                            android:paddingRight="24dp"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:layout_marginRight="16dp"
+                            android:text="PickedUp (0)"/>
+                    </RadioGroup>
                 </LinearLayout>
 
             </HorizontalScrollView>

@@ -26,7 +26,7 @@ public class OrderRepository {
     private final String TAG = this.getClass().getSimpleName();
     private static OrderRepository orderRepository;
     private MutableLiveData<Boolean> isLoading=new MutableLiveData<>();
-    private MutableLiveData<List<Order>> mutableAcceptedOrders;
+    private MutableLiveData<List<Order>> mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<List<String>> mutableCancelOrders;
     private MutableLiveData<Dashboard> mutableDashboard;
     MutableLiveData<List<Order>> mutableOrderList;
@@ -61,8 +61,8 @@ public class OrderRepository {
         }
         return mutableAcceptedOrders;
     }
-    public LiveData<ApiResponse> acceptOrder(RequestToken requestToken){
-        return acceptOrderApi(requestToken);
+    public LiveData<ApiResponse> acceptOrder(RequestToken requestToken, Order order){
+        return acceptOrderApi(requestToken, order);
     }
 
 
@@ -160,7 +160,7 @@ public class OrderRepository {
             }
         });
     }
-    private LiveData<ApiResponse> acceptOrderApi(RequestToken requestToken){
+    private LiveData<ApiResponse> acceptOrderApi(RequestToken requestToken, Order order){
         MutableLiveData<ApiResponse> apiResponseMutableLiveData = new MutableLiveData<>();
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
@@ -170,13 +170,12 @@ public class OrderRepository {
                 isLoading.setValue(false);
                 ApiResponse apiResponse = response.body();
 
-                // Update accepted orders list
-                if(mutableAcceptedOrders == null) mutableAcceptedOrders = new MutableLiveData<>();
-//                if(mutableAcceptedOrders.getValue() != null){
-//                    List<String> acceptedOrderList = new ArrayList<>(mutableAcceptedOrders.getValue());
-//                    acceptedOrderList.add(String.valueOf(requestToken.getOrder_id()));
-//                    mutableAcceptedOrders.setValue(acceptedOrderList);
-//                }
+                // Update accepted orders list:
+                List<Order> acceptedOrderList = mutableAcceptedOrders.getValue();
+                if(mutableAcceptedOrders == null) mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
+                if (acceptedOrderList == null) acceptedOrderList = new ArrayList<>();
+                acceptedOrderList.add(order);
+                mutableAcceptedOrders.postValue(acceptedOrderList);
 
                 apiResponseMutableLiveData.setValue(apiResponse);
             }

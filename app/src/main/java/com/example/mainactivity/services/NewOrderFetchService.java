@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -223,8 +224,8 @@ public class NewOrderFetchService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
             Intent fullScreenIntent = new Intent(this, AcceptOrderActivity.class);
-//            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
-//            taskStackBuilder.addNextIntentWithParentStack(fullScreenIntent);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
+            taskStackBuilder.addNextIntentWithParentStack(fullScreenIntent);
             //fullScreenIntent.putExtra(Constants.NOTIFICATION_IDS, notificationId);
             fullScreenIntent.putExtra(INTENT_EXTRA_OUTPUT_NEW_ORDERS, orders);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -244,6 +245,8 @@ public class NewOrderFetchService extends Service {
             notificationManager.notify(App.NOTIFICATION_ID_NEW_ORDER, notification);
         }else{
             Intent intent = new Intent(this, AcceptOrderActivity.class);
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(getApplicationContext());
+            taskStackBuilder.addNextIntentWithParentStack(intent);
             intent.putExtra(INTENT_EXTRA_OUTPUT_NEW_ORDERS, orders);
             //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
