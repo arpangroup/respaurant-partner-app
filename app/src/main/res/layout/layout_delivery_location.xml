@@ -20,9 +20,14 @@
             android:layoutDirection="rtl"
             android:padding="16dp"
             android:orientation="horizontal">
-            <ImageView
+            <Button
+                android:id="@+id/close_dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/transferent"
+                android:text="X"
+                android:layout_marginRight="-16dp"
+                android:textSize="24sp"
                 android:src="@drawable/ic_baseline_close_24"/>
             <TextView
                 android:layout_width="match_parent"
