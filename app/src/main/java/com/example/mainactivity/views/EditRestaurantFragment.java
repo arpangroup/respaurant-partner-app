@@ -112,7 +112,8 @@ public class EditRestaurantFragment extends Fragment {
         });
 
         mBinding.businessDetails.layoutAddress.setOnClickListener(view -> {
-            Toast.makeText(requireActivity(), "CLICKED: ADDRESS", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(requireActivity(), LocationActivity.class);
+            requireActivity().startActivity(intent);
         });
     }
 

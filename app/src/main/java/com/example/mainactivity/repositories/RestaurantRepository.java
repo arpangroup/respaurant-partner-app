@@ -10,11 +10,13 @@ import com.example.mainactivity.models.request.DisableCategoryRequest;
 import com.example.mainactivity.models.request.DisableItemRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
+import com.example.mainactivity.models.response.Dashboard;
 
 import java.util.List;
 
 public interface RestaurantRepository {
     public LiveData<Boolean> getIsLoading();
+    public LiveData<Dashboard> getDashboard(int userId);
     public LiveData<Restaurant> getRestaurantDetails(int userId);
     public LiveData<List<ItemCategory>> getRestaurantItems(int userId);
     public LiveData<ApiResponse> toggleMenuItem(DisableItemRequest disableItemRequest);

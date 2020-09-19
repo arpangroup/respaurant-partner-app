@@ -77,10 +77,6 @@ public class OrderViewModel extends ViewModel {
         LiveData<Boolean> isLoading=orderRepository.getIsLoading();
         return isLoading;
     }
-    public LiveData<Dashboard> getDashboard(){
-         int userId = new RequestToken().getUserId();
-         return orderRepository.getDashboard(userId);
-    }
 
     public void loadAllAcceptedOrders(){
         orderRepository.loadAcceptedOrders();

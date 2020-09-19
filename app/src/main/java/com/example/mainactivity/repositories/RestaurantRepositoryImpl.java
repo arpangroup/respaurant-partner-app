@@ -14,6 +14,7 @@ import com.example.mainactivity.models.request.DisableCategoryRequest;
 import com.example.mainactivity.models.request.DisableItemRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
+import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
 import com.example.mainactivity.sharedpref.UserSession;
 import com.google.gson.Gson;
@@ -33,6 +34,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     private MutableLiveData<Boolean> isLoading=new MutableLiveData<>();
     private MutableLiveData<List<ItemCategory>> mutableMenuItems;
     private MutableLiveData<Restaurant> mutableRestaurant;
+    private MutableLiveData<Dashboard> mutableDashboard;
 
 
     public static RestaurantRepositoryImpl getInstance(){
@@ -46,6 +48,14 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     @Override
     public LiveData<Boolean> getIsLoading(){
         return isLoading;
+    }
+
+    public LiveData<Dashboard> getDashboard(int userId){
+        if(mutableDashboard == null){
+            mutableDashboard = new MutableLiveData<>();
+        }
+        loadDashboard(userId);
+        return mutableDashboard;
     }
 
     @Override
@@ -89,6 +99,25 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
 
 
     /*========================================================API_CALLS==============================================*/
+    private void loadDashboard(int userId){
+        Log.d(TAG, "Inside loadDashboard()......");
+        Log.d(TAG, "UserId: "+userId);
+        ApiInterface apiInterface = ApiService.getApiService();
+        isLoading.setValue(true);
+        apiInterface.getDashboard(userId).enqueue(new Callback<Dashboard>() {
+            @Override
+            public void onResponse(Call<Dashboard> call, Response<Dashboard> response) {
+                isLoading.setValue(false);
+                mutableDashboard.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Dashboard> call, Throwable t) {
+                isLoading.setValue(false);
+                Log.d(TAG, "FAIL:"+t);
+            }
+        });
+    }
     private void loadRestaurant(int userId){
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);

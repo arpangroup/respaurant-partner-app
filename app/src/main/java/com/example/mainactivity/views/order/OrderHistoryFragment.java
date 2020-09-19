@@ -53,10 +53,10 @@ public class OrderHistoryFragment extends Fragment {
         mBinding.orderRecycler.setAdapter(orderHistoryAdapter);
 
 
-        orderViewModel.getDashboard().observe(requireActivity(), dashboard -> {
-            mDashboard = dashboard;
-            orderViewModel.setFilterOrders(dashboard.getAllOrders());
-        });
+//        orderViewModel.getDashboard().observe(requireActivity(), dashboard -> {
+//            mDashboard = dashboard;
+//            orderViewModel.setFilterOrders(dashboard.getAllOrders());
+//        });
 
 //        orderViewModel.getAllOrders().observe(getViewLifecycleOwner(), orders -> {
 //            orderHistoryAdapter.submitList(orders);

@@ -31,7 +31,6 @@ public class OrderRepository {
     private MutableLiveData<Boolean> isLoading=new MutableLiveData<>();
     private MutableLiveData<List<Order>> mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<List<String>> mutableCancelOrders;
-    private MutableLiveData<Dashboard> mutableDashboard;
     MutableLiveData<List<Order>> mutableNewOrderList;
 
     public static OrderRepository getInstance(){
@@ -43,13 +42,6 @@ public class OrderRepository {
 
     public LiveData<Boolean> getIsLoading(){
         return isLoading;
-    }
-    public LiveData<Dashboard> getDashboard(int userId){
-        if(mutableDashboard == null){
-            mutableDashboard = new MutableLiveData<>();
-        }
-        loadDashboard(userId);
-        return mutableDashboard;
     }
 
     public void loadAcceptedOrders(){
@@ -97,25 +89,6 @@ public class OrderRepository {
 
 
     /*========================================================API_CALLS==============================================*/
-    private void loadDashboard(int userId){
-        Log.d(TAG, "Inside loadDashboard()......");
-        Log.d(TAG, "UserId: "+userId);
-        ApiInterface apiInterface = ApiService.getApiService();
-        isLoading.setValue(true);
-        apiInterface.getDashboard(userId).enqueue(new Callback<Dashboard>() {
-            @Override
-            public void onResponse(Call<Dashboard> call, Response<Dashboard> response) {
-                isLoading.setValue(false);
-                mutableDashboard.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<Dashboard> call, Throwable t) {
-                isLoading.setValue(false);
-                Log.d(TAG, "FAIL:"+t);
-            }
-        });
-    }
     private void loadNewOrdersApi(NewOrderRequest newOrderRequest){
         Log.d(TAG,  "Inside loadNewOrdersApi().....");
         Log.d(TAG, "REQUEST: "+new Gson().toJson(newOrderRequest));

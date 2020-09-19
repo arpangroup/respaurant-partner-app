@@ -11,6 +11,7 @@ import com.example.mainactivity.models.request.DisableCategoryRequest;
 import com.example.mainactivity.models.request.DisableItemRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
+import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.repositories.RestaurantRepository;
 import com.example.mainactivity.repositories.RestaurantRepositoryImpl;
 
@@ -30,6 +31,11 @@ public class RestaurantViewModel extends ViewModel {
             return;
         }
         restaurantRepository = RestaurantRepositoryImpl.getInstance();
+    }
+
+    public LiveData<Dashboard> getDashboard(){
+        int userId = new RequestToken().getUserId();
+        return restaurantRepository.getDashboard(userId);
     }
 
     public LiveData<Boolean> getIsLoading(){
