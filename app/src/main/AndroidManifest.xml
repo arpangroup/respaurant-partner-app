@@ -28,7 +28,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.LocationActivity"></activity>
+        <activity android:name=".views.location.LocationActivity"></activity>
         <activity
             android:name=".views.order.AcceptOrderActivity"
             android:launchMode="singleTop"

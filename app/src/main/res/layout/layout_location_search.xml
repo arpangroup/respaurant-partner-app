@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="600dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/white"
     android:layout_gravity="bottom"
-    android:elevation="12dp"
-    android:orientation="vertical">
+    android:elevation="12dp">
+
     <LinearLayout
-        android:id="@+id/layout_address"
+        android:id="@+id/layout_search"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_height="match_parent"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layoutDirection="rtl"
-            android:padding="16dp"
             android:orientation="horizontal">
-            <Button
-                android:id="@+id/close_dialog"
+            <ImageButton
+                android:id="@+id/btnClose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/transferent"
-                android:text="X"
-                android:layout_marginRight="-16dp"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:textSize="24sp"
+                android:scaleType="fitCenter"
+                android:background="@color/transferent"
                 android:src="@drawable/ic_baseline_close_24"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="16dp"
                 android:fontFamily="@font/sfpro_display_bold"
                 android:text="Search location"
                 android:textColor="@color/black"
@@ -42,7 +45,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/rectangle_gray_border"
@@ -79,10 +81,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:padding="16dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -111,14 +113,14 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="20.5dp"
-            android:background="@color/gray" />
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:alpha="0.8"
+            android:background="#B4A5A7AC" />
 
 
         <LinearLayout
-            android:id="@+id/location_linear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25.2dp"
@@ -136,7 +138,6 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/location_recycle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25.3dp"

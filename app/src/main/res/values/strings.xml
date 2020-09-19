@@ -252,6 +252,12 @@
     <string name="permission_denied_location">Pureeats uses this permission to detect your current location and show you great restaurants near you. It also enables you to get turn-by-turn driving directions to restaurants. Are you sure you want to deny this permission?</string>
     <string name="permission_denied_location_never_show_again">It looks like you have turned off permissions required for this feature. It can be enabled under Phone Settings > Apps > PureEats > Permissions </string>
     <string name="RUPEE_SYMBOL">₹</string>
+    <string name="complete_address">Complete Address *</string>
+    <string name="complete_address_hint">House no. / Flat no. / Floor / Building</string>
+    <string name="floor_optional">Floor (Optional)</string>
+    <string name="floor_optional_hint">e.g. Ground Floor (Optional)</string>
+    <string name="how_to_reach_optional">How to reach (Optional)</string>
+    <string name="how_to_reach_optional_hint">Landmark  Entry gate  Street</string>
     <string-array name="country">
         <item>India</item>
         <item>Bangladesh</item>

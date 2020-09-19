@@ -21,14 +21,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.mainactivity.R;
-import com.example.mainactivity.adapters.MenuItemAdapter;
 import com.example.mainactivity.commons.Constants;
-import com.example.mainactivity.databinding.FragmentEditCategoryBinding;
 import com.example.mainactivity.databinding.FragmentEditRestaurantBinding;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
+import com.example.mainactivity.views.location.LocationActivity;
 import com.squareup.picasso.Picasso;
 
 import static android.app.Activity.RESULT_OK;
