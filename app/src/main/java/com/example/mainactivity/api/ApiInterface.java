@@ -108,5 +108,8 @@ public interface ApiInterface {
 
 
 
+    @POST("/api/coordinate-to-address")
+    Call<String> coordinateToAddress(@Query("lat") String lat, @Query("lng") String lng);
+
 
 }

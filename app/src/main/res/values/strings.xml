@@ -257,7 +257,7 @@
     <string name="floor_optional">Floor (Optional)</string>
     <string name="floor_optional_hint">e.g. Ground Floor (Optional)</string>
     <string name="how_to_reach_optional">How to reach (Optional)</string>
-    <string name="how_to_reach_optional_hint">Landmark  Entry gate  Street</string>
+    <string name="how_to_reach_optional_hint">Landmark / Entry gate / Street</string>
     <string-array name="country">
         <item>India</item>
         <item>Bangladesh</item>
