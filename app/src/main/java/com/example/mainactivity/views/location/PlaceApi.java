@@ -22,7 +22,7 @@ public class PlaceApi {
         this.API_KEY = "AIzaSyDHOCpobHOC5KsYSoIMV5l7i6s-iQxCIXA";
     }
 
-    public ArrayList<String> autoComplete(String input){
+    public ArrayList<String> search(String input){
         ArrayList<String> arrayList=new ArrayList();
         HttpURLConnection connection=null;
         StringBuilder jsonResult=new StringBuilder();
@@ -31,6 +31,8 @@ public class PlaceApi {
             sb.append("input="+input);
             sb.append("&key="+API_KEY);
             URL url=new URL(sb.toString());
+           System.out.println("============SEARCH=====================");
+           System.out.println(url);
             connection=(HttpURLConnection)url.openConnection();
             InputStreamReader inputStreamReader=new InputStreamReader(connection.getInputStream());
 

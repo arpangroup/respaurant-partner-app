@@ -3,18 +3,26 @@ package com.example.mainactivity.views.location;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -23,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.commons.LocationSearchDialogListener;
@@ -32,12 +41,23 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 public class LocationSearchDialog extends BottomSheetDialogFragment {
     private final String TAG = this.getClass().getSimpleName();
     private LocationSearchDialogListener mListener;
 
     private AppBarLayout appBarLayout;
     private LinearLayout linearLayout;
+
+    LinearLayout layout_location_list;
+    RecyclerView search_recycler;
+    List<Address> addressList = new ArrayList<>();
+    PlaceAutoSuggestAdapter searchAdapter;
+    private EditText txt_search;
 
     @NonNull
     @Override
@@ -93,15 +113,65 @@ public class LocationSearchDialog extends BottomSheetDialogFragment {
         View rootView = inflater.inflate(R.layout.layout_location_search, container, false);
 
         LinearLayout layoutSearch = rootView.findViewById(R.id.layout_search);
-
         ScreenUtils screenUtils = new ScreenUtils(requireActivity());
         layoutSearch.setMinimumHeight(screenUtils.getHeight());
+
+        Geocoder geocoder = new Geocoder(getActivity());
+        layout_location_list =  rootView.findViewById(R.id.layout_location_list);
+        search_recycler = rootView.findViewById(R.id.search_recycler);
+        searchAdapter = new PlaceAutoSuggestAdapter(requireActivity(), new ArrayList<>());
+        search_recycler.setAdapter(searchAdapter);
+
+        hideSearchResult();
+
+        txt_search = rootView.findViewById(R.id.txt_search);
+        txt_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String searchText = editable.toString().trim().toLowerCase();
+                if(searchText.length() < 1) hideSearchResult();
+                else if(searchText.length() > 2){
+                    Log.d(TAG, "Searching...............");
+                    try {
+                        addressList = geocoder.getFromLocationName(searchText, 100);
+                        Log.d(TAG, "RESULT: "+addressList);
+                        searchAdapter.updateList(addressList);
+                        showSearchResult();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    //searchAdapter.updateList(new ArrayList<>());
+                    //searchAdapter.notifyDataSetChanged();
+                }
+
+            }
+        });
 
 
         ImageButton btnClose = rootView.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(view -> dismiss());
 
         return rootView;
+    }
+
+    private void showSearchResult(){
+        search_recycler.setVisibility(View.VISIBLE);
+        layout_location_list.setVisibility(View.GONE);
+    }
+
+    private void hideSearchResult(){
+        search_recycler.setVisibility(View.GONE);
+        layout_location_list.setVisibility(View.VISIBLE);
     }
 
     @Override
