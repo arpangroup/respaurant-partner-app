@@ -288,7 +288,6 @@ public class FormatDate {
         return durationInMills;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static Long getTimeFromDateString(String dateStr){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 

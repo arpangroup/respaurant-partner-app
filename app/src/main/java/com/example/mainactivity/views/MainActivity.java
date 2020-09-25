@@ -46,31 +46,12 @@ public class MainActivity extends AppCompatActivity {
 
     Dashboard mDashboard = null;
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try{
-                String ordersJson = intent.getStringExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS);
-                System.out.println("==================RECEIVED==========================");
-                System.out.println(ordersJson);
-                System.out.println("====================================================");
-                Order order = new Gson().fromJson(ordersJson, Order.class);
-                //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, " New order received", Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
 
-                boolean isStatusChanged = orderViewModel.assignDeliveryPerson(order, order.getDeliveryDetails());
-            }catch (Exception e){
-                e.printStackTrace();
-                Toast.makeText(context, "RECEIVER: EXCEPTION", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 
     @Override
     protected void onStart() {
         super.onStart();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(MessagingService.MESSAGE_ORDER_STATUS));
+        //LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(MessagingService.MESSAGE_ORDER_STATUS));
     }
 
     @Override
@@ -124,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
+        //LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
     }
 
     private void requestPermission() {

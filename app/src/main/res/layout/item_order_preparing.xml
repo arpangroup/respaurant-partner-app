@@ -36,13 +36,26 @@
                     android:padding="16dp"
                     android:layoutDirection="rtl">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{order.orderTime}"
-                        android:hint="10:23 pm"
-                        android:textStyle="bold"
-                        android:textSize="18sp" />
+                   <LinearLayout
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical">
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="@{order.orderTime}"
+                           android:hint="10:23 pm"
+                           android:textStyle="bold"
+                           android:textSize="18sp" />
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="@{order.id + ``}"
+                           android:hint="ID"
+                           android:textColor="@color/red"
+                           android:textStyle="bold"
+                           android:textSize="18sp" />
+                   </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"

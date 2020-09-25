@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,6 +31,8 @@ import com.example.mainactivity.views.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AcceptOrderActivity extends AppCompatActivity implements OrderAcceptListAdapter.OrderAcceptInterface{
@@ -59,9 +63,8 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                 System.out.println("====================================================");
                 List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
                 //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, orders.size() +" New order received", Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
-
+                //Toast.makeText(context, orders.size() +" New order received", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
                 orderViewModel.setNewOrder(orders);
                 setupMediaPlayer();
                 ACTIVE = true;
@@ -103,6 +106,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Log.d(TAG, "Inside onCreate()..........................");
         //setContentView(R.layout.activity_accept_order);
         mBinding = ActivityAcceptOrderBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
@@ -146,8 +150,8 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
         orderViewModel.getNewOrders().observe(this, orders -> {
             if(orders.size() == 0){
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
+                //startActivity(new Intent(this, MainActivity.class));
+                //finish();
             }
             orderAcceptListAdapter.submitList(orders);
             mBinding.toolbar.title.setText(orders.size() +" New Order");

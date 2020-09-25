@@ -84,8 +84,26 @@ public class OrderRepository {
         ReadyOrderRequest readyOrderRequest = new ReadyOrderRequest(orderId);
         return makeOrderReadyApi(readyOrderRequest);
     }
-    public boolean assignDeliveryPerson(Order order, DeliveryGuy deliveryGuy){
-        // Update accepted orders list:
+//    public boolean assignDeliveryPerson(Order order, DeliveryGuy deliveryGuy){
+//        // Update accepted orders list:
+//        Log.d(TAG, "Inside assignDeliveryPerson...");
+//       if(mutableAcceptedOrders == null) return false;
+//       List<Order> orderList = new ArrayList<>(mutableAcceptedOrders.getValue());
+//       Log.d(TAG, "ACCEPTED_ORDER_SIZE: "+orderList.size());
+//       Log.d(TAG, "ACCEPTED_ORDERS: "+ orderList);
+//
+//       orderList.forEach(orderObj ->{
+//           if(orderObj.getId() == order.getId()){
+//               orderObj.setDeliveryDetails(deliveryGuy);
+//               orderObj.setOrderStatusId(order.getOrderStatusId());
+//               orderList.set(orderList.indexOf(orderObj), orderObj);
+//           }
+//       });
+//        mutableAcceptedOrders.setValue(orderList);
+//        return true;
+//    }
+    public boolean setStatusChanged(Order order){
+        //Update accepted orders list:
         Log.d(TAG, "Inside assignDeliveryPerson...");
        if(mutableAcceptedOrders == null) return false;
        List<Order> orderList = new ArrayList<>(mutableAcceptedOrders.getValue());
@@ -94,7 +112,7 @@ public class OrderRepository {
 
        orderList.forEach(orderObj ->{
            if(orderObj.getId() == order.getId()){
-               orderObj.setDeliveryDetails(deliveryGuy);
+               orderObj.setDeliveryDetails(order.getDeliveryDetails());
                orderObj.setOrderStatusId(order.getOrderStatusId());
                orderList.set(orderList.indexOf(orderObj), orderObj);
            }

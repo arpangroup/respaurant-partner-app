@@ -46,8 +46,10 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
 
         holder.itemOrderPreparingBinding.executePendingBindings();
 
-        if(order.getOrderStatusId() == 3 || order.getOrderStatusId() == 4){
-            Picasso.get().load(Constants.WEBSITE_URL + order.getDeliveryDetails().getPhoto()).into(holder.itemOrderPreparingBinding.imgDeliveryGuy);
+        if((order.getDeliveryType() == 1)&&(order.getOrderStatusId() >= 3)){
+            if(order.getDeliveryDetails() != null){
+                Picasso.get().load(Constants.WEBSITE_URL + order.getDeliveryDetails().getPhoto()).into(holder.itemOrderPreparingBinding.imgDeliveryGuy);
+            }
         }
 
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+05:30"));

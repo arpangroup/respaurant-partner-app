@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -62,10 +64,11 @@ public class MessagingService extends FirebaseMessagingService {
                 break;
             case API_WITHOUT_NOTIFICATION:
                 if(remoteMessage.getData().get("order") != null){
+                    Log.d(TAG, "New Order Arrive.................................");
                     String orderJson = remoteMessage.getData().get("order");
                     Order order = new Gson().fromJson(orderJson, Order.class);
                     sendOrderNotification(order.getOrderStatusId(), order);
-                    Log.d(TAG, "ID: "+order.getId());
+                    Log.d(TAG, "ORDER_ID: "+order.getId() + ", ORDER_STATUS_ID: "+order.getOrderStatusId() +", UNIQUE_ID: "+order.getUniqueOrderId());
                 }
                 break;
             case UNKNOWN_SOURCE:
@@ -78,23 +81,25 @@ public class MessagingService extends FirebaseMessagingService {
         String orderJson = null;
         switch (orderStatusId){
             case 1:
+                Log.d(TAG, "Notification for new Order");
                 List<Order> orders = Collections.singletonList(order);
                 orderJson = new Gson().toJson(orders);
-                //sendMessageToNewOrderActivity(orderJson);
-                //openNewOrderActivityDialog(orderJson);
-                if(AcceptOrderActivity.ACTIVE){
-                    Log.d(TAG, "Sending Broadcat Message......");
-                    sendMessageToNewOrderActivity(orderJson);
-                }else{
-                    Log.d(TAG, "Opening new Activity..........");
-                    openNewOrderActivityDialog(orderJson);
-                }
+                sendMessageToNewOrderActivity(orderJson);
+                openNewOrderActivityDialog(orderJson);
+//                if(AcceptOrderActivity.ACTIVE){
+//                    Log.d(TAG, "Sending Broadcat Message......");
+//                    sendMessageToNewOrderActivity(orderJson);
+//                }else{
+//                    Log.d(TAG, "Opening new Activity..........");
+//                    openNewOrderActivityDialog(orderJson);
+//                }
                 break;
             case 2:
                 //Accepted
                 break;
             case 3:
             case 4:
+                Log.d(TAG, "Notification for new OrderStatusChange");
                 //Order is pickedUp and DeliveryGuy is on the way to deliver order
                 //Delivery Guy Assigned
                 Log.d(TAG, "RECEIVED_DELIVERY_GUY: "+order.getDeliveryDetails());
@@ -178,9 +183,14 @@ public class MessagingService extends FirebaseMessagingService {
     }
     private void sendMessageToNewOrderActivity(String orders){
         Intent intent = new Intent(NewOrderFetchService.NEW_ORDER_FETCH_SERVICE_MESSAGE);
-        Log.d(TAG, "SENDING: "+orders);
         intent.putExtra("INTENT_EXTRA_OUTPUT_NEW_ORDERS", orders);
         // local broadcast receiver
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "SENDING: "+orders);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 
     }

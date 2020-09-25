@@ -111,7 +111,10 @@ public class OrderViewModel extends ViewModel {
         return orderRepository.makeOrderAsReady(orderId);
     }
 
-    public boolean assignDeliveryPerson(Order order, DeliveryGuy  deliveryGuy){
-        return orderRepository.assignDeliveryPerson(order, deliveryGuy);
+//    public boolean assignDeliveryPerson(Order order, DeliveryGuy  deliveryGuy){
+//        return orderRepository.assignDeliveryPerson(order, deliveryGuy);
+//    }
+    public boolean setStatusChange(Order order){
+        return orderRepository.setStatusChanged(order);
     }
 }
