@@ -50,11 +50,19 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
         return isLoading;
     }
 
-    public LiveData<Dashboard> getDashboard(int userId){
+    @Override
+    public void loadDashboard(int userId){
+        if(mutableDashboard == null){
+            mutableDashboard = new MutableLiveData<>();
+            loadDashboardApi(userId);
+        }
+    }
+
+    @Override
+    public LiveData<Dashboard> getDashboard(){
         if(mutableDashboard == null){
             mutableDashboard = new MutableLiveData<>();
         }
-        loadDashboard(userId);
         return mutableDashboard;
     }
 
@@ -99,7 +107,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
 
 
     /*========================================================API_CALLS==============================================*/
-    private void loadDashboard(int userId){
+    private void loadDashboardApi(int userId){
         Log.d(TAG, "Inside loadDashboard()......");
         Log.d(TAG, "UserId: "+userId);
         ApiInterface apiInterface = ApiService.getApiService();
@@ -107,6 +115,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
         apiInterface.getDashboard(userId).enqueue(new Callback<Dashboard>() {
             @Override
             public void onResponse(Call<Dashboard> call, Response<Dashboard> response) {
+                Log.d(TAG, "RESPONSE: "+response);
+                Log.d(TAG, "RESPONSE: "+response);
                 isLoading.setValue(false);
                 mutableDashboard.setValue(response.body());
             }

@@ -33,9 +33,12 @@ public class RestaurantViewModel extends ViewModel {
         restaurantRepository = RestaurantRepositoryImpl.getInstance();
     }
 
-    public LiveData<Dashboard> getDashboard(){
+    public void loadDashboard(){
         int userId = new RequestToken().getUserId();
-        return restaurantRepository.getDashboard(userId);
+        restaurantRepository.loadDashboard(userId);
+    }
+    public LiveData<Dashboard> getDashboard(){
+        return restaurantRepository.getDashboard();
     }
 
     public LiveData<Boolean> getIsLoading(){

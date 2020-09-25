@@ -39,7 +39,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{order.orderDate}"
+                        android:text="@{order.orderTime}"
                         android:hint="10:23 pm"
                         android:textStyle="bold"
                         android:textSize="18sp" />
@@ -325,7 +325,7 @@
                         android:layout_marginRight="16dp"
                         android:background="@color/lightsilver" />
                     <RelativeLayout
-                        android:visibility="@{(order.orderStatusId == 3 || order.orderStatusId == 4 || order.orderStatusId == 7)&amp;(order.deliveryType ==1) ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{(order.orderStatusId == 3 || order.orderStatusId == 4 || order.orderStatusId == 7)&amp;(order.deliveryType ==1  &amp; order.deliveryDetails !=null) ? View.VISIBLE : View.GONE}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"

@@ -31,8 +31,9 @@ public class FormatDate {
         }
         return dateStr;
     }
+
     public static String getTime(String timeStr){
-        DateFormat dateFormat = new SimpleDateFormat("HH.mm aa");
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm aa");
         String dateString = dateFormat.format(timeStr).toString();
         return dateString;
     }
@@ -50,6 +51,24 @@ public class FormatDate {
 
             int monthIndex = Integer.parseInt(month) - 1;
             String str = hour +":"+minute +" "+am;// 12:00 PM
+            return str;
+        }
+        return dateStr;
+    }
+    public static String format3(String dateStr){
+        String[] dateParts = getDateParts(dateStr);
+        if(dateParts.length >  0){
+            String day    = dateParts[0];
+            String month  = dateParts[1];
+            String year   = dateParts[2];
+            String hour   = dateParts[3];
+            String minute = dateParts[4];
+            String second = dateParts[5];
+            String am     = dateParts[6];
+            if(month.length() == 1) month +="0"+month;
+
+            int monthIndex = Integer.parseInt(month) - 1;
+            String str = day +"/"+month +"/"+year;// 22/09/2020
             return str;
         }
         return dateStr;

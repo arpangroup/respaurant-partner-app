@@ -97,6 +97,7 @@ public class MessagingService extends FirebaseMessagingService {
             case 4:
                 //Order is pickedUp and DeliveryGuy is on the way to deliver order
                 //Delivery Guy Assigned
+                Log.d(TAG, "RECEIVED_DELIVERY_GUY: "+order.getDeliveryDetails());
                 orderJson = new Gson().toJson(order);
                 sendOrderStatusChangedMessage(orderJson);
                 break;

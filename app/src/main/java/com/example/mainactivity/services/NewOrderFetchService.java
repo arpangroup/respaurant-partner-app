@@ -53,7 +53,7 @@ public class NewOrderFetchService extends Service {
     boolean isLoading = false;
     private static final long ORDER_FETCH_INTERVAL = 1000 * 5;
 
-    private PowerManager.WakeLock wakeLock = null;
+    private PowerManager.WakeLock wakeLock;
     private boolean isServiceStarted = false;
 
     @Override

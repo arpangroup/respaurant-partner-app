@@ -56,6 +56,8 @@ public class EditCategoryFragment extends Fragment implements ItemCategoryAdapte
         // Initialize NavController
         navController = Navigation.findNavController(view);
 
+        mBinding.toolbar.back.setOnClickListener(view1 -> navController.popBackStack());
+
         // Initialize RecyclerView
         menuItemAdapter = new MenuItemAdapter(this);
         restaurantViewModel.getSelectedCategory().observe(getViewLifecycleOwner(), itemCategory -> {

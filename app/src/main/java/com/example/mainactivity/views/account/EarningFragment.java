@@ -53,6 +53,8 @@ public class EarningFragment extends Fragment {
         mBinding.toolbar.title.setText("Business Insights");
         mBinding.toolbar.more.setVisibility(View.GONE);
 
+        mBinding.toolbar.back.setOnClickListener(view -> navController.popBackStack());
+
         restaurantViewModel.getIsLoading().observe(requireActivity(), isLoading -> {
             if(isLoading)mBinding.layoutProgress.setVisibility(View.VISIBLE);
             else mBinding.layoutProgress.setVisibility(View.GONE);

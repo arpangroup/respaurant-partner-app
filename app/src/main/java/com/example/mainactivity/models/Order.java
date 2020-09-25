@@ -95,11 +95,44 @@ public class Order {
         }
     }
 
-    public String getOrderDate(){
+    public String getOrderTime(){
         if(this.createdAt == null) return "";
         return FormatDate.format2(this.createdAt);
     }
+    public String getOrderDate(){
+        if(this.createdAt == null) return "";
+        return FormatDate.format3(this.createdAt);
+    }
     public String getAcceptedOrderStatus(){
+        String statusStr = "";
+        switch (this.orderStatusId){
+            case 1:
+                statusStr = "PLACED";//ORDER-PLACED
+                break;
+            case 2:
+                //ORDER_RECEIVED: i.e, restaurant preparing the order
+                statusStr = "PREPARING"; //ORDER_RECEIVED
+                break;
+            case 3:
+                statusStr = "DELIVERY ASSIGNED";//DELIVERY ASSIGNED
+                break;
+            case 4:
+                statusStr = "PICKED-UP";//ON_THE_WAY
+                break;
+            case 5:
+                statusStr = "DELIVERED";
+                break;
+            case 6:
+                statusStr = "CANCELLED";
+                break;
+            case 7:
+                statusStr = "READY";
+                break;
+        }
+        return statusStr;
+    }
+
+    public String getHistoryOrderStatus(){
         String statusStr = "";
         switch (this.orderStatusId){
             case 1:
@@ -133,7 +166,8 @@ public class Order {
         @Override
         public boolean areItemsTheSame(@NonNull Order oldItem, @NonNull Order newItem) {
             //return oldItem.getId() == newItem.getId() && oldItem.getRestaurant().getDeliveryTime().equals(newItem.getRestaurant().getDeliveryTime());
-            return oldItem.getId() == newItem.getId() ;
+            //return oldItem.getId() == newItem.getId() ;
+            return oldItem.getId() == newItem.getId() && oldItem.getOrderStatusId() == newItem.getOrderStatusId();
         }
 
         @Override

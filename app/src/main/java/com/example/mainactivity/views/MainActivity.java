@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -17,14 +20,18 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ActivityMainBinding;
+import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.response.Dashboard;
+import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.views.order.AcceptOrderActivity;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +46,32 @@ public class MainActivity extends AppCompatActivity {
 
     Dashboard mDashboard = null;
 
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                String ordersJson = intent.getStringExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS);
+                System.out.println("==================RECEIVED==========================");
+                System.out.println(ordersJson);
+                System.out.println("====================================================");
+                Order order = new Gson().fromJson(ordersJson, Order.class);
+                //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, " New order received", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
+
+                boolean isStatusChanged = orderViewModel.assignDeliveryPerson(order, order.getDeliveryDetails());
+            }catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(context, "RECEIVER: EXCEPTION", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(MessagingService.MESSAGE_ORDER_STATUS));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         orderViewModel.loadAllAcceptedOrders();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
     }
 
     private void requestPermission() {

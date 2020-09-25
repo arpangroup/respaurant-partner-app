@@ -78,6 +78,8 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         initClicks();
         initRecyclerView();
 
+        restaurantViewModel.loadDashboard();
+
 
         isRestaurantLoaded.observe(requireActivity(), isLoaded -> {
             if(isLoaded){

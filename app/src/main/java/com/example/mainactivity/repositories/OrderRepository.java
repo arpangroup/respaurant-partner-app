@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
+import com.example.mainactivity.models.DeliveryGuy;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.User;
 import com.example.mainactivity.models.request.AcceptOrderRequest;
@@ -83,6 +84,24 @@ public class OrderRepository {
         ReadyOrderRequest readyOrderRequest = new ReadyOrderRequest(orderId);
         return makeOrderReadyApi(readyOrderRequest);
     }
+    public boolean assignDeliveryPerson(Order order, DeliveryGuy deliveryGuy){
+        // Update accepted orders list:
+        Log.d(TAG, "Inside assignDeliveryPerson...");
+       if(mutableAcceptedOrders == null) return false;
+       List<Order> orderList = new ArrayList<>(mutableAcceptedOrders.getValue());
+       Log.d(TAG, "ACCEPTED_ORDER_SIZE: "+orderList.size());
+       Log.d(TAG, "ACCEPTED_ORDERS: "+ orderList);
+
+       orderList.forEach(orderObj ->{
+           if(orderObj.getId() == order.getId()){
+               orderObj.setDeliveryDetails(deliveryGuy);
+               orderObj.setOrderStatusId(order.getOrderStatusId());
+               orderList.set(orderList.indexOf(orderObj), orderObj);
+           }
+       });
+        mutableAcceptedOrders.setValue(orderList);
+        return true;
+    }
 
 
 
@@ -155,6 +174,7 @@ public class OrderRepository {
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.d(TAG, "FAIL");
                 isLoading.setValue(false);
             }
         });

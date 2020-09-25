@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.mainactivity.commons.OrderStatus;
+import com.example.mainactivity.models.DeliveryGuy;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
@@ -49,6 +50,7 @@ public class OrderViewModel extends ViewModel {
             mutableNewOrders.setValue(orders);
         }
     }
+
     public LiveData<List<Order>> getNewOrders(){
         if(newOrders == null){
             newOrders = new ArrayList<>();
@@ -107,5 +109,9 @@ public class OrderViewModel extends ViewModel {
     }
     public LiveData<ApiResponse> makeOrderAsReady(int orderId){
         return orderRepository.makeOrderAsReady(orderId);
+    }
+
+    public boolean assignDeliveryPerson(Order order, DeliveryGuy  deliveryGuy){
+        return orderRepository.assignDeliveryPerson(order, deliveryGuy);
     }
 }

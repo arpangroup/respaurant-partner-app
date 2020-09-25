@@ -2,6 +2,7 @@ package com.example.mainactivity.util;
 
 import android.util.Log;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +26,23 @@ public class FormatTime {
         }
 
     }
+
+
+    public static String formatTime(String timeStr){
+        System.out.println("======================");
+        System.out.println(timeStr);
+        DateFormat inputDateFormat = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat outputFormatter = new SimpleDateFormat("hh:mm aa");
+        try {
+            Date date = inputDateFormat.parse(timeStr);
+            return outputFormatter.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return timeStr;
+    }
+
+
     public static Map<Integer, String> getOpeningTime(long currentTime, long openingTime, long closingTime){
         Map<Integer, String> resultMap = new HashMap<>();
         String res = "";

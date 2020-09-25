@@ -86,6 +86,8 @@ public class EditItemFragment extends Fragment {
 
         mBinding.toolbar.more.setVisibility(View.GONE);
 
+        mBinding.toolbar.back.setOnClickListener(view -> navController.popBackStack());
+
 
         restaurantViewModel.getMenuItem().observe(getViewLifecycleOwner(), menuItem -> {
             ItemCategory category = restaurantViewModel.getSelectedCategory().getValue();

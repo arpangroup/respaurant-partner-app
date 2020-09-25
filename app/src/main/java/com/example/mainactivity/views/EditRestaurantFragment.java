@@ -1,6 +1,7 @@
 package com.example.mainactivity.views;
 
 import android.Manifest;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -17,22 +19,39 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.databinding.FragmentEditRestaurantBinding;
+import com.example.mainactivity.util.CommonUtils;
+import com.example.mainactivity.util.FormatDate;
+import com.example.mainactivity.util.FormatPrice;
+import com.example.mainactivity.util.FormatTime;
+import com.example.mainactivity.util.InputFilterMinMax;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.location.LocationActivity;
 import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
 
 import static android.app.Activity.RESULT_OK;
 
 public class EditRestaurantFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
+    private static final String MIN_DELIVERY_TIME = "1";
+    private static final String MAX_DELIVERY_TIME = "59";
+    private static final String MIN_DELIVERY_CHARGE = "0";
+    private static final String MAX_DELIVERY_CHARGE = "1000";
 
     private FragmentEditRestaurantBinding mBinding;
     RestaurantViewModel restaurantViewModel;
@@ -66,6 +85,56 @@ public class EditRestaurantFragment extends Fragment {
         // Initialize RecyclerView
         //menuItemAdapter = new MenuItemAdapter(this);
 
+        mBinding.toolbar.back.setOnClickListener(view -> {
+            navController.popBackStack();
+        });
+
+        // Get CurrentTime
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        mBinding.businessDetails.btnOpenTime.setOnClickListener(view -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(requireActivity(), (timePicker, selectedHour, selectedMinute) -> {
+                mBinding.businessDetails.etOpeningTime.setText(CommonUtils.getFormattedTime(selectedHour, selectedMinute));
+            }, hour, minute, false);
+            timePickerDialog.setTitle("Select Opening Time");
+            timePickerDialog.show();
+        });
+
+
+        mBinding.businessDetails.btnCloseTime.setOnClickListener(view -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(requireActivity(), (timePicker, selectedHour, selectedMinute) -> {
+                mBinding.businessDetails.etOpeningTime.setText(CommonUtils.getFormattedTime(selectedHour, selectedMinute));
+            }, hour, minute, false);
+            timePickerDialog.setTitle("Select Closing Time");
+            timePickerDialog.show();
+        });
+
+        mBinding.businessDetails.btnChangeDeliveryTime.setOnClickListener(view -> {
+            Log.d(TAG, "Clicked Change delivery time");
+            final EditText input = new EditText(requireActivity());
+            input.setFilters(new InputFilter[]{new InputFilterMinMax(MIN_DELIVERY_TIME, MAX_DELIVERY_TIME)});
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(24, 60, 24, 24);
+            input.setLayoutParams(layoutParams);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(requireActivity());
+            alert.setView(input);
+            alert.setTitle("Approx. Delivery Time(Minute)");
+            alert.setCancelable(false);
+            alert.setPositiveButton("SET",  (dialogInterface, i) -> {
+                String value = "1";
+                if(input.getText() != null){
+                    value = input.getText().toString();
+                    if(value.equals("")) value = "1";
+                    mBinding.businessDetails.etDeliveryTime.setText(value +" min");
+                }
+            });
+            alert.setNegativeButton("CANCEL", (dialogInterface, i) -> dialogInterface.dismiss());
+            alert.show();
+        });
+
         restaurantViewModel.getRestaurantDetails().observe(requireActivity(), restaurant -> {
             mBinding.toolbar.title.setText(restaurant.getName());
 
@@ -77,8 +146,8 @@ public class EditRestaurantFragment extends Fragment {
             mBinding.businessDetails.etAddress.setText(restaurant.getAddress());
             mBinding.businessDetails.etLatitude.setText(restaurant.getLatitude());
             mBinding.businessDetails.etLongitude.setText(restaurant.getLongitude());
-            mBinding.businessDetails.etOpeningTime.setText(restaurant.getOpeningTime());
-            mBinding.businessDetails.etClosingTime.setText(restaurant.getClosingTime());
+            mBinding.businessDetails.etOpeningTime.setText(FormatTime.formatTime(restaurant.getOpeningTime()));
+            mBinding.businessDetails.etClosingTime.setText(FormatTime.formatTime(restaurant.getClosingTime()));
             mBinding.businessDetails.etContactNumber.setText(restaurant.getContactNumber());
             //mBinding.etPriceRange.setText(restaurant.getPriceRange());
             //mBinding.etLandmark.setText(restaurant.getLandmark());
@@ -105,6 +174,68 @@ public class EditRestaurantFragment extends Fragment {
         });
 
 
+        mBinding.businessExtra.btnCommissionDecrease.setOnClickListener(view -> {
+            String prevStr = mBinding.businessExtra.etCommissionRate.getText().toString().replace("%", "");
+            double prevVal  = Double.parseDouble(prevStr);
+            prevVal -= 0.5;
+
+//            if (prevVal == 1) mBinding.businessExtra.btnCommissionDecrease.setEnabled(false);
+//            else mBinding.businessExtra.btnCommissionDecrease.setEnabled(true);
+            if(prevVal < 1){
+                //mBinding.businessExtra.etCommissionRate.setText("1%");
+            }else{
+                mBinding.businessExtra.etCommissionRate.setText(FormatPrice.formatDecimalPoint(prevVal) + "%");
+            }
+        });
+
+        mBinding.businessExtra.btnCommissionIncrease.setOnClickListener(view -> {
+            String prevStr = mBinding.businessExtra.etCommissionRate.getText().toString().replace("%", "");
+            double prevVal  = Double.parseDouble(prevStr);
+            prevVal += 0.5;
+//            if(prevVal == 99)mBinding.businessExtra.btnCommissionIncrease.setEnabled(false);
+//            else mBinding.businessExtra.btnCommissionIncrease.setEnabled(true);
+            if(prevVal > 99){
+                //mBinding.businessExtra.etCommissionRate.setText("99%");
+            }else{
+                mBinding.businessExtra.etCommissionRate.setText(FormatPrice.formatDecimalPoint(prevVal) + "%");
+            }
+        });
+
+        mBinding.businessExtra.decreaseRadius.setOnClickListener(view -> {
+            String prevStr = mBinding.businessExtra.etDeliveryRadius.getText().toString().replace("\nKM", "");
+            double prevVal  = Double.parseDouble(prevStr);
+            prevVal -= 0.5;
+
+//            if (prevVal == 1) mBinding.businessExtra.btnCommissionDecrease.setEnabled(false);
+//            else mBinding.businessExtra.btnCommissionDecrease.setEnabled(true);
+            if(prevVal < 1){
+                //mBinding.businessExtra.etCommissionRate.setText("1%");
+            }else{
+                mBinding.businessExtra.etDeliveryRadius.setText(FormatPrice.formatDecimalPoint(prevVal) + "\nKM");
+            }
+        });
+        mBinding.businessExtra.increaseRadius.setOnClickListener(view -> {
+            String prevStr = mBinding.businessExtra.etDeliveryRadius.getText().toString().replace("\nKM", "");
+            double prevVal  = Double.parseDouble(prevStr);
+            prevVal += 0.5;
+//            if(prevVal == 99)mBinding.businessExtra.btnCommissionIncrease.setEnabled(false);
+//            else mBinding.businessExtra.btnCommissionIncrease.setEnabled(true);
+            if(prevVal > 99){
+                //mBinding.businessExtra.etCommissionRate.setText("99%");
+            }else{
+                mBinding.businessExtra.etDeliveryRadius.setText(FormatPrice.formatDecimalPoint(prevVal) + "\nKM");
+            }
+        });
+
+        mBinding.businessExtra.radiobuttonDelivery.setOnClickListener(view -> mBinding.businessExtra.radiobuttonBoth.setChecked(false));
+        mBinding.businessExtra.radiobuttonSelfPickup.setOnClickListener(view -> mBinding.businessExtra.radiobuttonBoth.setChecked(false));
+        mBinding.businessExtra.radiobuttonBoth.setOnCheckedChangeListener((compoundButton, b) -> {
+            if(compoundButton.isChecked()){
+                mBinding.businessExtra.radiobuttonDelivery.setChecked(false);
+                mBinding.businessExtra.radiobuttonSelfPickup.setChecked(false);
+            }
+        });
+
         mBinding.businessDetails.btnChangeImage.setOnClickListener(view -> {
             verifyPermissions();
         });
@@ -113,7 +244,32 @@ public class EditRestaurantFragment extends Fragment {
             Intent intent = new Intent(requireActivity(), LocationActivity.class);
             requireActivity().startActivity(intent);
         });
+
+        mBinding.businessExtra.btnChangeDeliveryCharge.setOnClickListener(view -> {
+            final EditText input = new EditText(requireActivity());
+            input.setFilters(new InputFilter[]{new InputFilterMinMax(MIN_DELIVERY_CHARGE, MAX_DELIVERY_CHARGE)});
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(24, 60, 24, 24);
+            input.setLayoutParams(layoutParams);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(requireActivity());
+            alert.setView(input);
+            alert.setTitle("Fix Delivery Charge");
+            alert.setCancelable(false);
+            alert.setPositiveButton("SET",  (dialogInterface, i) -> {
+                String value = "1";
+                if(input.getText() != null){
+                    value = input.getText().toString();
+                    if(value.equals("")) value = "1";
+                    mBinding.businessExtra.etDeliveryCharge.setText(com.example.mainactivity.util.Constants.RUPEE_SYMBOL + value);
+                }
+            });
+            alert.setNegativeButton("CANCEL", (dialogInterface, i) -> dialogInterface.dismiss());
+            alert.show();
+        });
     }
+
 
 
 

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +21,14 @@ import com.example.mainactivity.databinding.FragmentOrderHistoryBinding;
 import com.example.mainactivity.databinding.FragmentOrderListBinding;
 import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.viewmodels.OrderViewModel;
+import com.example.mainactivity.viewmodels.RestaurantViewModel;
 
 public class OrderHistoryFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
 
     private FragmentOrderHistoryBinding mBinding;
     OrderViewModel orderViewModel;
+    RestaurantViewModel restaurantViewModel;
     private OrderHistoryAdapter orderHistoryAdapter;
     private NavController navController;
     private Dashboard mDashboard;
@@ -37,35 +40,38 @@ public class OrderHistoryFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onViewCreated(@NonNull View rootView, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(rootView, savedInstanceState);
 
         // Initialize ViewModel
-        orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
-        orderViewModel.init();
+        //orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
+        //orderViewModel.init();
+        restaurantViewModel = new ViewModelProvider(requireActivity()).get(RestaurantViewModel.class);
+        restaurantViewModel.init();
 
         // Initialize NavController
-        navController = Navigation.findNavController(view);
+        navController = Navigation.findNavController(rootView);
         mBinding.toolbar.title.setText("Order History");
 
         // Initialize RecyclerView
         orderHistoryAdapter = new OrderHistoryAdapter();
         mBinding.orderRecycler.setAdapter(orderHistoryAdapter);
 
+        mBinding.toolbar.back.setOnClickListener(view -> navController.popBackStack());
 
-//        orderViewModel.getDashboard().observe(requireActivity(), dashboard -> {
-//            mDashboard = dashboard;
-//            orderViewModel.setFilterOrders(dashboard.getAllOrders());
-//        });
 
-//        orderViewModel.getAllOrders().observe(getViewLifecycleOwner(), orders -> {
-//            orderHistoryAdapter.submitList(orders);
-//        });
+        restaurantViewModel.getDashboard().observe(requireActivity(), dashboard -> {
+            Log.d(TAG, "HISTORY_SIZE: "+dashboard.getAllOrders().size());
+            orderHistoryAdapter.submitList(dashboard.getAllOrders());
+            orderHistoryAdapter.notifyDataSetChanged();
+        });
 
-        orderViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
+        restaurantViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
             if(aBoolean)mBinding.progressbar.setVisibility(View.VISIBLE);
             else mBinding.progressbar.setVisibility(View.GONE);
         });
+
+
 
 
 
