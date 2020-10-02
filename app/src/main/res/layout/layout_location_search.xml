@@ -51,7 +51,6 @@
             android:orientation="horizontal"
             android:paddingLeft="13.7dp"
             android:paddingTop="13.3dp"
-            android:paddingRight="23.3dp"
             android:paddingBottom="13.3dp">
 
             <ImageView
@@ -59,21 +58,19 @@
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="center|center_vertical"
                 android:src="@drawable/ic_baseline_search_24"
                 android:layout_marginRight="4dp"/>
 
-            <EditText
+            <TextView
                 android:id="@+id/txt_search"
                 android:layout_toLeftOf="@+id/ic_search"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:dropDownVerticalOffset="50dp"
+                android:layout_height="match_parent"
                 android:background="@color/transferent"
                 android:fontFamily="@font/sfpro_display_semibold"
                 android:hint="Search for your location..."
-                android:layout_gravity="center_vertical"
-                android:letterSpacing="0.0525"
+                android:layout_gravity="center|center_vertical"
                 android:maxLines="1"
                 android:textColor="@color/black"
                 android:textColorHint="@color/silver"
@@ -82,6 +79,7 @@
         </LinearLayout>
 
         <FrameLayout
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <androidx.recyclerview.widget.RecyclerView
@@ -100,7 +98,8 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/layout_current_location"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:padding="16dp"

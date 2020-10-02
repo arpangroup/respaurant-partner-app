@@ -94,6 +94,7 @@ public class AuthRepositoryImpl implements AuthRepository {
         UserSession.logOut();
         isLoggedIn.setValue(false);
         isLoading.setValue(false);
+        isPushNotificationAvailable.setValue(false);
         sendOtpResponse = new MutableLiveData<>();
         loginResponse= new MutableLiveData<>();
     }

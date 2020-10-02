@@ -38,9 +38,12 @@ public class OrderViewModel extends ViewModel {
         orderRepository = OrderRepository.getInstance();
     }
 
-    public void setNewOrder(List<Order> orders){
+    public void setNewOrder(Order order){
         Log.d("MessagingService", "Adding new order to view model");
-        newOrders.addAll(orders);
+        if (newOrders == null) {
+            newOrders = new ArrayList<>();
+        }
+        newOrders.add(order);
         mutableNewOrders.setValue(newOrders);
     }
     public void removeOrderFromNewOrderList(Order order){

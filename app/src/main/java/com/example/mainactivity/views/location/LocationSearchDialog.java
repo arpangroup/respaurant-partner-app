@@ -1,7 +1,12 @@
 package com.example.mainactivity.views.location;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
@@ -10,6 +15,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -25,24 +31,41 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.R;
+import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.commons.LocationSearchDialogListener;
 import com.example.mainactivity.util.ScreenUtils;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,14 +73,14 @@ public class LocationSearchDialog extends BottomSheetDialogFragment {
     private final String TAG = this.getClass().getSimpleName();
     private LocationSearchDialogListener mListener;
 
-    private AppBarLayout appBarLayout;
-    private LinearLayout linearLayout;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Geocoder mGeoCoder = null; //To get address from a location(Latlng)
 
-    LinearLayout layout_location_list;
-    RecyclerView search_recycler;
-    List<Address> addressList = new ArrayList<>();
-    PlaceAutoSuggestAdapter searchAdapter;
-    private EditText txt_search;
+    private Location mCurrentLocation = null;
+
+    TextView txt_search;
+    ImageButton btnClose;
+    LinearLayout layout_current_location;
 
     @NonNull
     @Override
@@ -116,62 +139,60 @@ public class LocationSearchDialog extends BottomSheetDialogFragment {
         ScreenUtils screenUtils = new ScreenUtils(requireActivity());
         layoutSearch.setMinimumHeight(screenUtils.getHeight());
 
-        Geocoder geocoder = new Geocoder(getActivity());
-        layout_location_list =  rootView.findViewById(R.id.layout_location_list);
-        search_recycler = rootView.findViewById(R.id.search_recycler);
-        searchAdapter = new PlaceAutoSuggestAdapter(requireActivity(), new ArrayList<>());
-        search_recycler.setAdapter(searchAdapter);
-
-        hideSearchResult();
-
         txt_search = rootView.findViewById(R.id.txt_search);
-        txt_search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+        btnClose = rootView.findViewById(R.id.btnClose);
+        layout_current_location = rootView.findViewById(R.id.layout_current_location);
+        initCurrentLocation();
+        initGooglePlaceAutoComplete();
+        initClicks();
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String searchText = editable.toString().trim().toLowerCase();
-                if(searchText.length() < 1) hideSearchResult();
-                else if(searchText.length() > 2){
-                    Log.d(TAG, "Searching...............");
-                    try {
-                        addressList = geocoder.getFromLocationName(searchText, 100);
-                        Log.d(TAG, "RESULT: "+addressList);
-                        searchAdapter.updateList(addressList);
-                        showSearchResult();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }else{
-                    //searchAdapter.updateList(new ArrayList<>());
-                    //searchAdapter.notifyDataSetChanged();
-                }
-
-            }
-        });
-
-
-        ImageButton btnClose = rootView.findViewById(R.id.btnClose);
-        btnClose.setOnClickListener(view -> dismiss());
 
         return rootView;
     }
 
-    private void showSearchResult(){
-        search_recycler.setVisibility(View.VISIBLE);
-        layout_location_list.setVisibility(View.GONE);
+    private void initClicks() {
+        txt_search.setOnClickListener(view -> {
+            Intent intent = new Autocomplete.IntentBuilder(
+                    AutocompleteActivityMode.OVERLAY,
+                    Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG))
+                    .setCountries(Collections.singletonList("IN"))
+                    .build(requireActivity());
+            startActivityForResult(intent, Constants.REQUEST_GOOGLE_PLACE_AUTOCOMPLETE_SEARCH_ACTIVITY);
+        });
+
+        btnClose.setOnClickListener(view -> dismiss());
+
+        layout_current_location.setOnClickListener(view -> {
+            mGeoCoder = new Geocoder(requireActivity(), Locale.getDefault());
+            try {
+                List<Address> addressList = mGeoCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
+                if(addressList != null){
+                    Address addressObj = addressList.get(0);
+                    mListener.onCurrentLocationClick(mCurrentLocation, addressObj);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
-    private void hideSearchResult(){
-        search_recycler.setVisibility(View.GONE);
-        layout_location_list.setVisibility(View.VISIBLE);
+    private void initGooglePlaceAutoComplete() {
+        Places.initialize(requireActivity(), Constants.GOOGLE_MAP_API_KEY);
+    }
+    private void initCurrentLocation() {
+        Log.d(TAG, "All permissions available");
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
+            Location location = task.getResult();
+            if (location != null) {
+                mCurrentLocation = location;
+            } else {
+                Log.d(TAG, "Location is null");
+            }
+        });
     }
 
     @Override
@@ -184,16 +205,8 @@ public class LocationSearchDialog extends BottomSheetDialogFragment {
         }
     }
 
-    private void hideView(View view){
-        ViewGroup.LayoutParams params = view.getLayoutParams();
-        params.height = 0;
-        view.setLayoutParams(params);
-    }
-    private void showView(View view, int size){
-        ViewGroup.LayoutParams params = view.getLayoutParams();
-        params.height = size;
-        view.setLayoutParams(params);
-    }
+
+
     private int getActionBarSize(){
         final TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(new int[]{
             android.R.attr.actionBarSize
@@ -223,4 +236,26 @@ public class LocationSearchDialog extends BottomSheetDialogFragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == Constants.REQUEST_GOOGLE_PLACE_AUTOCOMPLETE_SEARCH_ACTIVITY){
+            if(resultCode  == requireActivity().RESULT_OK){
+                // Initialize places
+                Place place = Autocomplete.getPlaceFromIntent(data);
+
+                // set address as editText
+                txt_search.setText(place.getAddress());
+
+                //String localityName = String.format(place.getName());
+                //LatLng latLng = place.getLatLng();
+                mListener.onLocationSearchResult(place);
+
+            }else if (resultCode  == AutocompleteActivity.RESULT_ERROR){
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            }else if(resultCode == Activity.RESULT_CANCELED){
+                // The user cancelled the operation.
+            }
+        }
+    }
 }

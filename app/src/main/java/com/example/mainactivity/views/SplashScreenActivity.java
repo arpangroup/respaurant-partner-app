@@ -75,11 +75,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     private void processActivity() {
-        authenticationViewModel.isFirebaseTokenAvailable().observe(this, isPushTokenAvailabe -> {
-            if(!isPushTokenAvailabe){
-                initFirebaseInstance();
-            }
-        });
         goToNextActivity();
         /*
         // Step1: Check if config is missing or not
@@ -110,30 +105,4 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    private void initFirebaseInstance(){
-        FirebaseApp.initializeApp(this);
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(InstanceIdResult instanceIdResult) {
-                String token = instanceIdResult.getToken();
-                Log.d(TAG, "PUSH_NOTIFICATION_TOKEN: "+token);
-                authenticationViewModel.setFirebaseToken(token);
-            }
-        });
-
-
-        FirebaseMessaging.getInstance().subscribeToTopic("general")
-                .addOnCompleteListener(task -> {
-                    String msg = "Successfull";
-                    if(!task.isSuccessful())msg = "Failed";
-                    //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-                });
-
-
-    }
-
-
-
 }

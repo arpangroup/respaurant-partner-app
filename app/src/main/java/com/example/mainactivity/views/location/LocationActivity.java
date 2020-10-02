@@ -4,26 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
+import android.location.Address;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
-import android.widget.Toast;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.commons.Constants;
@@ -32,8 +27,6 @@ import com.example.mainactivity.commons.LocationSearchDialogListener;
 import com.example.mainactivity.databinding.ActivityLocationBinding;
 import com.example.mainactivity.util.GpsUtils;
 import com.example.mainactivity.viewmodels.AddressViewModel;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,13 +34,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.Autocomplete;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback, LocationSearchDialogListener, LocationDetailsDialogListener {
     private final String TAG = this.getClass().getSimpleName();
     ActivityLocationBinding mBinding;
     AddressViewModel addressViewModel;
     private GoogleMap mMap;
+
+    LocationSearchDialog locationSearchDialog;
+    LocationDetailsDialog locationDetailsDialog;
 
     boolean mLocationEnabled = false;
     boolean mGpsEnabled = false;
@@ -115,13 +110,13 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         });
 
         mBinding.btnChangeAddress.setOnClickListener(view -> {
-            LocationSearchDialog dialog = new LocationSearchDialog();
-            dialog.show(getSupportFragmentManager(), "LOCATION_SEARCH_DIALOG");
+            locationSearchDialog = new LocationSearchDialog();
+            locationSearchDialog.show(getSupportFragmentManager(), "LOCATION_SEARCH_DIALOG");
         });
 
         mBinding.btnConfirm.setOnClickListener(view -> {
-            LocationDetailsDialog dialog = new LocationDetailsDialog();
-            dialog.show(getSupportFragmentManager(), "LOCATION_DETAILS_DIALOG");
+            locationDetailsDialog = new LocationDetailsDialog();
+            locationDetailsDialog.show(getSupportFragmentManager(), "LOCATION_DETAILS_DIALOG");
         });
     }
 
@@ -231,13 +226,46 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
 
     @Override
-    public void onCurrentLocationClick() {
+    public void onCurrentLocationClick(Location location, Address address) {
+        Log.d(TAG, "Inside onCurrentLocationClick()....");
+        if(location != null){
+            if(locationSearchDialog != null)locationSearchDialog.dismiss();
+            if(locationDetailsDialog != null)locationDetailsDialog.dismiss();
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
+            Log.d(TAG, "ADDRESS: " + address);
+            String fullAddress = address.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            String city = address.getLocality();
+            String state = address.getAdminArea();
+            String country = address.getCountryName();
+            String postalCode = address.getPostalCode();
+            String knownName = address.getFeatureName(); // Only if available else return NULL
+
+            String addressHeader = getAddressHeader(address);
+            if(addressHeader == null) mBinding.txtAddressHeader.setVisibility(View.GONE);
+            else mBinding.txtAddressHeader.setText(addressHeader);
+            mBinding.txtAddress.setText(fullAddress);
+        }
+    }
+    private String getAddressHeader(Address address){
+        String addressHeader = null;
+        if (address.getLocality() != null) addressHeader = address.getLocality();
+        else if(address.getCountryName() != null) addressHeader = address.getCountryName();
+        else if (address.getAdminArea() != null) addressHeader = address.getAdminArea();
+        else if (address.getFeatureName() != null) addressHeader = address.getFeatureName();
+        return addressHeader;
     }
 
     @Override
-    public void onSearchLocation(String searchText) {
-
+    public void onLocationSearchResult(Place place) {
+        Log.d(TAG, "onLocationSearchResult");
+        Log.d(TAG, "PLACE: " + place);
+        if(locationSearchDialog != null)locationSearchDialog.dismiss();
+        if(locationDetailsDialog != null)locationDetailsDialog.dismiss();
+        mBinding.txtAddressHeader.setText(place.getName());
+        mBinding.txtAddress.setText(place.getAddress());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
     }
 
     @Override
@@ -263,17 +291,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             if (requestCode == Constants.GPS_REQUEST_CODE) {
                 addressViewModel.setGpsEnableStatus(true);
             }
-        }
-        if(requestCode == Constants.REQUEST_GOOGLE_PLACE_AUTOCOMPLETE_SEARCH_ACTIVITY && resultCode == RESULT_OK){
-            // Initialize places
-            Place place = Autocomplete.getPlaceFromIntent(data);
-
-            // set address as editText
-            //txt_search.setText(place.getAddress());
-
-            String localityName = String.format(place.getName());
-            LatLng latLng = place.getLatLng();
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         }
     }
 

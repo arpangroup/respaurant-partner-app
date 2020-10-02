@@ -22,6 +22,7 @@ import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderAcceptListAdapter;
 import com.example.mainactivity.databinding.ActivityAcceptOrderBinding;
 import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
+import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.User;
 import com.example.mainactivity.services.NewOrderFetchService;
@@ -34,13 +35,17 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class AcceptOrderActivity extends AppCompatActivity implements OrderAcceptListAdapter.OrderAcceptInterface{
     private final String TAG = this.getClass().getSimpleName();
     public static boolean ACTIVE = false;
     ActivityAcceptOrderBinding mBinding;
+
     private boolean isMusicEnable = true;
     private MediaPlayer mMediaPlayer;
+    Timer timer;
 
     OrderViewModel orderViewModel;
     private OrderAcceptListAdapter orderAcceptListAdapter;
@@ -57,16 +62,20 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         @Override
         public void onReceive(Context context, Intent intent) {
             try{
-                String ordersJson = intent.getStringExtra(NewOrderFetchService.INTENT_EXTRA_OUTPUT_NEW_ORDERS);
+                String ordersJson = intent.getStringExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS);
                 System.out.println("==================RECEIVED==========================");
                 System.out.println(ordersJson);
                 System.out.println("====================================================");
-                List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
+                //List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
                 //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
                 //Toast.makeText(context, orders.size() +" New order received", Toast.LENGTH_SHORT).show();
                 //Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
-                orderViewModel.setNewOrder(orders);
-                setupMediaPlayer();
+                //orderViewModel.setNewOrder(orders.get(0));
+                //setupMediaPlayer();
+                Order order = new Gson().fromJson(ordersJson, Order.class);
+                Log.d(TAG, "ORDER_JSON: "+ordersJson);
+                Log.d(TAG, "ORDER: "+order);
+                orderViewModel.setNewOrder(order);
                 ACTIVE = true;
             }catch (Exception e){
                 e.printStackTrace();
@@ -78,12 +87,13 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     protected void onStart() {
         super.onStart();
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(NewOrderFetchService.NEW_ORDER_FETCH_SERVICE_MESSAGE));
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(MessagingService.MESSAGE_ORDER_STATUS));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        setupMediaPlayer();
     }
 
     @Override
@@ -91,6 +101,11 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         super.onStop();
         ACTIVE = false;
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
+        if(mMediaPlayer != null){
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
     @Override
@@ -132,10 +147,13 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
        if(!ACTIVE){
        }
         try{
-            String ordersJson = getIntent().getStringExtra(NewOrderFetchService.INTENT_EXTRA_OUTPUT_NEW_ORDERS);
-            List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
-            orderViewModel.setNewOrder(orders);
-            setupMediaPlayer();
+            String ordersJson = getIntent().getStringExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS);
+            //List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
+            //orderViewModel.setNewOrder(orders.get(0));
+            Order order = new Gson().fromJson(ordersJson, Order.class);
+            Log.d(TAG, "ORDER_JSON: "+ordersJson);
+            Log.d(TAG, "ORDER: "+order);
+            orderViewModel.setNewOrder(order);
         }catch (Exception e){
             e.printStackTrace();
             Toast.makeText(this, "INTENT: EXCEPTION", Toast.LENGTH_SHORT).show();
@@ -150,8 +168,13 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
         orderViewModel.getNewOrders().observe(this, orders -> {
             if(orders.size() == 0){
-                //startActivity(new Intent(this, MainActivity.class));
-                //finish();
+                if(mMediaPlayer != null){
+                    isMusicEnable = false;
+                    mMediaPlayer.stop();
+                    mMediaPlayer.release();
+                    mMediaPlayer = null;
+                }
+                finish();
             }
             orderAcceptListAdapter.submitList(orders);
             mBinding.toolbar.title.setText(orders.size() +" New Order");
@@ -164,13 +187,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
 
 
-//        Timer timer = new Timer();
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                setupMediaPlayer();
-//            }
-//        }, 0, 3*1000);
+
     }
 
 
@@ -178,7 +195,17 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         mMediaPlayer = new MediaPlayer();
         Context context = getApplicationContext();
         mMediaPlayer = MediaPlayer.create(context, R.raw.alert_5);
-        mMediaPlayer.start();
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(isMusicEnable){
+                    mMediaPlayer.start();
+                }
+            }
+        }, 0, 1000);
+
 
     }
 
