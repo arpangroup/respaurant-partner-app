@@ -136,7 +136,7 @@ public class MessagingService extends FirebaseMessagingService {
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setCategory(NotificationCompat.CATEGORY_CALL)
                     .setFullScreenIntent(pendingIntent, true)
-                    .setAutoCancel(true)
+                    .setAutoCancel(false)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setOngoing(true);
             Notification notification = builder.build();

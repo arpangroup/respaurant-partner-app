@@ -102,11 +102,6 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         super.onStop();
         ACTIVE = false;
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
-        if(mMediaPlayer != null){
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
     }
 
     @Override

@@ -158,7 +158,9 @@ public class EndlessService extends Service {
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
+                .setAutoCancel(false)// clear notification after click
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setOngoing(true)
                 .setChannelId(App.CHANNEL_ID_NEW_ORDER)
                 .setOngoing(true);
         Notification notification = builder.build();
