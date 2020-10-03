@@ -3,6 +3,7 @@ package com.example.mainactivity.firebase;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.os.Build;
@@ -16,6 +17,8 @@ import com.example.mainactivity.R;
 import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.services.NewOrderFetchService;
+import com.example.mainactivity.sharedpref.ServiceTracker;
+import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.views.order.AcceptOrderActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -54,6 +57,13 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG, "Inside onCreate().....................");
+        Log.d(TAG, "TOKEN:  " + UserSession.getPushNotificationToken());
+    }
+
+    @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         Log.d(TAG, "onMessageReceived() called....");
@@ -66,7 +76,9 @@ public class MessagingService extends FirebaseMessagingService {
                 break;
             case API_WITHOUT_NOTIFICATION:
                 if(remoteMessage.getData().get("order") != null){
-                    processOrderStatusChangedData(remoteMessage);
+                    if(ServiceTracker.getServiceState(this) == ServiceTracker.ServiceState.STARTED){
+                        processOrderStatusChangedData(remoteMessage);
+                    }
                 }
                 break;
             case UNKNOWN_SOURCE:

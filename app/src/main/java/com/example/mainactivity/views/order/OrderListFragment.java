@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -138,6 +140,9 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             orderListAdapter.submitList(orders);
         });
     }
+
+
+
 
     private void handleSearch() {
         //title_frame, searchView

@@ -23,6 +23,8 @@ import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 
+import java.util.Collections;
+
 public class OrderHistoryFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
 
@@ -62,6 +64,7 @@ public class OrderHistoryFragment extends Fragment {
 
         restaurantViewModel.getDashboard().observe(requireActivity(), dashboard -> {
             Log.d(TAG, "HISTORY_SIZE: "+dashboard.getAllOrders().size());
+            Collections.reverse(dashboard.getAllOrders());
             orderHistoryAdapter.submitList(dashboard.getAllOrders());
             orderHistoryAdapter.notifyDataSetChanged();
         });

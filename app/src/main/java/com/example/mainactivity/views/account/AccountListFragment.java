@@ -31,6 +31,7 @@ import com.example.mainactivity.models.AccountSection;
 import com.example.mainactivity.services.EndlessService;
 import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.ServiceTracker;
+import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.MainActivity;
@@ -51,7 +52,7 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     private AccountSectionAdapter accountSectionAdapter;
     private NavController navController;
 
-    private final MutableLiveData<Boolean>isRestaurantLoaded = new MutableLiveData<>(false);
+    //private final MutableLiveData<Boolean>isRestaurantLoaded = new MutableLiveData<>(false);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,28 +82,24 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
 
         restaurantViewModel.loadDashboard();
 
+//
+//        isRestaurantLoaded.observe(requireActivity(), isLoaded -> {
+//            if(isLoaded){
+//                mBinding.toolbar.restaurantOnOfSwitch.setEnabled(true);
+//            }
+//        });
 
-        isRestaurantLoaded.observe(requireActivity(), isLoaded -> {
-            if(isLoaded){
-                mBinding.toolbar.restaurantOnOfSwitch.setEnabled(true);
-            }
-        });
+
 
 
         mBinding.toolbar.restaurantOnOfSwitch.setOnClickListener(view -> {
             Log.d(TAG, "CLICKED");
             boolean status = mBinding.toolbar.restaurantOnOfSwitch.isChecked();
-            restaurantViewModel.toggleRestaurant(status);
-
-            if(status){
-                //Intent intent = new Intent(getActivity(), MessagingService.class);
-                //requireActivity().startService(intent);
-                //Log.d(TAG, "START THE FOREGROUND SERVICE ON DEMAND");
-                actionOnService(Actions.START);
-            }else{
-                Log.d(TAG, "STOP THE FOREGROUND SERVICE ON DEMAND");
-                actionOnService(Actions.STOP);
-            }
+            restaurantViewModel.toggleRestaurant(status).observe(requireActivity(), apiResponse -> {
+                if(apiResponse.isSuccess()){
+                    handleEndlessService();
+                }
+            });
         });
 
         restaurantViewModel.getRestaurantDetails().observe(getViewLifecycleOwner(), restaurant -> {
@@ -110,11 +107,25 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
             mBinding.desc.setText(restaurant.getAddress());
             if(restaurant.getIsActive() == 1)mBinding.toolbar.restaurantOnOfSwitch.setChecked(true);
             else mBinding.toolbar.restaurantOnOfSwitch.setChecked(false);
+            handleEndlessService();
 
-            isRestaurantLoaded.setValue(true);
+            //isRestaurantLoaded.setValue(true);
         });
 
 
+    }
+
+    private void handleEndlessService(){
+        boolean serviceStarted = ServiceTracker.getServiceState(requireActivity()) == ServiceTracker.ServiceState.STARTED;
+        boolean isRestaurantActive = UserSession.isRestaurantActive(requireActivity());
+        if(isRestaurantActive && serviceStarted) return;
+        else if(!isRestaurantActive && !serviceStarted) return;
+        else if(isRestaurantActive && !serviceStarted) actionOnService(Actions.START);
+        else if(!isRestaurantActive && serviceStarted)actionOnService(Actions.STOP);
+        else{
+            Log.d(TAG, "STOP THE FOREGROUND SERVICE ON DEMAND");
+            actionOnService(Actions.STOP);
+        }
     }
 
     private void initClicks() {
@@ -148,21 +159,6 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         accountSectionAdapter.submitList(sections);
     }
 
-
-    /*
-    private void startForeGroundService(){
-        //String inputStr = et1.getText().toString();
-        Intent intent = new Intent(getActivity(), NewOrderFetchService.class);
-        //intent.putExtra("intentExtra", inputStr);
-
-        //startService(intent);
-        ContextCompat.startForegroundService(getActivity(), intent);
-    }
-    private void stopForegroundService(){
-        Intent intent = new Intent(requireActivity(), NewOrderFetchService.class);
-        requireActivity().stopService(intent);
-    }
-    */
     private void actionOnService(Actions action){
         if(ServiceTracker.getServiceState(requireActivity()) == ServiceTracker.ServiceState.STOPPED && action == Actions.STOP) return;
         Intent intent = new Intent(getActivity(), EndlessService.class);
@@ -170,7 +166,6 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             Log.d(TAG, "Starting the service in >=26 Mode");
             ContextCompat.startForegroundService(requireActivity(), intent);
-            return;
         }else{
             Log.d(TAG, "Starting the service in < 26 Mode");
             requireActivity().startService(intent);

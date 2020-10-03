@@ -20,6 +20,8 @@ import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 
+import java.util.List;
+
 public class OrderAcceptFragment extends Fragment implements OrderAcceptListAdapter.OrderAcceptInterface {
     private final String TAG = this.getClass().getSimpleName();
 
@@ -76,7 +78,7 @@ public class OrderAcceptFragment extends Fragment implements OrderAcceptListAdap
     }
 
     @Override
-    public void onRejectClick(Order order) {
+    public void onRejectClick(Order order, ItemOrderAcceptBinding binding) {
         mBinding.progressbar.setVisibility(View.VISIBLE);
     }
 
@@ -93,6 +95,11 @@ public class OrderAcceptFragment extends Fragment implements OrderAcceptListAdap
 
     @Override
     public void onAutoCancelOrder(Order order) {
+
+    }
+
+    @Override
+    public void onDialogDismiss(List<Order> notAcceptedOrders) {
 
     }
 }

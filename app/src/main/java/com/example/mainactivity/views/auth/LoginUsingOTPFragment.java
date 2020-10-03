@@ -1,5 +1,6 @@
 package com.example.mainactivity.views.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -12,6 +13,7 @@ import androidx.navigation.Navigation;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +21,9 @@ import android.view.ViewGroup;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.FragmentLoginUsingOTPBinding;
+import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
+import com.example.mainactivity.views.MainActivity;
 
 public class LoginUsingOTPFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
@@ -58,9 +62,15 @@ public class LoginUsingOTPFragment extends Fragment {
         authenticationViewModel = new ViewModelProvider(requireActivity()).get(AuthenticationViewModel.class);
         authenticationViewModel.init();
         initOTPInput();
+        mBinding.layoutLoginWithPassword.setVisibility(View.GONE);
+        mBinding.layoutAlert.setVisibility(View.GONE);
 
         // Initialize NavController
         navController = Navigation.findNavController(rootView);
+
+        authenticationViewModel.getPhoneNumber().observe(requireActivity(), phoneNumber -> {
+            mBinding.txtPhone.setText(phoneNumber);
+        });
 
         mBinding.loginWithPassword.setOnClickListener(view -> {
             navController.navigate(R.id.action_loginUsingOTPFragment_to_loginUsingPasswordFragment);
@@ -224,6 +234,24 @@ public class LoginUsingOTPFragment extends Fragment {
     }
 
     private void loginNow() {
+        String otp   = mBinding.et1.getText().toString() + mBinding.et2.getText().toString() + mBinding.et3.getText().toString() + mBinding.et4.getText().toString() + mBinding.et5.getText().toString();
+        Log.d(TAG, "Inside loginNow().....");
+        String phone = authenticationViewModel.getPhoneNumber().getValue();
+        //Address defaultAddress = SettingSession.getDefaultAddress();
+        authenticationViewModel.loginByOtp(phone, otp, null).observe(getViewLifecycleOwner(), userLoginResponse -> {
+            if(userLoginResponse.isSuccess()){
+                Intent intent = new Intent(requireActivity(), MainActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
+                System.out.println("=========================LOGIN_RESPONSE========================");
+                System.out.println(userLoginResponse);
+                System.out.println("REQUEST_TOKEN:"+new RequestToken());
+
+            }else{
+                mBinding.layoutAlert.setVisibility(View.VISIBLE);
+                mBinding.layoutLoginWithPassword.setVisibility(View.GONE);
+            }
+        });
     }
 
 

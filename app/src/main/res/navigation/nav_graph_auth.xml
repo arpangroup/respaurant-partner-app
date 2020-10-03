@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_otpSentFragment_to_signupFragment"
             app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_otpSentFragment_to_loginUsingOTPFragment"
+            app:destination="@id/loginUsingOTPFragment" />
     </fragment>
     <fragment
         android:id="@+id/signupFragment"

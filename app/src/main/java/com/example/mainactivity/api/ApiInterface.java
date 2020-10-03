@@ -38,8 +38,8 @@ public interface ApiInterface {
 //    @POST("/api/login-using-otp")
 //    Call<LoginResponse<User>> login(@Body LoginRequest loginRequest);
 
-    @POST("/api/login-new")
-    Call<LoginResponse<User>> login(@Body LoginRequest loginRequest);
+    @POST("/api/store-owner/login-using-otp")
+    Call<LoginResponse<User>> loginUsingOtp(@Body LoginRequest loginRequest);
 
     @GET("/api/store-owner/dashboard/{storeOwnerId}")
     Call<Dashboard> getDashboard(@Path("storeOwnerId") int storeOwnerId);

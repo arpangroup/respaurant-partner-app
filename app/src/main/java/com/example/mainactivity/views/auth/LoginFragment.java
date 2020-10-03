@@ -89,19 +89,19 @@ public class LoginFragment extends Fragment {
             if(phone != null) {
                 mBinding.btnSendOtp.setBackgroundColor(Color.parseColor("#E3E3E3"));
                 authenticationViewModel.setPhoneNumber(phone);
-                navController.navigate(R.id.action_otpSentFragment_to_loginUsingPasswordFragment);
+                //navController.navigate(R.id.action_otpSentFragment_to_loginUsingPasswordFragment);
 
-//                authenticationViewModel.sendLoginOtp(phone).observe(getViewLifecycleOwner(), apiResponse -> {
-//                    if(apiResponse.isSuccess()){
-//                        navController.navigate(R.id.action_loginUsingPasswordFragment_to_loginUsingOTPFragment);
-//                    }
-//                    else {
-//                        if(authenticationViewModel.getIsLoading().getValue() == false){
-//                            String message = apiResponse.getMessage();
-//                            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
+                authenticationViewModel.sendLoginOtp(phone).observe(getViewLifecycleOwner(), apiResponse -> {
+                    if(apiResponse.isSuccess()){
+                        navController.navigate(R.id.action_otpSentFragment_to_loginUsingOTPFragment);
+                    }
+                    else {
+                        if(authenticationViewModel.getIsLoading().getValue() == false){
+                            String message = apiResponse.getMessage();
+                            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
             }
         });

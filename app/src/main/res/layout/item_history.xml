@@ -97,7 +97,7 @@
                                 android:textSize="14sp" />
                         </LinearLayout>
                         <TextView
-                            android:visibility="@{order.orderStatusId == 5 ? View.VISIBLE : View.GONE}"
+                            android:visibility="@{order.orderStatusId == 6 ? View.VISIBLE : View.GONE}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"

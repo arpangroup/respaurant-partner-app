@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderAcceptListAdapter;
+import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.databinding.ActivityAcceptOrderBinding;
 import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.firebase.MessagingService;
@@ -118,8 +119,8 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         Log.d(TAG, "Inside onCreate()..........................");
         //setContentView(R.layout.activity_accept_order);
@@ -181,8 +182,10 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         });
 
 
+        //mBinding.toolbar.close.setVisibility(View.GONE);
         mBinding.toolbar.close.setOnClickListener(view -> {
-            onBackPressed();
+            List<Order> notAcceptedOrders = orderViewModel.getNewOrders().getValue();
+            onDialogDismiss(notAcceptedOrders);
         });
 
 
@@ -227,13 +230,27 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
     @Override
     public void onBackPressed() {
+        try{
+            List<Order> notAcceptedOrders = orderViewModel.getNewOrders().getValue();
+            if (notAcceptedOrders != null){
+                if(notAcceptedOrders.size() > 0){
+                    notAcceptedOrders.forEach(order -> orderViewModel.cancelOrder(order,  mUser.getId(), "CANCELLED_BY_RESTAURANT"));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         super.onBackPressed();
         isMusicEnable = false;
+
+
     }
 
     @Override
     public void onIncreasePreparationTime(Order order) {
         int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
+        if(preparationTime == Constants.FOOD_PREPARE_TIME_MAX)return;
         preparationTime += 1;
         orderViewModel.changeDeliveryTimeOfNotAcceptedOrder(order.getId(), preparationTime);
     }
@@ -241,14 +258,17 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     public void onDecreasePreparationTime(Order order) {
         int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
+        if(preparationTime == Constants.FOOD_PREPARE_TIME_MIN)return;
         preparationTime -= 1;
         if(preparationTime < 1) preparationTime = 0;
         orderViewModel.changeDeliveryTimeOfNotAcceptedOrder(order.getId(), preparationTime);
     }
 
     @Override
-    public void onRejectClick(Order order) {
+    public void onRejectClick(Order order, ItemOrderAcceptBinding binding) {
+        if(binding != null)binding.layoutProgress.setVisibility(View.VISIBLE);
         orderViewModel.cancelOrder(order,  mUser.getId(), "REJECT_BY_RESTAURANT").observe(this, apiResponse -> {
+            if(binding != null)binding.layoutProgress.setVisibility(View.GONE);
             if(apiResponse.isSuccess()){
                 orderViewModel.removeOrderFromNewOrderList(order);
             }
@@ -261,11 +281,10 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     public void onAcceptClick(Order order, ItemOrderAcceptBinding binding) {
         binding.layoutProgress.setVisibility(View.VISIBLE);
         orderViewModel.acceptOrder(order, mUser.getId()).observe(this, apiResponse -> {
+            binding.layoutProgress.setVisibility(View.GONE);
             System.out.println(apiResponse);
             if(apiResponse.isSuccess()){
                 orderViewModel.removeOrderFromNewOrderList(order);
-                binding.layoutProgress.setVisibility(View.GONE);
-
             }
         });
     }
@@ -282,5 +301,10 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
 
         }
 
+    }
+
+    @Override
+    public void onDialogDismiss(List<Order> notAcceptedOrders) {
+        onBackPressed();
     }
 }

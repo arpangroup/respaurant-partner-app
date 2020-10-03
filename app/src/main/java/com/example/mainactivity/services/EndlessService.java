@@ -68,7 +68,7 @@ public class EndlessService extends Service {
         PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
         //wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "whatever");
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NewOrderFetchService::lock");
-        wakeLock.acquire(60 * 1000L /*1 minutes*/);
+        wakeLock.acquire();
 
         // we're starting a loop in a coroutine
         new Thread(() -> {
@@ -83,8 +83,10 @@ public class EndlessService extends Service {
         Toast.makeText(this, "Service stopping", Toast.LENGTH_SHORT).show();
 
         try{
-            if(wakeLock.isHeld()){
-                wakeLock.release();
+            if(wakeLock != null){
+                if(wakeLock.isHeld()){
+                    wakeLock.release();
+                }
             }
             stopForeground(true);
             stopSelf();
@@ -112,9 +114,13 @@ public class EndlessService extends Service {
         Toast.makeText(this, "Service destroyed", Toast.LENGTH_SHORT).show();
     }
 
+
+
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+        Log.d(TAG, "TASK REMOVED..............");
+
         Intent restartServiceIntent  = new Intent(getApplicationContext(), EndlessService.class);
         restartServiceIntent.setPackage(getPackageName());
 
@@ -122,6 +128,15 @@ public class EndlessService extends Service {
         getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         AlarmManager alarmService =(AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() +1000, restartServicePendingIntent);
+
+//        PendingIntent service = PendingIntent.getService(
+//                getApplicationContext(),
+//                1001,
+//                new Intent(getApplicationContext(), EndlessService.class),
+//                PendingIntent.FLAG_ONE_SHOT);
+//
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, 1000, service);
     }
 
     @Nullable

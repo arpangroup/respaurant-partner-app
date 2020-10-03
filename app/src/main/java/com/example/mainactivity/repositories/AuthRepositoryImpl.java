@@ -145,7 +145,7 @@ public class AuthRepositoryImpl implements AuthRepository {
         Log.d(TAG, "Inside loginNow()......................");
         Log.d(TAG, "LOGIN_REQUEST: "+ new Gson().toJson(loginRequest));
         ApiInterface apiInterface = ApiService.getApiService();
-        apiInterface.login(loginRequest).enqueue(new Callback<LoginResponse<User>>() {
+        apiInterface.loginUsingOtp(loginRequest).enqueue(new Callback<LoginResponse<User>>() {
             @Override
             public void onResponse(Call<LoginResponse<User>> call, Response<LoginResponse<User>> response) {
                 isLoading.setValue(false);

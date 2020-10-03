@@ -3,6 +3,7 @@ package com.example.mainactivity.adapters;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.util.FormatTime;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,6 +55,7 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
         startProgressBar(holder);
 
 
+
     }
 
     class OrderViewHolder extends RecyclerView.ViewHolder{
@@ -73,7 +76,7 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
                 notifyItemChanged(getAdapterPosition());
             });
             itemAcceptOrderBinding.txtReject.setOnClickListener(view -> {
-                orderAcceptInterface.onRejectClick(getItem(getAdapterPosition()));
+                orderAcceptInterface.onRejectClick(getItem(getAdapterPosition()), binding);
                 notifyItemChanged(getAdapterPosition());
             });
             itemAcceptOrderBinding.layoutAccept.setOnClickListener(view -> {
@@ -87,9 +90,10 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
     public interface OrderAcceptInterface {
         void onIncreasePreparationTime(Order order);
         void onDecreasePreparationTime(Order order);
-        void onRejectClick(Order order);
+        void onRejectClick(Order order, ItemOrderAcceptBinding binding);
         void onAcceptClick(Order order, ItemOrderAcceptBinding binding);
         void onAutoCancelOrder(Order order);
+        void onDialogDismiss(List<Order> notAcceptedOrders);
     }
 
 

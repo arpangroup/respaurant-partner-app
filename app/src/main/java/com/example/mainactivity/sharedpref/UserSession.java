@@ -143,6 +143,10 @@ public class UserSession {
             return false;
         }
     }
+    public static boolean isRestaurantActive(Context context){
+        mContext = context;
+        return isRestaurantActive();
+    }
     public static boolean toggleRestaurantActive(boolean isActive){
         Restaurant restaurant = getRestaurantData();
         if(restaurant != null){

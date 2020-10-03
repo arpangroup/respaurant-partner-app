@@ -9,6 +9,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.mainactivity.App;
 import com.example.mainactivity.R;
 import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ActivityMainBinding;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         if (!Settings.canDrawOverlays(this)) {
             //requestPermission();
         }
+        //enableAutoStart();
 
         String deviceName = android.os.Build.MODEL;
         String deviceMan = android.os.Build.MANUFACTURER;
@@ -133,5 +137,25 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void enableAutoStart() {
+        Log.d("APPLICATION_APP: ", "Inside enableAutoStart()....");
+        for (Intent intent : App.POWERMANAGER_INTENTS)
+            if (getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) != null) {
+                // show dialog to ask user action
+                new AlertDialog.Builder(this)
+                        .setTitle("Enable AutoStart")
+                        .setMessage("Please allow PureEats to always run in the background,else our services can't be accessed.")
+                        .setPositiveButton("ALLOW", (dialogInterface, i) -> {
+                            startActivity(intent);
+                        })
+                        .setNegativeButton("NO", null)
+                        .create()
+                        .show();
+                break;
+            }
+    }
+
+
 
 }
