@@ -64,7 +64,6 @@ public class OrderHistoryFragment extends Fragment {
 
         restaurantViewModel.getDashboard().observe(requireActivity(), dashboard -> {
             Log.d(TAG, "HISTORY_SIZE: "+dashboard.getAllOrders().size());
-            Collections.reverse(dashboard.getAllOrders());
             orderHistoryAdapter.submitList(dashboard.getAllOrders());
             orderHistoryAdapter.notifyDataSetChanged();
         });

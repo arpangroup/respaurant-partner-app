@@ -20,6 +20,7 @@ import com.example.mainactivity.sharedpref.UserSession;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +119,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
                 Log.d(TAG, "RESPONSE: "+response);
                 Log.d(TAG, "RESPONSE: "+response);
                 isLoading.setValue(false);
-                mutableDashboard.setValue(response.body());
+                Dashboard dashboard = response.body();
+                if(dashboard != null)Collections.reverse(dashboard.getAllOrders());
+                mutableDashboard.setValue(dashboard);
             }
 
             @Override
