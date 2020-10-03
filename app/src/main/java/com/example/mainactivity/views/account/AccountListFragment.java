@@ -28,6 +28,7 @@ import com.example.mainactivity.databinding.FragmentAccountListBinding;
 import com.example.mainactivity.databinding.FragmentMenuListBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.AccountSection;
+import com.example.mainactivity.services.EndlessService;
 import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.ServiceTracker;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
@@ -94,9 +95,9 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
             restaurantViewModel.toggleRestaurant(status);
 
             if(status){
-                Intent intent = new Intent(getActivity(), MessagingService.class);
-                requireActivity().startService(intent);
-                Log.d(TAG, "START THE FOREGROUND SERVICE ON DEMAND");
+                //Intent intent = new Intent(getActivity(), MessagingService.class);
+                //requireActivity().startService(intent);
+                //Log.d(TAG, "START THE FOREGROUND SERVICE ON DEMAND");
                 actionOnService(Actions.START);
             }else{
                 Log.d(TAG, "STOP THE FOREGROUND SERVICE ON DEMAND");
@@ -164,7 +165,7 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     */
     private void actionOnService(Actions action){
         if(ServiceTracker.getServiceState(requireActivity()) == ServiceTracker.ServiceState.STOPPED && action == Actions.STOP) return;
-        Intent intent = new Intent(getActivity(), NewOrderFetchService.class);
+        Intent intent = new Intent(getActivity(), EndlessService.class);
         intent.setAction(action.name());
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             Log.d(TAG, "Starting the service in >=26 Mode");

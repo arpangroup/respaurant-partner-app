@@ -42,7 +42,7 @@ public class MessagingService extends FirebaseMessagingService {
     int[] validOrderStatusList = {
             OrderStatus.ORDER_PLACED.value(),//1
             OrderStatus.DELIVERY_GUY_ASSIGNED.value(),//3
-            OrderStatus.REACHED_PICKUP_LOCATION.value(),//8
+            //OrderStatus.REACHED_PICKUP_LOCATION.value(),//8
             OrderStatus.ON_THE_WAY.value(),// 4 ORDER_PICKED_FROM_RESTAURANT_BY_DELIVERY_GUY
             OrderStatus.DELIVERED.value(),//5
             OrderStatus.CANCELED.value()//6

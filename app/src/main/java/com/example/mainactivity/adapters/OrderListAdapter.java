@@ -4,6 +4,8 @@ import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ListAdapter;
@@ -15,14 +17,18 @@ import com.example.mainactivity.models.Order;
 import com.example.mainactivity.util.FormatDate;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderViewHolder> {
+public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderViewHolder> implements Filterable {
 
+    List<Order> originalList = null;
     OrderPrepareInterface orderPrepareInterface;
     public OrderListAdapter(OrderPrepareInterface orderPrepareInterface) {
         super(Order.itemCallback);
@@ -85,6 +91,45 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
             holder.itemOrderPreparingBinding.setOrder(order);
         });
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    Filter filter = new Filter() {
+        // Run on BackgroundThread
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<Order> filteredList = new ArrayList<>();
+            if(originalList == null){
+                originalList = getCurrentList();
+            }
+            if(charSequence.toString().isEmpty()){
+                filteredList.addAll(originalList);
+            }else{
+                originalList.forEach(order -> {
+                    if(order.getUniqueOrderId().toLowerCase().contains(charSequence.toString().toLowerCase()) ||
+                            order.getUser().getName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                            ||  String.valueOf(order.getId()).contains(charSequence.toString().toLowerCase()) ){
+                        filteredList.add(order);
+                    }
+                });
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+
+            return filterResults;
+        }
+
+        // Run on UI-Thread
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            //getCurrentList().repla((Collection<? extends Order>) filterResults.values);
+
+            submitList((List<Order>) filterResults.values);
+        }
+    };
 
     class OrderViewHolder extends RecyclerView.ViewHolder{
         ItemOrderPreparingBinding itemOrderPreparingBinding ;

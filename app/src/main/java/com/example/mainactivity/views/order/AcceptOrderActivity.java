@@ -201,7 +201,11 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
             @Override
             public void run() {
                 if(isMusicEnable){
-                    mMediaPlayer.start();
+                    try{
+                        mMediaPlayer.start();
+                    }catch (Exception e){
+                        //e.printStackTrace();
+                    }
                 }
             }
         }, 0, 1000);

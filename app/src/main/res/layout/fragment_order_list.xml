@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_order_accept"/>
+        tools:listitem="@layout/item_order_preparing"/>
     <RelativeLayout
         android:id="@+id/progressbar"
         android:visibility="gone"

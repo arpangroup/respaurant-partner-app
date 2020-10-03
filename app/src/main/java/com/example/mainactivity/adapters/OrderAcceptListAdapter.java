@@ -15,6 +15,7 @@ import com.example.mainactivity.R;
 import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.util.FormatTime;
 
 import java.util.Locale;
 import java.util.Timer;
@@ -93,7 +94,14 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
 
 
     private void startAcceptCountDownTimer(OrderViewHolder holder, int position){
-        final long[] mTimeLeftInMills = {Constants.ORDER_ACCEPT_WAITING_TIME};
+        Order order = getItem(position);
+        long currentTime = FormatTime.getCurrentTimeInLong();
+        long orderTime =  FormatTime.getTimeFromDateString(order.getCreatedAt());
+        long targetTime =  orderTime + Constants.ORDER_ACCEPT_WAITING_TIME;
+        long remainingTime = targetTime - currentTime;
+
+
+        final long[] mTimeLeftInMills = {remainingTime};
         //mBinding.txtResend.setEnabled(false);
         holder.countDownTimer = new CountDownTimer(mTimeLeftInMills[0], 1000){
             @Override
@@ -107,6 +115,7 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
                 //mBinding.txtCounter.setVisibility(View.GONE);
                 //mBinding.txtResend.setEnabled(true);
                 disableAcceptButton(holder, position);
+
             }
         }.start();
     }
@@ -141,6 +150,9 @@ public class OrderAcceptListAdapter extends ListAdapter<Order, OrderAcceptListAd
         holder.itemAcceptOrderBinding.layoutAccept.setBackgroundColor(Color.parseColor("#979DD59F"));
         holder.itemAcceptOrderBinding.layoutAccept.setEnabled(false);
         holder.itemAcceptOrderBinding.layoutAccept.setOnClickListener(null);
+        holder.itemAcceptOrderBinding.plusText.setEnabled(false);
+        holder.itemAcceptOrderBinding.minusTxt.setEnabled(false);
+        holder.itemAcceptOrderBinding.txtReject.setEnabled(false);
         //orderAcceptInterface.onAutoCancelOrder(getItem(position));
 
 

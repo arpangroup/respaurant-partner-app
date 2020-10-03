@@ -14,9 +14,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.example.mainactivity.adapters.OrderListAdapter;
@@ -77,6 +81,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
 
                 boolean isStatusChanged = orderViewModel.setStatusChange(order);
                 if(isStatusChanged) orderListAdapter.notifyDataSetChanged();
+                mBinding.toolbar.tagAll.performClick();
             }catch (Exception e){
                 e.printStackTrace();
                 Toast.makeText(context, "RECEIVER: EXCEPTION", Toast.LENGTH_SHORT).show();
@@ -101,6 +106,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         // Initialize NavController
         navController = Navigation.findNavController(rootView);
         initClicks();
+        handleSearch();
 
         // Initialize RecyclerView
         orderListAdapter = new OrderListAdapter(this);
@@ -130,6 +136,59 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             mBinding.toolbar.tagPicked.setText("PickedUp (" + pickedUpOrders.size() +")");
 
             orderListAdapter.submitList(orders);
+        });
+    }
+
+    private void handleSearch() {
+        //title_frame, searchView
+        mBinding.toolbar.btnSearch.setOnClickListener(view -> {
+            mBinding.toolbar.titleFrame.setVisibility(View.GONE);
+            mBinding.toolbar.searchView.setVisibility(View.VISIBLE);
+            mBinding.toolbar.searchClose.setVisibility(View.GONE);
+            mBinding.toolbar.txtSearch.requestFocus();
+        });
+
+        mBinding.toolbar.searchBack.setOnClickListener(view -> {
+            mBinding.toolbar.txtSearch.setText("");
+            mBinding.toolbar.titleFrame.setVisibility(View.VISIBLE);
+            mBinding.toolbar.searchView.setVisibility(View.GONE);
+            mBinding.toolbar.txtSearch.clearFocus();
+            orderListAdapter.getFilter().filter("");
+        });
+        mBinding.toolbar.searchClose.setOnClickListener(view -> {
+            mBinding.toolbar.txtSearch.setText(null);
+            mBinding.toolbar.searchClose.setVisibility(View.GONE);
+            orderListAdapter.getFilter().filter("");
+        });
+        mBinding.toolbar.txtSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence input, int start, int before, int count) {
+                if(input.length() != 0){
+                    mBinding.toolbar.searchClose.setVisibility(View.VISIBLE);
+                    orderListAdapter.getFilter().filter(input);
+                }else{
+                    mBinding.toolbar.searchClose.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        mBinding.toolbar.txtSearch.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            }else{
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+            }
         });
     }
 
@@ -186,7 +245,9 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         if(filterType == FilterType.PREPARE){
             filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() ==  OrderStatus.ORDER_RECEIVED.value() || order.getOrderStatusId() ==  OrderStatus.DELIVERY_GUY_ASSIGNED.value()).collect(Collectors.toList());
         }else if(filterType == FilterType.READY){
-            filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() ==  OrderStatus.ORDER_READY.value()).collect(Collectors.toList());
+            filteredOrders = orderList
+                    .stream()
+                    .filter(order -> order.getOrderStatusId() ==  OrderStatus.ORDER_READY.value()).collect(Collectors.toList());
         }else if(filterType == FilterType.PICKED){
             filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() ==  OrderStatus.ON_THE_WAY.value()).collect(Collectors.toList());
         }else{// ALL
