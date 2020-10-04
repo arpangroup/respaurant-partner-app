@@ -1,10 +1,20 @@
 package com.example.mainactivity.util;
 
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+
+import com.example.mainactivity.App;
+import com.example.mainactivity.R;
 import com.example.mainactivity.models.CouponDetails;
+import com.example.mainactivity.views.MoreActivity;
 
 public class CommonUtils {
     public static String getFormattedTime(int hourIn24HourFormat, int minute){
@@ -57,6 +67,27 @@ public class CommonUtils {
         intent.setData(Uri.parse("http://api.whatsapp.com/send?phone="+Constants.WHATSAPP_SUPPORT_NUMBER +"&text="+text));
         context.startActivity(intent);
 
+    }
+
+    public static void showPushNotification(Context context, String title, String message){
+        Intent notificationIntent = new Intent(context, MoreActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, App.CHANNEL_ID_PUSH_NOTIFICATION);
+        builder.setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)// clear notification after click
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setOngoing(false)
+                .setChannelId(App.CHANNEL_ID_PUSH_NOTIFICATION)
+                .setOngoing(true);
+        Notification notification = builder.build();
+
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        notificationManager.notify(App.NOTIFICATION_ID_PUSH_NOTIFICATION, notification);
     }
 
 }

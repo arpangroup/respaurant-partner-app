@@ -7,6 +7,8 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -107,7 +109,7 @@ public class MessagingService extends FirebaseMessagingService {
             String orderJson = remoteMessage.getData().get("order");
             String title = data.get("title");
             String message = data.get("message");
-            if(orderStatusId == OrderStatus.ORDER_PLACED.value()){
+            if(orderStatusId == OrderStatus.ORDER_PLACED.value() || orderStatusId == OrderStatus.CANCELED.value()){
                 // Show full screen notification
                 showFullScreenOrderArriveNotification(title, message, orderJson);
                 sendMessageToBroadCastReceiver(orderJson);
@@ -159,10 +161,12 @@ public class MessagingService extends FirebaseMessagingService {
     }
     private void sendMessageToBroadCastReceiver(String orderJson) {
         Intent intent = new Intent(MESSAGE_ORDER_STATUS);
-        Log.d(TAG, "SENDING: "+orderJson);
         intent.putExtra(INTENT_EXTRA_ORDER_STATUS, orderJson);
         // local broadcast receiver
+        SystemClock.sleep(1000);
+        Log.d(TAG, "SENDING: "+orderJson);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
     }
     private PushNotificationSource getNotificationSource(RemoteMessage remoteMessage){
         PushNotificationSource notificationSource;

@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderAcceptListAdapter;
 import com.example.mainactivity.commons.Constants;
+import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ActivityAcceptOrderBinding;
 import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.firebase.MessagingService;
@@ -28,6 +29,7 @@ import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.User;
 import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.UserSession;
+import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.views.MainActivity;
 import com.google.gson.Gson;
@@ -67,16 +69,25 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                 System.out.println("==================RECEIVED==========================");
                 System.out.println(ordersJson);
                 System.out.println("====================================================");
-                //List<Order> orders = new Gson().fromJson(ordersJson, convertType.getType());
-                //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
-                //Toast.makeText(context, orders.size() +" New order received", Toast.LENGTH_SHORT).show();
-                //Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
-                //orderViewModel.setNewOrder(orders.get(0));
-                //setupMediaPlayer();
                 Order order = new Gson().fromJson(ordersJson, Order.class);
                 Log.d(TAG, "ORDER_JSON: "+ordersJson);
                 Log.d(TAG, "ORDER: "+order);
-                orderViewModel.setNewOrder(order);
+                if(order.getOrderStatusId() == 1){
+                    List<Order> existingOrders =  orderViewModel.getNewOrders().getValue();
+                    if(existingOrders != null){
+                        if(existingOrders.size() > 0){
+                            boolean isOrderPresent = existingOrders.stream().anyMatch(order1 -> order1.getId() == order.getId()) ;
+                           if(!isOrderPresent){
+                               orderViewModel.setNewOrder(order);
+                           }
+                        }
+                    }
+                }
+                if(order.getOrderStatusId() == 6){// if user cancel the order
+                    Log.d(TAG, "ORDER CANCELLED.......");
+                    orderViewModel.removeOrderFromNewOrderList(order);
+                    CommonUtils.showPushNotification(getApplicationContext(), "Order Cancelled",  "You have missed one order, Customer cancelled the order");
+                }
                 ACTIVE = true;
             }catch (Exception e){
                 e.printStackTrace();
@@ -88,12 +99,14 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart()....");
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(MessagingService.MESSAGE_ORDER_STATUS));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume()....");
         setupMediaPlayer();
     }
 
@@ -149,7 +162,14 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
             Order order = new Gson().fromJson(ordersJson, Order.class);
             Log.d(TAG, "ORDER_JSON: "+ordersJson);
             Log.d(TAG, "ORDER: "+order);
-            orderViewModel.setNewOrder(order);
+            if(order.getOrderStatusId() == 1){
+                orderViewModel.setNewOrder(order);
+            }
+            if(order.getOrderStatusId() == 6){// if user cancel the order
+                Log.d(TAG, "ORDER CANCELLED.......");
+                orderViewModel.removeOrderFromNewOrderList(order);
+                CommonUtils.showPushNotification(getApplicationContext(), "Order Cancelled",  "You have missed one order, Customer cancelled the order");
+            }
         }catch (Exception e){
             e.printStackTrace();
             Toast.makeText(this, "INTENT: EXCEPTION", Toast.LENGTH_SHORT).show();
