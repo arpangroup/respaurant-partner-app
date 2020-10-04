@@ -38,8 +38,10 @@ import com.example.mainactivity.util.FormatDate;
 import com.example.mainactivity.util.FormatPrice;
 import com.example.mainactivity.util.FormatTime;
 import com.example.mainactivity.util.InputFilterMinMax;
+import com.example.mainactivity.viewmodels.AddressViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.location.LocationActivity;
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -55,6 +57,7 @@ public class EditRestaurantFragment extends Fragment {
 
     private FragmentEditRestaurantBinding mBinding;
     RestaurantViewModel restaurantViewModel;
+    AddressViewModel addressViewModel;
     private NavController navController;
 
     private Bitmap mBitmap = null;
@@ -78,6 +81,8 @@ public class EditRestaurantFragment extends Fragment {
         // Initialize ViewModel
         restaurantViewModel = new ViewModelProvider(requireActivity()).get(RestaurantViewModel.class);
         restaurantViewModel.init();
+        addressViewModel = new ViewModelProvider(requireActivity()).get(AddressViewModel.class);
+        addressViewModel.init(requireActivity());
 
         // Initialize NavController
         navController = Navigation.findNavController(rootView);
@@ -241,8 +246,26 @@ public class EditRestaurantFragment extends Fragment {
         });
 
         mBinding.businessDetails.layoutAddress.setOnClickListener(view -> {
-            Intent intent = new Intent(requireActivity(), LocationActivity.class);
-            requireActivity().startActivity(intent);
+            LatLng latLngRestaurant = null;
+            try{
+                double lat = Double.parseDouble(mBinding.businessDetails.etLatitude.getText().toString());
+                double lng = Double.parseDouble(mBinding.businessDetails.etLongitude.getText().toString());
+                latLngRestaurant = new LatLng(lat, lng);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            if(latLngRestaurant != null){
+                addressViewModel.setCurrentLocation(latLngRestaurant);
+                Log.d(TAG, "########################### RESTAURANT_LOCATION ####################");
+                Log.d(TAG, "\nLATLNG: " + latLngRestaurant);
+                Log.d(TAG, "\n##################################################################");
+                Intent intent = new Intent(requireActivity(), LocationActivity.class);
+                intent.putExtra(LocationActivity.INTENT_EXTRA_LATITUDE, latLngRestaurant.latitude);
+                intent.putExtra(LocationActivity.INTENT_EXTRA_LONGITUDE, latLngRestaurant.longitude);
+                requireActivity().startActivity(intent);
+            }else{
+                Toast.makeText(requireActivity(), "Invalid Location", Toast.LENGTH_SHORT).show();
+            }
         });
 
         mBinding.businessExtra.btnChangeDeliveryCharge.setOnClickListener(view -> {

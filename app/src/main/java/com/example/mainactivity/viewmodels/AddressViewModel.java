@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.LocationManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -22,12 +24,17 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 import static android.content.Context.LOCATION_SERVICE;
 
 public class AddressViewModel extends ViewModel {
     private final String TAG = this.getClass().getSimpleName();
     private AddressRepository addressRepository;
     private MutableLiveData<LatLng> mutableLatLng = new MutableLiveData<>(Constants.DEFAULT_LOCATION);
+    private MutableLiveData<Address> mutableAddress = null;
 
     private Context mContext;
     private MutableLiveData<Boolean> mutableIsLocationEnable;
@@ -35,9 +42,6 @@ public class AddressViewModel extends ViewModel {
 
     public void init(Context context){
         mContext  = context;
-//        if (mItems != null){
-//            return;
-//        }
         addressRepository = AddressRepository.getInstance();
     }
 
@@ -50,15 +54,24 @@ public class AddressViewModel extends ViewModel {
     public LiveData<LatLng> getCurrentLocation(){
         return mutableLatLng;
     }
-    public void setCurrentLocation(LatLng latLng){
-        mutableLatLng.setValue(latLng);
+    public void setCurrentLocation(LatLng currentLatlng){
+        LatLng defaultLocation =  Constants.DEFAULT_LOCATION;
+        if(currentLatlng !=  defaultLocation){
+            mutableLatLng.setValue(currentLatlng);
+        }
     }
 
     public void convertCoordinateToAddress(LatLng latLng){
-        addressRepository.convertCoordinateToAddress(latLng);
+        //addressRepository.convertCoordinateToAddress(latLng);// Using API Call to Server
+        convertCoordinateToAddressUsingGeoCoderApi(latLng); // Using GeoCoder API
     }
-    public LiveData<String> getAddressFromCoordinate(){
-        return addressRepository.getAddressFromCoordinate();
+
+    public LiveData<Address> getAddressFromCoordinate(){
+        //return addressRepository.getAddressFromCoordinate();
+        if(mutableAddress == null){
+            mutableAddress = new MutableLiveData<>(null);
+        }
+        return mutableAddress;
     }
 
 
@@ -125,6 +138,20 @@ public class AddressViewModel extends ViewModel {
             Toast.makeText(mContext, "Play services are required by this application", Toast.LENGTH_SHORT).show();
         }
         return false;
+    }
+
+
+    private void convertCoordinateToAddressUsingGeoCoderApi(LatLng latLng){
+        Geocoder mGeoCoder = new Geocoder(mContext, Locale.ENGLISH);
+        try {
+            List<Address> addressList = mGeoCoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if(addressList != null){
+                Address addressObj = addressList.get(0);
+                mutableAddress.setValue(addressObj);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

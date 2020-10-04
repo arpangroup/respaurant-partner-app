@@ -168,7 +168,8 @@ public class LocationSearchDialog extends BottomSheetDialogFragment {
                 List<Address> addressList = mGeoCoder.getFromLocation(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), 1);
                 if(addressList != null){
                     Address addressObj = addressList.get(0);
-                    mListener.onCurrentLocationClick(mCurrentLocation, addressObj);
+                    LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                    mListener.onCurrentLocationClick(latLng, addressObj);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

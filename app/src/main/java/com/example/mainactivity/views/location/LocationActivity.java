@@ -36,6 +36,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback, LocationSearchDialogListener, LocationDetailsDialogListener {
+    public static final String INTENT_EXTRA_LATITUDE = "latitude";
+    public static final String INTENT_EXTRA_LONGITUDE = "longitude";
     private final String TAG = this.getClass().getSimpleName();
     ActivityLocationBinding mBinding;
     AddressViewModel addressViewModel;
@@ -43,6 +45,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     LocationSearchDialog locationSearchDialog;
     LocationDetailsDialog locationDetailsDialog;
+
+    private LatLng mLatLng = null;
 
     boolean mLocationEnabled = false;
     boolean mGpsEnabled = false;
@@ -54,6 +58,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         mBinding = ActivityLocationBinding.inflate(getLayoutInflater());
         View rootView = mBinding.getRoot();
         setContentView(rootView);
+        double lat = getIntent().getDoubleExtra(INTENT_EXTRA_LATITUDE, -0.0);
+        double lng = getIntent().getDoubleExtra(INTENT_EXTRA_LONGITUDE, -0.0);
+        if(lat > 0.0 && lng > 0.0) mLatLng = new LatLng(lat, lng);
         addressViewModel = new ViewModelProvider(this).get(AddressViewModel.class);
         addressViewModel.init(this);
         mBinding.bgOverlay.setVisibility(View.GONE);
@@ -106,7 +113,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
 
         addressViewModel.getAddressFromCoordinate().observe(this, address->{
-            mBinding.txtAddressHeader.setText(address);
+            //mBinding.txtAddressHeader.setText(address);
+            if(address != null){
+                onCurrentLocationClick(null, address);
+            }
         });
 
         mBinding.btnChangeAddress.setOnClickListener(view -> {
@@ -184,15 +194,19 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
         mMap.setMyLocationEnabled(true);
 
-        LatLng currentLocation = addressViewModel.getCurrentLocation().getValue();
+        if(mLatLng == null) mLatLng = addressViewModel.getCurrentLocation().getValue();
+        Log.d(TAG, "########################### CURRENT_LOCATION ####################");
+        Log.d(TAG, "\nLATLNG: " + mLatLng);
+        Log.d(TAG, "\n###############################################################");
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-        goToLocation(currentLocation);
+        goToLocation(mLatLng);
 
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
                 //get latlng at the center by calling
                 LatLng midLatLng = mMap.getCameraPosition().target;
+               // addressViewModel.convertCoordinateToAddress(midLatLng);
                 addressViewModel.convertCoordinateToAddress(midLatLng);
             }
         });
@@ -226,33 +240,31 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
 
     @Override
-    public void onCurrentLocationClick(Location location, Address address) {
+    public void onCurrentLocationClick(LatLng latLng, Address address) {
         Log.d(TAG, "Inside onCurrentLocationClick()....");
-        if(location != null){
-            if(locationSearchDialog != null)locationSearchDialog.dismiss();
-            if(locationDetailsDialog != null)locationDetailsDialog.dismiss();
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        if(locationSearchDialog != null)locationSearchDialog.dismiss();
+        if(locationDetailsDialog != null)locationDetailsDialog.dismiss();
+        if(latLng != null)mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
-            Log.d(TAG, "ADDRESS: " + address);
-            String fullAddress = address.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-            String city = address.getLocality();
-            String state = address.getAdminArea();
-            String country = address.getCountryName();
-            String postalCode = address.getPostalCode();
-            String knownName = address.getFeatureName(); // Only if available else return NULL
+        Log.d(TAG, "ADDRESS: " + address);
+        String fullAddress = address.getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        String city = address.getLocality();
+        String state = address.getAdminArea();
+        String country = address.getCountryName();
+        String postalCode = address.getPostalCode();
+        String knownName = address.getFeatureName(); // Only if available else return NULL
 
-            String addressHeader = getAddressHeader(address);
-            if(addressHeader == null) mBinding.txtAddressHeader.setVisibility(View.GONE);
-            else mBinding.txtAddressHeader.setText(addressHeader);
-            mBinding.txtAddress.setText(fullAddress);
-        }
+        String addressHeader = getAddressHeader(address);
+        if(addressHeader == null) mBinding.txtAddressHeader.setVisibility(View.GONE);
+        else mBinding.txtAddressHeader.setText(addressHeader);
+        mBinding.txtAddress.setText(fullAddress);
     }
     private String getAddressHeader(Address address){
         String addressHeader = null;
         if (address.getLocality() != null) addressHeader = address.getLocality();
+        if (address.getSubAdminArea() != null) addressHeader = address.getSubAdminArea();
+        if (address.getAdminArea() != null) addressHeader = address.getAdminArea();
         else if(address.getCountryName() != null) addressHeader = address.getCountryName();
-        else if (address.getAdminArea() != null) addressHeader = address.getAdminArea();
         else if (address.getFeatureName() != null) addressHeader = address.getFeatureName();
         return addressHeader;
     }
