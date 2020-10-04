@@ -89,6 +89,12 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
             if(order.getToggle() == 0)order.setToggle(1);
             else if(order.getToggle() == 1)order.setToggle(0);
             holder.itemOrderPreparingBinding.setOrder(order);
+
+//
+//            System.out.println("=========================COUPON================================");
+//            System.out.println("ORDER_ID: "+order.getId());
+//            System.out.println("COUPON: "+order.getCouponDetails());
+//            System.out.println("COUPON_AMOUNT: "+order.getDiscountAmount());
         });
     }
 

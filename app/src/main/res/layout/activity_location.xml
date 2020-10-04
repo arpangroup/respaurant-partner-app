@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,84 +7,82 @@
     android:layout_height="match_parent"
     tools:context=".views.location.LocationActivity">
 
-    <!--Google Map Code-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_sheet_address_layout">
-        <fragment
-            android:id="@+id/map1"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <!--Google Map Code-->
         <RelativeLayout
-            android:id="@+id/layout_pulse_animation"
+            android:id="@+id/rootLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true">
+            android:layout_above="@+id/bottom_sheet_address_layout">
+            <fragment
+                android:id="@+id/map1"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <RelativeLayout
+                android:id="@+id/layout_pulse_animation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true">
+                <ImageView
+                    android:id="@+id/img_anim1"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/circle_img"/>
+                <!--        <ImageView-->
+                <!--            android:layout_below="@+id/img_pin"-->
+                <!--            android:id="@+id/img_anim2"-->
+                <!--            android:layout_width="30dp"-->
+                <!--            android:layout_height="30dp"-->
+                <!--            android:layout_centerInParent="true"-->
+                <!--            android:scaleType="centerCrop"-->
+                <!--            android:src="@drawable/circle_img"/>-->
+            </RelativeLayout>
             <ImageView
-                android:id="@+id/img_anim1"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:id="@+id/img_pin"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="20dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/circle_img"/>
-            <!--        <ImageView-->
-            <!--            android:layout_below="@+id/img_pin"-->
-            <!--            android:id="@+id/img_anim2"-->
-            <!--            android:layout_width="30dp"-->
-            <!--            android:layout_height="30dp"-->
-            <!--            android:layout_centerInParent="true"-->
-            <!--            android:scaleType="centerCrop"-->
-            <!--            android:src="@drawable/circle_img"/>-->
+                android:src="@drawable/pin_marker"/>
         </RelativeLayout>
-        <ImageView
-            android:id="@+id/img_pin"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/pin_marker"/>
-    </RelativeLayout>
-    <View
-        android:visibility="visible"
-        android:id="@+id/bg_overlay"
-        android:background="#99000000"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    <LinearLayout
-        android:id="@+id/bottom_sheet_address_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:padding="16dp"
-        android:orientation="vertical">
-
-        <TextView
+        <View
+            android:visibility="visible"
+            android:id="@+id/bg_overlay"
+            android:background="#99000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <LinearLayout
+            android:id="@+id/bottom_sheet_address_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/sfpro_display_bold"
-            android:text="Select delivery location"
-            android:textColor="@color/black"
-            android:textSize="16sp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/sfpro_display_semibold"
-            android:text="YOUR LOCATION"
-            android:textColor="@color/gray"
-            android:textSize="8sp" />
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layoutDirection="ltr"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:padding="16dp"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sfpro_display_bold"
+                android:text="Select delivery location"
+                android:textColor="@color/black"
+                android:textSize="16sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/sfpro_display_semibold"
+                android:text="YOUR LOCATION"
+                android:textColor="@color/gray"
+                android:textSize="8sp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layoutDirection="ltr"
@@ -93,65 +91,73 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layoutDirection="rtl"
-                    android:layout_marginTop="-4dp"
-                    android:orientation="horizontal">
-                    <Button
-                        android:id="@+id/btnChangeAddress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CHANGE"
-                        android:textColor="@color/ic_launcher_background"
-                        android:background="@color/transferent"/>
+                    android:layout_marginTop="8dp"
+                    android:layoutDirection="ltr"
+                    android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/txt_address_header"
+                        android:layoutDirection="rtl"
+                        android:layout_marginTop="-4dp"
+                        android:orientation="horizontal">
+                        <Button
+                            android:id="@+id/btnChangeAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CHANGE"
+                            android:textColor="@color/ic_launcher_background"
+                            android:background="@color/transferent"/>
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:fontFamily="@font/sfpro_display_semibold"
-                            android:text="Desun Hospital"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:textColor="@color/black"
-                            android:textSize="14sp" />
-                        <TextView
-                            android:id="@+id/txt_address"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:fontFamily="@font/sfpro_display_regular"
-                            android:text="RubyHospital Area, Kolkata"
-                            android:textColor="@color/gray"
-                            android:textSize="12sp" />
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/txt_address_header"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/sfpro_display_semibold"
+                                android:text="Desun Hospital"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/black"
+                                android:textSize="14sp" />
+                            <TextView
+                                android:id="@+id/txt_address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:fontFamily="@font/sfpro_display_regular"
+                                android:text="RubyHospital Area, Kolkata"
+                                android:textColor="@color/gray"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
                     </LinearLayout>
+
 
                 </LinearLayout>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.1dp"
+                    android:alpha="0.8"
+                    android:background="#B4A5A7AC" />
 
             </LinearLayout>
-
-            <View
+            <Button
+                android:id="@+id/btnConfirm"
+                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="0.1dp"
-                android:alpha="0.8"
-                android:background="#B4A5A7AC" />
-
+                android:layout_height="wrap_content"
+                android:text="Confirm location &amp; Proceed"
+                android:textColor="@color/white"
+                android:background="@drawable/rounded_red_button"/>
         </LinearLayout>
-        <Button
-            android:id="@+id/btnConfirm"
-            android:layout_marginTop="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Confirm location &amp; Proceed"
-            android:textColor="@color/white"
-            android:background="@drawable/rounded_red_button"/>
-    </LinearLayout>
 
+    </RelativeLayout>
 
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

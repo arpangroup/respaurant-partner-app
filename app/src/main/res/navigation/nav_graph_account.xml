@@ -29,10 +29,19 @@
         android:id="@+id/orderHistoryFragment"
         android:name="com.example.mainactivity.views.order.OrderHistoryFragment"
         android:label="fragment_order_history"
-        tools:layout="@layout/fragment_order_history" />
+        tools:layout="@layout/fragment_order_history" >
+        <action
+            android:id="@+id/action_orderHistoryFragment_to_orderDetailsFragment"
+            app:destination="@id/orderDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/earningFragment"
         android:name="com.example.mainactivity.views.account.EarningFragment"
         android:label="fragment_earning"
         tools:layout="@layout/fragment_earning" />
+    <fragment
+        android:id="@+id/orderDetailsFragment"
+        android:name="com.example.mainactivity.views.order.OrderDetailsFragment"
+        android:label="fragment_order_details"
+        tools:layout="@layout/fragment_order_details" />
 </navigation>

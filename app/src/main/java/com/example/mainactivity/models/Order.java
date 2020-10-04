@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.adapters.DishListAdapter;
+import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.util.FormatDate;
+import com.example.mainactivity.util.FormatPrice;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -60,11 +62,17 @@ public class Order {
     @SerializedName("restaurant")
     private Restaurant restaurant;
 
+    @SerializedName("discount_amount")
+    private String discountAmount;
+
+    @SerializedName("item_total")
+    private String itemTotal;
+
 //    @SerializedName("resturant_details")
 //    private Restaurant restaurantDetails;
 
-    @SerializedName("coupon_details")
-    private CouponDetails couponDetails;
+//    @SerializedName("coupon_details")
+//    private CouponDetails couponDetails;
 
     @SerializedName("orderitems")
     private List<Dish> orderitems;
@@ -80,6 +88,16 @@ public class Order {
         this.id = id;
         this.uniqueOrderId = uniqueOrderId;
     }
+    public String billAmount(){
+        double itemTotal = Double.parseDouble(this.itemTotal);
+        double discount = Double.parseDouble(this.discountAmount);
+        double billAmount =  itemTotal - discount;
+        return FormatPrice.formatDecimalPoint(billAmount);
+    }
+
+
+
+
 
     /*========================================================================*/
     private int toggle = 1;

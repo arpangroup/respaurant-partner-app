@@ -34,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.material.snackbar.Snackbar;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback, LocationSearchDialogListener, LocationDetailsDialogListener {
     public static final String INTENT_EXTRA_LATITUDE = "latitude";
@@ -47,6 +48,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     LocationDetailsDialog locationDetailsDialog;
 
     private LatLng mLatLng = null;
+    private com.example.mainactivity.models.Address mAddress = null;
 
     boolean mLocationEnabled = false;
     boolean mGpsEnabled = false;
@@ -125,7 +127,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         });
 
         mBinding.btnConfirm.setOnClickListener(view -> {
-            locationDetailsDialog = new LocationDetailsDialog();
+            //locationDetailsDialog = new LocationDetailsDialog();
+            locationDetailsDialog = LocationDetailsDialog.newInstance(mAddress);
             locationDetailsDialog.show(getSupportFragmentManager(), "LOCATION_DETAILS_DIALOG");
         });
     }
@@ -207,6 +210,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 //get latlng at the center by calling
                 LatLng midLatLng = mMap.getCameraPosition().target;
                // addressViewModel.convertCoordinateToAddress(midLatLng);
+                mLatLng = midLatLng;
                 addressViewModel.convertCoordinateToAddress(midLatLng);
             }
         });
@@ -258,6 +262,22 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         if(addressHeader == null) mBinding.txtAddressHeader.setVisibility(View.GONE);
         else mBinding.txtAddressHeader.setText(addressHeader);
         mBinding.txtAddress.setText(fullAddress);
+
+        if(latLng != null){
+            mAddress = new com.example.mainactivity.models.Address();
+            mAddress.setAddressTitle(addressHeader);
+            mAddress.setAddress(fullAddress);
+            mAddress.setLatitude(String.valueOf(latLng.latitude));
+            mAddress.setLongitude(String.valueOf(latLng.longitude));
+        }
+
+        String latlngStr = mLatLng.toString();
+        if(latLng != null) latlngStr = latLng.toString();
+        Snackbar snackbar = Snackbar.make(mBinding.rootLayout, latlngStr, Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("CLOSE", view -> snackbar.dismiss());
+        snackbar.show();
+
+
     }
     private String getAddressHeader(Address address){
         String addressHeader = null;

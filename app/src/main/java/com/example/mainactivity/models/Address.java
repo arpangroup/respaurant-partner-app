@@ -13,6 +13,7 @@ public class Address {
     @SerializedName("user_id")
     private int userId;
     private String address;
+    private String addressTitle;
     private String house;
     private String landmark;
     private String tag;

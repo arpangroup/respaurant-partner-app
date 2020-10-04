@@ -10,6 +10,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,20 +27,35 @@ import androidx.annotation.RequiresApi;
 import com.example.mainactivity.R;
 import com.example.mainactivity.commons.LocationDetailsDialogListener;
 import com.example.mainactivity.databinding.ActivityLocationBinding;
+import com.example.mainactivity.models.Address;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
 
 public class LocationDetailsDialog extends BottomSheetDialogFragment {
     private final String TAG = this.getClass().getSimpleName();
     private LocationDetailsDialogListener mListener;
 
+    private Address mAddress = null;
+    private static final String INPUT_STRING_ADDRESS = "address";
+    static LocationDetailsDialog newInstance(Address address){
+        LocationDetailsDialog fragment = new LocationDetailsDialog();
+
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putString(INPUT_STRING_ADDRESS, new Gson().toJson(address));
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     private AppBarLayout appBarLayout;
     private LinearLayout linearLayout;
 
     ImageButton btnClose;
+    TextView address_title, full_address;
     TextInputEditText etCompleteAddress, etFloor, etHowToReach;
     Button btnChangeAddress;
 
@@ -52,35 +69,13 @@ public class LocationDetailsDialog extends BottomSheetDialogFragment {
         BottomSheetBehavior bottomSheetBehavior  =  BottomSheetBehavior.from((View)rootView.getParent());
         bottomSheetBehavior.setDraggable(false);
 
-        /*
-        final View view = View.inflate(getContext(), R.layout.layout_location_search, null);
-        dialog.setContentView(view);
-        BottomSheetBehavior bottomSheetBehavior  =  BottomSheetBehavior.from((View)view.getParent());
-        bottomSheetBehavior.setPeekHeight(BottomSheetBehavior.PEEK_HEIGHT_AUTO);
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(bottomSheetBehavior.STATE_EXPANDED == newState){
-                    showView(appBarLayout, getActionBarSize());
-                    hideView(linearLayout);
-                }
-
-                if(bottomSheetBehavior.STATE_COLLAPSED == newState){
-                    hideView(appBarLayout);
-                    showView(linearLayout, getActionBarSize());
-                }
-
-                if(bottomSheetBehavior.STATE_HIDDEN == newState){
-                   dismiss();
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
-        });
-         */
+        try{
+            String addressJson = getArguments().getString(INPUT_STRING_ADDRESS);
+            mAddress = new Gson().fromJson(addressJson, Address.class);
+            Log.d(TAG, "ADDRESS: "+mAddress);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setWhiteNavigationBar(dialog);
@@ -107,11 +102,20 @@ public class LocationDetailsDialog extends BottomSheetDialogFragment {
     }
 
     private void init(View rootView){
+        address_title = rootView.findViewById(R.id.address_title);
+        full_address = rootView.findViewById(R.id.full_address);
         btnClose = rootView.findViewById(R.id.btnClose);
         etCompleteAddress = rootView.findViewById(R.id.etCompleteAddress);
         etFloor = rootView.findViewById(R.id.etFloor);
         etHowToReach = rootView.findViewById(R.id.etHowToReach);
         btnChangeAddress = rootView.findViewById(R.id.btnChangeAddress);
+
+        if(mAddress != null){
+            address_title.setText(mAddress.getAddressTitle());
+            full_address.setText(mAddress.getAddress());
+        }
+
+
 
         //initHints:
         etCompleteAddress.setOnFocusChangeListener((view, b) -> {

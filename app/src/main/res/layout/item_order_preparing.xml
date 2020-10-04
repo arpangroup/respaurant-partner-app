@@ -164,7 +164,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:fontFamily="@font/sfpro_display_medium"
-                                    android:text="@{`₹`+order.total}"
+                                    android:text="@{`₹`+order.itemTotal}"
                                     android:hint="₹87.5"
                                     android:textColor="@color/silver"
                                     android:textSize="18sp" />
@@ -194,6 +194,7 @@
 
                             </LinearLayout>
                             <LinearLayout
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layoutDirection="rtl">
@@ -219,6 +220,7 @@
 
                             </LinearLayout>
                             <LinearLayout
+                                android:visibility="@{order.coupon_name != null ? View.VISIBLE : View.GONE}"
                                 xmlns:android="http://schemas.android.com/apk/res/android"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -227,21 +229,25 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
+                                    android:layoutDirection="ltr"
                                     android:fontFamily="@font/sfpro_display_medium"
-                                    android:text="@{order.couponDetails !=null ? `₹`+ order.couponDetails.discount : `₹`+ `0`}"
+                                    android:text="@{`₹`+order.discountAmount}"
+                                    android:hint="₹ 10"
                                     android:textColor="@color/silver"
                                     android:textSize="18sp" />
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/sfpro_display_medium"
-                                    android:text="Restaurant Promo"
+                                    android:text="@{`Promo(` + order.coupon_name + `)`}"
+                                    android:hint="Promo(DEMO)"
                                     android:textColor="@color/silver"
                                     android:textSize="18sp" />
 
 
                             </LinearLayout>
                             <LinearLayout
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layoutDirection="rtl">
@@ -303,7 +309,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="8dp"
                                         android:fontFamily="@font/sfpro_display_medium"
-                                        android:text="@{`₹`+ order.total}"
+                                        android:text="@{`₹`+ order.billAmount()}"
                                         android:hint="₹113.40"
                                         android:textColor="@color/black"
                                         android:textStyle="bold"
