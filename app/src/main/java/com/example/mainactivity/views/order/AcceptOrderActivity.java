@@ -170,6 +170,8 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                     mMediaPlayer.release();
                     mMediaPlayer = null;
                 }
+                Intent  intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
                 finish();
             }
             orderAcceptListAdapter.submitList(orders);

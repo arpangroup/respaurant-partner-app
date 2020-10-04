@@ -89,6 +89,15 @@ public class EditRestaurantFragment extends Fragment {
 
         // Initialize RecyclerView
         //menuItemAdapter = new MenuItemAdapter(this);
+        mBinding.businessExtra.layoutCommission.setVisibility(View.VISIBLE);
+        mBinding.businessExtra.btnCommissionIncrease.setVisibility(View.VISIBLE);
+        mBinding.businessExtra.btnCommissionDecrease.setVisibility(View.VISIBLE);
+        mBinding.businessExtra.layoutFixDeliveryCharge.setVisibility(View.GONE);
+        mBinding.businessExtra.textInputStoreChargeLayout.setVisibility(View.GONE);
+        mBinding.btnRegister.setVisibility(View.GONE);
+        mBinding.businessExtra.layoutDynamicDeliveryCharge.setVisibility(View.GONE);
+        mBinding.businessDetails.country.setEnabled(false);
+        mBinding.businessDetails.country.setClickable(false);
 
         mBinding.toolbar.back.setOnClickListener(view -> {
             navController.popBackStack();
@@ -99,20 +108,24 @@ public class EditRestaurantFragment extends Fragment {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         mBinding.businessDetails.btnOpenTime.setOnClickListener(view -> {
+            /*
             TimePickerDialog timePickerDialog = new TimePickerDialog(requireActivity(), (timePicker, selectedHour, selectedMinute) -> {
                 mBinding.businessDetails.etOpeningTime.setText(CommonUtils.getFormattedTime(selectedHour, selectedMinute));
             }, hour, minute, false);
             timePickerDialog.setTitle("Select Opening Time");
             timePickerDialog.show();
+             */
         });
 
 
         mBinding.businessDetails.btnCloseTime.setOnClickListener(view -> {
+            /*
             TimePickerDialog timePickerDialog = new TimePickerDialog(requireActivity(), (timePicker, selectedHour, selectedMinute) -> {
                 mBinding.businessDetails.etOpeningTime.setText(CommonUtils.getFormattedTime(selectedHour, selectedMinute));
             }, hour, minute, false);
             timePickerDialog.setTitle("Select Closing Time");
             timePickerDialog.show();
+             */
         });
 
         mBinding.businessDetails.btnChangeDeliveryTime.setOnClickListener(view -> {
@@ -180,6 +193,7 @@ public class EditRestaurantFragment extends Fragment {
 
 
         mBinding.businessExtra.btnCommissionDecrease.setOnClickListener(view -> {
+            /*
             String prevStr = mBinding.businessExtra.etCommissionRate.getText().toString().replace("%", "");
             double prevVal  = Double.parseDouble(prevStr);
             prevVal -= 0.5;
@@ -191,9 +205,11 @@ public class EditRestaurantFragment extends Fragment {
             }else{
                 mBinding.businessExtra.etCommissionRate.setText(FormatPrice.formatDecimalPoint(prevVal) + "%");
             }
+             */
         });
 
         mBinding.businessExtra.btnCommissionIncrease.setOnClickListener(view -> {
+            /*
             String prevStr = mBinding.businessExtra.etCommissionRate.getText().toString().replace("%", "");
             double prevVal  = Double.parseDouble(prevStr);
             prevVal += 0.5;
@@ -204,9 +220,11 @@ public class EditRestaurantFragment extends Fragment {
             }else{
                 mBinding.businessExtra.etCommissionRate.setText(FormatPrice.formatDecimalPoint(prevVal) + "%");
             }
+             */
         });
 
         mBinding.businessExtra.decreaseRadius.setOnClickListener(view -> {
+            /*
             String prevStr = mBinding.businessExtra.etDeliveryRadius.getText().toString().replace("\nKM", "");
             double prevVal  = Double.parseDouble(prevStr);
             prevVal -= 0.5;
@@ -218,8 +236,10 @@ public class EditRestaurantFragment extends Fragment {
             }else{
                 mBinding.businessExtra.etDeliveryRadius.setText(FormatPrice.formatDecimalPoint(prevVal) + "\nKM");
             }
+             */
         });
         mBinding.businessExtra.increaseRadius.setOnClickListener(view -> {
+            /*
             String prevStr = mBinding.businessExtra.etDeliveryRadius.getText().toString().replace("\nKM", "");
             double prevVal  = Double.parseDouble(prevStr);
             prevVal += 0.5;
@@ -230,6 +250,7 @@ public class EditRestaurantFragment extends Fragment {
             }else{
                 mBinding.businessExtra.etDeliveryRadius.setText(FormatPrice.formatDecimalPoint(prevVal) + "\nKM");
             }
+             */
         });
 
         mBinding.businessExtra.radiobuttonDelivery.setOnClickListener(view -> mBinding.businessExtra.radiobuttonBoth.setChecked(false));

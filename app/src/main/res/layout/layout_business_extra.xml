@@ -35,6 +35,7 @@
             app:errorEnabled="true">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_certificate"
+                android:enabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/sfpro_text_medium"
@@ -51,6 +52,7 @@
             app:errorEnabled="true">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_store_charge"
+                android:enabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/sfpro_text_medium"
@@ -70,6 +72,7 @@
             app:errorEnabled="true">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_min_order_price"
+                android:enabled="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/sfpro_text_medium"
@@ -95,6 +98,7 @@
                 android:orientation="horizontal">
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/is_pure_veg"
+                    android:enabled="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
@@ -118,6 +122,7 @@
 
         <!--CommissionRate-->
         <androidx.cardview.widget.CardView
+            android:id="@+id/layout_commission"
             android:layout_width="match_parent"
             android:layout_height="96dp"
             android:layout_marginTop="24dp"
@@ -243,6 +248,7 @@
                         android:background="@drawable/radio_button_ui"
                         android:textColor="@drawable/radio_text_selector"
                         android:button="@null"
+                        android:enabled="false"
                         android:paddingLeft="24dp"
                         android:paddingRight="24dp"
                         android:paddingTop="8dp"
@@ -256,6 +262,7 @@
                         android:background="@drawable/radio_button_ui"
                         android:textColor="@drawable/radio_text_selector"
                         android:button="@null"
+                        android:enabled="false"
                         android:paddingLeft="24dp"
                         android:paddingRight="24dp"
                         android:paddingTop="8dp"
@@ -271,6 +278,7 @@
                     android:background="@drawable/radio_button_ui"
                     android:textColor="@drawable/radio_text_selector"
                     android:button="@null"
+                    android:enabled="false"
                     android:paddingLeft="24dp"
                     android:paddingRight="24dp"
                     android:paddingTop="8dp"
@@ -408,6 +416,7 @@
 
         <!--DeliveryCharge(Fixed)-->
         <androidx.cardview.widget.CardView
+            android:id="@+id/layout_fix_delivery_charge"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginTop="24dp"
@@ -473,6 +482,7 @@
 
         <!--DeliveryCharge(Dynamic)-->
         <androidx.cardview.widget.CardView
+            android:id="@+id/layout_dynamic_delivery_charge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"

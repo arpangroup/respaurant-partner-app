@@ -1,6 +1,9 @@
 package com.example.mainactivity.models.response;
 
+import com.example.mainactivity.models.Restaurant;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

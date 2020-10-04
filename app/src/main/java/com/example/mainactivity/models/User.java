@@ -2,6 +2,9 @@ package com.example.mainactivity.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -36,4 +39,7 @@ public class User {
 
     @SerializedName("push_token")
     private String pushToken;
+
+    @SerializedName("restaurants")
+    private List<Restaurant> restaurants = new ArrayList<>();
 }

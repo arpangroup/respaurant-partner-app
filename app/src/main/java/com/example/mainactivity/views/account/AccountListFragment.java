@@ -116,12 +116,26 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     }
 
     private void handleEndlessService(){
+        Log.d(TAG, "Inside handleEndlessService().............");
+        Log.d(TAG, "PUSH_TOKEN: "+UserSession.getPushNotificationToken());
         boolean serviceStarted = ServiceTracker.getServiceState(requireActivity()) == ServiceTracker.ServiceState.STARTED;
         boolean isRestaurantActive = UserSession.isRestaurantActive(requireActivity());
-        if(isRestaurantActive && serviceStarted) return;
-        else if(!isRestaurantActive && !serviceStarted) return;
-        else if(isRestaurantActive && !serviceStarted) actionOnService(Actions.START);
-        else if(!isRestaurantActive && serviceStarted)actionOnService(Actions.STOP);
+        if(isRestaurantActive && serviceStarted) {
+            Log.d(TAG, "Restaurant is ACTIVE and Service STARTED; ==> return; ");
+            return;
+        }
+        else if(!isRestaurantActive && !serviceStarted) {
+            Log.d(TAG, "Restaurant is NOT_ACTIVE and Service NOT_STARTED; ==> return; ");
+            return;
+        }
+        else if(isRestaurantActive && !serviceStarted) {
+            Log.d(TAG, "Restaurant is ACTIVE and Service NOT_STARTED; ==> try to START service ");
+            actionOnService(Actions.START);
+        }
+        else if(!isRestaurantActive && serviceStarted){
+            Log.d(TAG, "Restaurant is NOT_ACTIVE and Service STARTED; ==> try to STOP service ");
+            actionOnService(Actions.STOP);
+        }
         else{
             Log.d(TAG, "STOP THE FOREGROUND SERVICE ON DEMAND");
             actionOnService(Actions.STOP);
