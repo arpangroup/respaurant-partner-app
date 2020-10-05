@@ -32,7 +32,6 @@ public class OrderRepository {
     private MutableLiveData<Boolean> isLoading=new MutableLiveData<>();
     private MutableLiveData<List<Order>> mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<List<String>> mutableCancelOrders;
-    MutableLiveData<List<Order>> mutableNewOrderList;
 
     public static OrderRepository getInstance(){
         if (orderRepository == null){
@@ -62,12 +61,17 @@ public class OrderRepository {
     }
 
 
-    public LiveData<List<Order>> getNewOrders(NewOrderRequest newOrderRequest){
-        if(mutableNewOrderList == null){
-            mutableNewOrderList = new MutableLiveData<>();
-            loadNewOrdersApi(newOrderRequest);
+    public LiveData<List<Order>> getNewOrders(){
+        // Find already acccepted orders:
+        List<String> acceptedOrderIds = new ArrayList<>();
+        List<Order> acceptedOrders = mutableAcceptedOrders.getValue();
+        if (acceptedOrders != null) {
+            acceptedOrders.forEach(order -> acceptedOrderIds.add(String.valueOf(order.getId())));
         }
-        return mutableNewOrderList;
+
+        NewOrderRequest newOrderRequest = new NewOrderRequest(acceptedOrderIds);
+
+        return loadNewOrdersApi(newOrderRequest);
     }
     public LiveData<List<String>> getAllCanceledOrders(){
         if(mutableCancelOrders == null){
@@ -126,9 +130,10 @@ public class OrderRepository {
 
 
     /*========================================================API_CALLS==============================================*/
-    private void loadNewOrdersApi(NewOrderRequest newOrderRequest){
+    private LiveData<List<Order>> loadNewOrdersApi(NewOrderRequest newOrderRequest){
         Log.d(TAG,  "Inside loadNewOrdersApi().....");
         Log.d(TAG, "REQUEST: "+new Gson().toJson(newOrderRequest));
+        MutableLiveData<List<Order>> mutableNewOrderList = new MutableLiveData<>();
         ApiInterface apiInterface = ApiService.getApiService();
         isLoading.setValue(true);
         apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<List<Order>>() {
@@ -136,6 +141,8 @@ public class OrderRepository {
             public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
                 isLoading.setValue(false);
                 List<Order> orders = response.body();
+                Log.d(TAG, "RESPONSE: "+orders);
+
                 mutableNewOrderList.setValue(orders);
             }
 
@@ -144,6 +151,7 @@ public class OrderRepository {
                 isLoading.setValue(false);
             }
         });
+        return mutableNewOrderList;
     }
     private void loadAllAcceptedOrdersFromApi(){
         RequestToken requestToken = new RequestToken();

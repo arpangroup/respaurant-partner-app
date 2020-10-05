@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
+@Getter
+@Setter
 @ToString
-public class NewOrderRequest {
-    private int user_id;
+public class NewOrderRequest extends RequestToken {
     private List<String>listed_order_ids;
 
-    public NewOrderRequest(int user_id, List<String> listed_order_ids) {
-        this.user_id = user_id;
+    public NewOrderRequest(List<String> listed_order_ids) {
         this.listed_order_ids = listed_order_ids;
     }
 

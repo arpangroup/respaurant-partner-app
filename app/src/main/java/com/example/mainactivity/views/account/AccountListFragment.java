@@ -32,6 +32,7 @@ import com.example.mainactivity.services.EndlessService;
 import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.ServiceTracker;
 import com.example.mainactivity.sharedpref.UserSession;
+import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 import com.example.mainactivity.views.MainActivity;
@@ -202,6 +203,7 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
                 navController.navigate(R.id.action_accountListFragment_to_earningFragment);
                 break;
             case 4:
+                CommonUtils.openWhatsApp(requireActivity());
                 break;
             case 5:
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());

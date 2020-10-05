@@ -172,7 +172,7 @@ public class NewOrderFetchService extends Service {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    NewOrderRequest newOrderRequest = new NewOrderRequest(user.getId(), listedOrderIds);
+                    NewOrderRequest newOrderRequest = new NewOrderRequest(listedOrderIds);
                     //NewOrderRequest newOrderRequest = new NewOrderRequest(userId, new ArrayList<>());
                     while (isServiceStarted){
                         if(!isLoading){

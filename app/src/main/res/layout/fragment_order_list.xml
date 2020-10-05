@@ -8,19 +8,41 @@
     android:background="@color/white"
     android:orientation="vertical"
     tools:context=".views.order.OrderListFragment">
+
+
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar_order"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/order_recycler"
-        android:layout_below="@+id/toolbar"
-        android:layout_above="@+id/bottomNavigation"
-        android:layout_marginTop="4dp"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_order_preparing"/>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@id/bottomNavigation">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/order_recycler"
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_order_preparing"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_reload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_anchorGravity="bottom|end"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:background="@color/white"
+            android:foregroundTint="@color/white"
+            android:tint="@color/white"
+            app:fabSize="normal"
+            android:src="@drawable/ic_baseline_refresh_24"/>
+
+    </RelativeLayout>
     <RelativeLayout
         android:id="@+id/progressbar"
         android:visibility="gone"
@@ -32,10 +54,9 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"/>
     </RelativeLayout>
-
-
     <include
         android:id="@+id/bottomNavigation"
         layout="@layout/bottom_navigation_main"/>
-
 </RelativeLayout>
+
+

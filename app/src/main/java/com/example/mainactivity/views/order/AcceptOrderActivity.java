@@ -74,6 +74,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                             boolean isOrderPresent = existingOrders.stream().anyMatch(order1 -> order1.getId() == order.getId()) ;
                            if(!isOrderPresent){
                                orderViewModel.setNewOrder(order);
+                               startMediaPlayer(NotificationSoundType.ORDER_ARRIVE);
                            }
                         }
                     }
@@ -82,7 +83,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                     Log.d(TAG, "ORDER CANCELLED.......");
                     orderViewModel.removeOrderFromNewOrderList(order);
                     CommonUtils.showPushNotification(getApplicationContext(), "Order Cancelled",  "You have missed one order, Customer cancelled the order");
-                    setupMediaPlayer(NotificationSoundType.ORDER_ARRIVE);
+                    startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
                 }
                 ACTIVE = true;
             }catch (Exception e){
@@ -103,7 +104,6 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume()....");
-        setupMediaPlayer(NotificationSoundType.ORDER_ARRIVE);
     }
 
     @Override
@@ -160,6 +160,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
             Log.d(TAG, "ORDER: "+order);
             if(order.getOrderStatusId() == 1){
                 orderViewModel.setNewOrder(order);
+                startMediaPlayer(NotificationSoundType.ORDER_ARRIVE);
             }
             if(order.getOrderStatusId() == 6){// if user cancel the order
                 Log.d(TAG, "ORDER CANCELLED.......");
@@ -207,7 +208,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     }
 
 
-    private void setupMediaPlayer(NotificationSoundType soundType) {
+    private void startMediaPlayer(NotificationSoundType soundType) {
         mMediaPlayer = new MediaPlayer();
         Context context = getApplicationContext();
         if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
@@ -244,6 +245,10 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
         super.onDestroy();
         isMusicEnable = false;
         ACTIVE = false;
+        stopMediaPlayer();
+
+    }
+    private void stopMediaPlayer(){
         if(mMediaPlayer != null){
             mMediaPlayer.stop();
             mMediaPlayer.release();

@@ -60,6 +60,9 @@ public class OrderViewModel extends ViewModel {
         }
         return mutableNewOrders;
     }
+    public LiveData<List<Order>> getNewOrdersFromApi(){
+        return orderRepository.getNewOrders();
+    }
     public void changeDeliveryTimeOfNotAcceptedOrder(int orderId, int time){
         //orderRepository.changePrepareTime(orderId, time);
         if(mutableNewOrders != null && mutableNewOrders.getValue() != null){

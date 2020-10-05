@@ -276,6 +276,28 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         //BottomNavigation Click:
         mBinding.bottomNavigation.menuLinear.setOnClickListener(view -> startActivity(new Intent(requireActivity(), MenuActivity.class)));
         mBinding.bottomNavigation.accountLinear.setOnClickListener(view -> startActivity(new Intent(requireActivity(), MoreActivity.class)));
+
+        mBinding.fabReload.setOnClickListener(view -> {
+            orderViewModel.getNewOrdersFromApi().observe(requireActivity(), orders -> {
+                // check if the orders present in newOrders list or not
+                final Order[] lastOrder = {null};
+                orders.forEach(order -> {
+                    List<Order> newOrders = orderViewModel.getNewOrders().getValue();
+                    boolean isExist = newOrders.stream().anyMatch(order1 -> order.getId() == order1.getId());
+                    if(!isExist){
+                        orderViewModel.setNewOrder(order);
+                        lastOrder[0] = order;
+                    }
+                });
+                if(lastOrder[0] != null){
+                    Intent intent = new Intent(requireActivity(), AcceptOrderActivity.class);
+                    String orderJson = new Gson().toJson(lastOrder[0]);
+                    intent.putExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS, orderJson);
+                    startActivity(intent);
+                }
+            });
+
+        });
     }
 
 
