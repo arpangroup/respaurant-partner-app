@@ -1,28 +1,17 @@
 package com.example.mainactivity;
 
-import android.app.AlertDialog;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
-
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 public class App extends Application {
     public static final String CHANNEL_ID_NEW_ORDER = "channel_new_orders";
@@ -58,7 +47,7 @@ public class App extends Application {
     }
 
     private void createNotificationChannels() {
-        Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.notification_mp3);
+        Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.default_notification_sound);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationChannel notificationChannelNewOrder = new NotificationChannel(
                     CHANNEL_ID_NEW_ORDER,

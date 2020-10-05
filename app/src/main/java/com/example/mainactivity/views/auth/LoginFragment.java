@@ -110,11 +110,6 @@ public class LoginFragment extends Fragment {
             navController.navigate(R.id.action_otpSentFragment_to_signupFragment);
         });
 
-        mBinding.layoutHeader.setOnClickListener(view -> {
-            startActivity(new Intent(requireActivity(), MainActivity.class));
-        });
-
-
 
         authenticationViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
             if(aBoolean) {

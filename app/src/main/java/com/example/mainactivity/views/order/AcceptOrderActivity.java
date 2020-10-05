@@ -11,23 +11,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderAcceptListAdapter;
 import com.example.mainactivity.commons.Constants;
-import com.example.mainactivity.commons.OrderStatus;
+import com.example.mainactivity.commons.NotificationSoundType;
 import com.example.mainactivity.databinding.ActivityAcceptOrderBinding;
 import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.User;
-import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
@@ -35,8 +32,6 @@ import com.example.mainactivity.views.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -87,6 +82,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                     Log.d(TAG, "ORDER CANCELLED.......");
                     orderViewModel.removeOrderFromNewOrderList(order);
                     CommonUtils.showPushNotification(getApplicationContext(), "Order Cancelled",  "You have missed one order, Customer cancelled the order");
+                    setupMediaPlayer(NotificationSoundType.ORDER_ARRIVE);
                 }
                 ACTIVE = true;
             }catch (Exception e){
@@ -107,7 +103,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume()....");
-        setupMediaPlayer();
+        setupMediaPlayer(NotificationSoundType.ORDER_ARRIVE);
     }
 
     @Override
@@ -211,25 +207,35 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
     }
 
 
-    private void setupMediaPlayer() {
+    private void setupMediaPlayer(NotificationSoundType soundType) {
         mMediaPlayer = new MediaPlayer();
         Context context = getApplicationContext();
-        mMediaPlayer = MediaPlayer.create(context, R.raw.alert_5);
+        if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
+        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.swiggy_order_cancel_ringtone);
+        else mMediaPlayer = MediaPlayer.create(context, R.raw.default_notification_sound);
 
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if(isMusicEnable){
-                    try{
-                        mMediaPlayer.start();
-                    }catch (Exception e){
-                        //e.printStackTrace();
-                    }
-                }
-            }
-        }, 0, 1000);
+       if(soundType == NotificationSoundType.ORDER_ARRIVE){
+           timer = new Timer();
+           timer.schedule(new TimerTask() {
+               @Override
+               public void run() {
+                   if(isMusicEnable){
+                       try{
+                           mMediaPlayer.start();
+                       }catch (Exception e){
+                           //e.printStackTrace();
+                       }
+                   }
+               }
+           }, 0, 1000);
 
+       }else{
+           try{
+               mMediaPlayer.start();
+           }catch (Exception e){
+               //e.printStackTrace();
+           }
+       }
 
     }
 

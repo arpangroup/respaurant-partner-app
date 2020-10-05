@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,19 +14,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderListAdapter;
+import com.example.mainactivity.commons.NotificationSoundType;
 import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.FragmentOrderListBinding;
 import com.example.mainactivity.firebase.MessagingService;
@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 public class OrderListFragment extends Fragment implements OrderListAdapter.OrderPrepareInterface {
     private final String TAG = this.getClass().getSimpleName();
 
+    private MediaPlayer mMediaPlayer;
     private FragmentOrderListBinding mBinding;
     OrderViewModel orderViewModel;
     private OrderListAdapter orderListAdapter;
@@ -56,10 +57,37 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         PICKED
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(requireActivity()).registerReceiver(mReceiver, new IntentFilter(MessagingService.MESSAGE_ORDER_STATUS));
+    }
+
+    private void startMediaPlayer(NotificationSoundType soundType) {
+        mMediaPlayer = new MediaPlayer();
+        Context context = requireActivity();
+        if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
+        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.swiggy_order_cancel_ringtone);
+        else mMediaPlayer = MediaPlayer.create(context, R.raw.default_notification_sound);
+        try{
+            mMediaPlayer.start();
+        }catch (Exception e){
+            //e.printStackTrace();
+        }
+    }
+    private void stopMediaPlayer(){
+        if(mMediaPlayer != null){
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopMediaPlayer();
     }
 
     @Override
@@ -82,8 +110,16 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
                 Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
 
                 boolean isStatusChanged = orderViewModel.setStatusChange(order);
-                if(isStatusChanged) orderListAdapter.notifyDataSetChanged();
-                mBinding.toolbar.tagAll.performClick();
+                if(isStatusChanged){
+                    orderListAdapter.notifyDataSetChanged();
+                    mBinding.toolbar.tagAll.performClick();
+                    if (order.getOrderStatusId() == OrderStatus.CANCELED.value()){
+                        startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
+                    }else{
+                        startMediaPlayer(NotificationSoundType.DEFAULT);
+                    }
+                }
+
             }catch (Exception e){
                 e.printStackTrace();
                 Toast.makeText(context, "RECEIVER: EXCEPTION", Toast.LENGTH_SHORT).show();

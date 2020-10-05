@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FA0F30"
-    tools:context=".views.SplashFragment">
+    tools:context=".views.SplashScreenActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#FA0F30"
+        android:background="#FFFFFF"
         android:gravity="center"
         tools:context=".views.SplashScreenActivity">
         <!--    android:background="@drawable/splash_screen"-->
@@ -24,7 +24,7 @@
             android:layout_height="300dp"
             android:layout_centerInParent="true"
 
-            android:src="@drawable/logo_transparent" />
+            android:src="@drawable/delivery" />
 
         <TextView
             android:id="@+id/tv"
@@ -38,7 +38,7 @@
             android:letterSpacing="0.0525"
             android:lineSpacingExtra="6.5dp"
             android:text="@string/india_s_fastest_growing_nfood_delivery_platform"
-            android:textColor="@color/white"
+            android:textColor="#F2F2F2"
             android:textSize="12.3sp" />
     </LinearLayout>
 
