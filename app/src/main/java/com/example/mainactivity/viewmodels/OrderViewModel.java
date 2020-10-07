@@ -1,31 +1,24 @@
 package com.example.mainactivity.viewmodels;
 
-import android.location.Address;
 import android.util.Log;
 
-import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.mainactivity.commons.OrderStatus;
-import com.example.mainactivity.models.DeliveryGuy;
 import com.example.mainactivity.models.Order;
-import com.example.mainactivity.models.request.NewOrderRequest;
-import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.response.ApiResponse;
-import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.repositories.OrderRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderViewModel extends ViewModel {
     private final String TAG = this.getClass().getSimpleName();
     private OrderRepository orderRepository;
     //private MutableLiveData<ORDER_TYPE> mutableOrderType = new MutableLiveData<>(ORDER_TYPE.ALL);
     private MutableLiveData<List<Order>> mutableOrders = null;
+    private MutableLiveData<Order> mutableOrderDetails = new MutableLiveData<>();
 
     private List<Order> ordersNotAccepted = new ArrayList<>();
     private List<Order> newOrders = new ArrayList<>();
@@ -44,6 +37,13 @@ public class OrderViewModel extends ViewModel {
             newOrders = new ArrayList<>();
         }
         newOrders.add(order);
+        mutableNewOrders.setValue(newOrders);
+    }
+    public void setNewOrder(List<Order> orders){
+        if (newOrders == null) {
+            newOrders = new ArrayList<>();
+        }
+        newOrders.addAll(orders);
         mutableNewOrders.setValue(newOrders);
     }
     public void removeOrderFromNewOrderList(Order order){
@@ -122,5 +122,16 @@ public class OrderViewModel extends ViewModel {
 //    }
     public boolean setStatusChange(Order order){
         return orderRepository.setStatusChanged(order);
+    }
+
+
+    public void setOrderDetails(Order order){
+        mutableOrderDetails.setValue(order);
+    }
+    public LiveData<Order> getOrderDetails(){
+        if(mutableOrderDetails == null){
+            mutableOrderDetails = new MutableLiveData<>();
+        }
+        return mutableOrderDetails;
     }
 }

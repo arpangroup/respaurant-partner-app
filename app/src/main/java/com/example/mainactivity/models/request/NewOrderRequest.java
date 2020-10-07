@@ -1,5 +1,7 @@
 package com.example.mainactivity.models.request;
 
+import com.example.mainactivity.models.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,13 @@ public class NewOrderRequest extends RequestToken {
     private List<String>listed_order_ids;
 
     public NewOrderRequest(List<String> listed_order_ids) {
+        this.listed_order_ids = listed_order_ids;
+    }
+
+    public NewOrderRequest(User user, List<String> listed_order_ids) {
+        this.setRestaurantId(user.getRestaurants().get(0).getId());
+        this.setUserId(user.getId());
+        this.setToken(user.getAuthToken());
         this.listed_order_ids = listed_order_ids;
     }
 

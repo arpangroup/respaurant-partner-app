@@ -29,6 +29,7 @@ import com.example.mainactivity.databinding.FragmentMenuListBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.AccountSection;
 import com.example.mainactivity.services.EndlessService;
+import com.example.mainactivity.services.FetchOrderService;
 import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.ServiceTracker;
 import com.example.mainactivity.sharedpref.UserSession;
@@ -67,6 +68,12 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        restaurantViewModel.loadDashboard();
+    }
+
+    @Override
     public void onViewCreated(@NonNull View rootView, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
 
@@ -81,7 +88,7 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         initClicks();
         initRecyclerView();
 
-        restaurantViewModel.loadDashboard();
+//        restaurantViewModel.loadDashboard();
 
 //
 //        isRestaurantLoaded.observe(requireActivity(), isLoaded -> {
@@ -176,7 +183,7 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
 
     private void actionOnService(Actions action){
         if(ServiceTracker.getServiceState(requireActivity()) == ServiceTracker.ServiceState.STOPPED && action == Actions.STOP) return;
-        Intent intent = new Intent(getActivity(), EndlessService.class);
+        Intent intent = new Intent(getActivity(), FetchOrderService.class);
         intent.setAction(action.name());
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             Log.d(TAG, "Starting the service in >=26 Mode");

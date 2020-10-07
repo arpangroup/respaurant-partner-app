@@ -1,20 +1,28 @@
 package com.example.mainactivity.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.databinding.ItemHistoryBinding;
+import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.databinding.ItemOrderPreparingBinding;
 import com.example.mainactivity.models.Order;
 
-public class OrderHistoryAdapter extends ListAdapter<Order, OrderHistoryAdapter.OrderViewHolder> {
+import java.util.List;
 
-    public OrderHistoryAdapter() {
+public class OrderHistoryAdapter extends ListAdapter<Order, OrderHistoryAdapter.OrderViewHolder> {
+    OrderHistoryInterface orderHistoryInterface;
+
+
+    public OrderHistoryAdapter(OrderHistoryInterface orderHistoryInterface) {
         super(Order.itemCallback);
+        this.orderHistoryInterface = orderHistoryInterface;
     }
 
     @NonNull
@@ -30,9 +38,13 @@ public class OrderHistoryAdapter extends ListAdapter<Order, OrderHistoryAdapter.
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = getItem(position);
         holder.itemBinding.setOrder(order);
-        holder.itemBinding.setOrder(order);
 
-        holder.itemBinding.executePendingBindings();    }
+        holder.itemBinding.executePendingBindings();
+
+
+
+
+    }
 
     class OrderViewHolder extends RecyclerView.ViewHolder{
         ItemHistoryBinding itemBinding ;
@@ -40,7 +52,14 @@ public class OrderHistoryAdapter extends ListAdapter<Order, OrderHistoryAdapter.
         public OrderViewHolder(ItemHistoryBinding binding) {
             super(binding.getRoot());
             this.itemBinding = binding;
+
+            itemBinding.getRoot().setOnClickListener(view -> {
+                orderHistoryInterface.onOrderHistoryClick(getItem(getAdapterPosition()));
+            });
         }
+    }
+    public interface OrderHistoryInterface {
+        void onOrderHistoryClick(Order order);
     }
 
 }

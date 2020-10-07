@@ -120,7 +120,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
                 Log.d(TAG, "RESPONSE: "+response);
                 isLoading.setValue(false);
                 Dashboard dashboard = response.body();
-                if(dashboard != null)Collections.reverse(dashboard.getAllOrders());
+                if(dashboard.getAllOrders() != null){
+                    if(dashboard != null)Collections.reverse(dashboard.getAllOrders());
+                }
                 mutableDashboard.setValue(dashboard);
             }
 

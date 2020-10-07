@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +20,14 @@ import com.example.mainactivity.adapters.OrderHistoryAdapter;
 import com.example.mainactivity.adapters.OrderListAdapter;
 import com.example.mainactivity.databinding.FragmentOrderHistoryBinding;
 import com.example.mainactivity.databinding.FragmentOrderListBinding;
+import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 
 import java.util.Collections;
 
-public class OrderHistoryFragment extends Fragment {
+public class OrderHistoryFragment extends Fragment implements OrderHistoryAdapter.OrderHistoryInterface{
     private final String TAG = this.getClass().getSimpleName();
 
     private FragmentOrderHistoryBinding mBinding;
@@ -46,8 +48,8 @@ public class OrderHistoryFragment extends Fragment {
         super.onViewCreated(rootView, savedInstanceState);
 
         // Initialize ViewModel
-        //orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
-        //orderViewModel.init();
+        orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
+        orderViewModel.init();
         restaurantViewModel = new ViewModelProvider(requireActivity()).get(RestaurantViewModel.class);
         restaurantViewModel.init();
 
@@ -56,7 +58,7 @@ public class OrderHistoryFragment extends Fragment {
         mBinding.toolbar.title.setText("Order History");
 
         // Initialize RecyclerView
-        orderHistoryAdapter = new OrderHistoryAdapter();
+        orderHistoryAdapter = new OrderHistoryAdapter(this);
         mBinding.orderRecycler.setAdapter(orderHistoryAdapter);
 
         mBinding.toolbar.back.setOnClickListener(view -> navController.popBackStack());
@@ -73,9 +75,26 @@ public class OrderHistoryFragment extends Fragment {
             else mBinding.progressbar.setVisibility(View.GONE);
         });
 
+        mBinding.swiperefreshLayout.setOnRefreshListener(() -> {
+            restaurantViewModel.loadDashboard();
+            final Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                if(mBinding.swiperefreshLayout.isRefreshing()) {
+                    mBinding.swiperefreshLayout.setRefreshing(false);
+                }
+            }, 1000);
+        });
 
 
 
 
+
+    }
+
+    @Override
+    public void onOrderHistoryClick(Order order) {
+        Log.d(TAG, "ORDER:  "+order);
+        orderViewModel.setOrderDetails(order);
+        navController.navigate(R.id.action_orderHistoryFragment_to_orderDetailsFragment);
     }
 }

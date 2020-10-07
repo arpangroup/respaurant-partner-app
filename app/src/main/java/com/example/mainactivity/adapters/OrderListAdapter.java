@@ -48,7 +48,6 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = getItem(position);
         holder.itemOrderPreparingBinding.setOrder(order);
-        holder.itemOrderPreparingBinding.setOrder(order);
 
         holder.itemOrderPreparingBinding.executePendingBindings();
 

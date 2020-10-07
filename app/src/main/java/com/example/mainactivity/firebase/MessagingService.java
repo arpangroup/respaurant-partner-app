@@ -79,7 +79,7 @@ public class MessagingService extends FirebaseMessagingService {
             case API_WITHOUT_NOTIFICATION:
                 if(remoteMessage.getData().get("order") != null){
                     if(ServiceTracker.getServiceState(this) == ServiceTracker.ServiceState.STARTED){
-                        processOrderStatusChangedData(remoteMessage);
+                        //processOrderStatusChangedData(remoteMessage);
                     }
                 }
                 break;

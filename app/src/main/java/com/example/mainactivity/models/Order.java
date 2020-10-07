@@ -71,8 +71,8 @@ public class Order {
 //    @SerializedName("resturant_details")
 //    private Restaurant restaurantDetails;
 
-//    @SerializedName("coupon_details")
-//    private CouponDetails couponDetails;
+    @SerializedName("coupon_details")
+    private CouponDetails couponDetails;
 
     @SerializedName("orderitems")
     private List<Dish> orderitems;
@@ -89,10 +89,15 @@ public class Order {
         this.uniqueOrderId = uniqueOrderId;
     }
     public String billAmount(){
-        double itemTotal = Double.parseDouble(this.itemTotal);
-        double discount = Double.parseDouble(this.discountAmount);
-        double billAmount =  itemTotal - discount;
-        return FormatPrice.formatDecimalPoint(billAmount);
+        try {
+            double itemTotal = Double.parseDouble(this.itemTotal);
+            double discount = Double.parseDouble(this.discountAmount);
+            double billAmount = itemTotal - discount;
+            return FormatPrice.formatDecimalPoint(billAmount);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
 

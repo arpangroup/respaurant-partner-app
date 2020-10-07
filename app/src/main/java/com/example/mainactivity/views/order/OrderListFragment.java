@@ -290,10 +290,10 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
                     }
                 });
                 if(lastOrder[0] != null){
-                    Intent intent = new Intent(requireActivity(), AcceptOrderActivity.class);
-                    String orderJson = new Gson().toJson(lastOrder[0]);
-                    intent.putExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS, orderJson);
-                    startActivity(intent);
+//                    Intent intent = new Intent(requireActivity(), AcceptOrderActivity.class);
+//                    String orderJson = new Gson().toJson(lastOrder[0]);
+//                    intent.putExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS, orderJson);
+//                    startActivity(intent);
                 }
             });
 

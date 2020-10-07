@@ -16,6 +16,9 @@ import android.view.ViewGroup;
 import com.example.mainactivity.R;
 import com.example.mainactivity.databinding.FragmentOrderDetailsBinding;
 import com.example.mainactivity.databinding.FragmentOrderHistoryBinding;
+import com.example.mainactivity.models.Dish;
+import com.example.mainactivity.util.CommonUtils;
+import com.example.mainactivity.util.FormatPrice;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.viewmodels.RestaurantViewModel;
 
@@ -44,6 +47,25 @@ public class OrderDetailsFragment extends Fragment {
 
         // Initialize NavController
         navController = Navigation.findNavController(rootView);
-        mBinding.toolbar.title.setText("Order Details");
+        mBinding.toolbar.title.setText("ORDER  SUMMARY");
+
+        mBinding.toolbar.back.setOnClickListener(view -> navController.popBackStack());
+
+        orderViewModel.getOrderDetails().observe(requireActivity(), order -> {
+            // Calculate total price:
+//            double itemTotal = 0.0;
+//            for(Dish dish : order.getOrderitems()){
+//                double price = Double.parseDouble(dish.getPrice());
+//                itemTotal += (price * dish.getQuantity());
+//            }
+//            order.setItemTotal(FormatPrice.formatDecimalPoint(itemTotal));
+//
+//            if(order.getCoupon_name() != null){
+//                double discountAmount = CommonUtils.getCouponAmount(order.getCouponDetails(), order.getTotal());
+//                order.setDiscountAmount(FormatPrice.format(discountAmount));
+//            }
+
+            mBinding.setOrder(order);
+        });
     }
 }

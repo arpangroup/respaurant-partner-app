@@ -8,11 +8,6 @@
         <variable
             name="order"
             type="com.example.mainactivity.models.Order" />
-
-        <variable
-            name="orderAcceptInterface"
-            type="com.example.mainactivity.adapters.OrderAcceptListAdapter" />
-
     </data>
 
     <androidx.cardview.widget.CardView
