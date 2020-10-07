@@ -33,6 +33,7 @@ import com.example.mainactivity.views.MainActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,11 +60,80 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
         super.onNewIntent(intent);
     }
 
+
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                String ordersJson = intent.getStringExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS);
+                System.out.println("==================RECEIVED==========================");
+                System.out.println(ordersJson);
+                System.out.println("====================================================");
+                Order order = new Gson().fromJson(ordersJson, Order.class);
+                Log.d(TAG, "ORDER_JSON: "+ordersJson);
+                Log.d(TAG, "ORDER: "+order);
+                if(order.getOrderStatusId() == 1){
+                    List<Order> existingOrders =  orderViewModel.getNewOrders().getValue();
+                    if(existingOrders != null){
+                        if(existingOrders.size() > 0){
+                            boolean isOrderPresent = existingOrders.stream().anyMatch(order1 -> order1.getId() == order.getId()) ;
+                            if(!isOrderPresent){
+                                orderViewModel.setNewOrder(order);
+                                startMediaPlayer(NotificationSoundType.ORDER_ARRIVE);
+                            }
+                        }
+                    }
+                }
+                if(order.getOrderStatusId() == 6){// if user cancel the order
+                    Log.d(TAG, "ORDER CANCELLED.......");
+                    orderViewModel.removeOrderFromNewOrderList(order);
+                    CommonUtils.showPushNotification(getApplicationContext(), "Order Cancelled",  "You have missed one order, Customer cancelled the order");
+                    startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
+                }
+                ACTIVE = true;
+            }catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(context, "RECEIVER: EXCEPTION", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    List<Order> getAllOrderWhichAreNotPresentInAcceptedOrderList(List<Order> newOrders){
+        List<Order> orders = new ArrayList<>();
+        List<Order> acceptedOrders = orderViewModel.getAllAcceptedOrders().getValue();
+        if(acceptedOrders == null) return newOrders;
+        newOrders.forEach(newOrder -> {
+            acceptedOrders.forEach(acceptedOrder->{
+                if(newOrder.getId() != acceptedOrder.getId()){
+                    orders.add(newOrder);
+                }
+            });
+        });
+        return orders;
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, new IntentFilter(MessagingService.MESSAGE_ORDER_STATUS));
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
+    }
+
     private void subscribeToObserver(){
         Log.d(TAG, "Inside subscribeToObserver....");
-        FetchOrderService.mutablePendingNewOrders.observe(this, orders -> {
+        FetchOrderService.mutableNewOrders.observe(this, orders -> {
             System.out.println("============================================================================");
             Log.d(TAG, "ORDERS: "+orders);
+            // Check if newOrders are present in already accepted orders or not
+
+
+
             orderViewModel.setNewOrder(orders);
             System.out.println("============================================================================");
         });

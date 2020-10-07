@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.nfc.Tag;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,13 +15,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.mainactivity.R;
@@ -159,6 +165,15 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             mOrders = orders;
             mBinding.toolbar.tagAll.setText("All ("+orders.size() +")");
             orderViewModel.setFilterOrders(orders);
+
+            Log.d(TAG, "#########################Scroll to top..........");
+            RecyclerView.LayoutManager layoutManager  = mBinding.orderRecycler.getLayoutManager();
+            //mBinding.orderRecycler.getLayoutManager().scrollToPosition(-1);
+            //layoutManager.scrollToPositionWithOffset(0, -2);
+            //layoutManager.smoothScrollToPosition(mBinding.orderRecycler, null, 0);
+            //mBinding.orderRecycler.scrollToPosition(0);
+            //mBinding.orderRecycler.refreshDrawableState();
+            layoutManager.smoothScrollToPosition(mBinding.orderRecycler, new RecyclerView.State(), -orders.size());
         });
 
         orderViewModel.getAllFilteredOrders().observe(requireActivity(), orders -> {
@@ -176,6 +191,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             orderListAdapter.submitList(orders);
         });
     }
+
 
 
 

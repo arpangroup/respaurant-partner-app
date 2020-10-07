@@ -45,7 +45,7 @@ public class MessagingService extends FirebaseMessagingService {
 
     }
     int[] validOrderStatusList = {
-            OrderStatus.ORDER_PLACED.value(),//1
+//            OrderStatus.ORDER_PLACED.value(),//1
             OrderStatus.DELIVERY_GUY_ASSIGNED.value(),//3
             //OrderStatus.REACHED_PICKUP_LOCATION.value(),//8
             OrderStatus.ON_THE_WAY.value(),// 4 ORDER_PICKED_FROM_RESTAURANT_BY_DELIVERY_GUY
@@ -79,7 +79,7 @@ public class MessagingService extends FirebaseMessagingService {
             case API_WITHOUT_NOTIFICATION:
                 if(remoteMessage.getData().get("order") != null){
                     if(ServiceTracker.getServiceState(this) == ServiceTracker.ServiceState.STARTED){
-                        //processOrderStatusChangedData(remoteMessage);
+                        processOrderStatusChangedData(remoteMessage);
                     }
                 }
                 break;
@@ -111,10 +111,12 @@ public class MessagingService extends FirebaseMessagingService {
             String message = data.get("message");
             if(orderStatusId == OrderStatus.ORDER_PLACED.value() || orderStatusId == OrderStatus.CANCELED.value()){
                 // Show full screen notification
-                showFullScreenOrderArriveNotification(title, message, orderJson);
-                sendMessageToBroadCastReceiver(orderJson);
+                //showFullScreenOrderArriveNotification(title, message, orderJson);
+                //sendMessageToBroadCastReceiver(orderJson);
             }else{
-                sendMessageToBroadCastReceiver(orderJson);
+                if (ServiceTracker.getServiceState(this) == ServiceTracker.ServiceState.STARTED){
+                    sendMessageToBroadCastReceiver(orderJson);
+                }
             }
         }
 

@@ -51,6 +51,7 @@ public class FetchOrderService extends LifecycleService {
 
     public static MutableLiveData<Boolean> isFetching = new MutableLiveData<>(false);
     public static MutableLiveData<List<Order>> mutablePendingNewOrders = new MutableLiveData<>(new ArrayList<>());
+    public static MutableLiveData<List<Order>> mutableNewOrders = new MutableLiveData<>(new ArrayList<>());
 
     User user = null;
     Timer timer = null;
@@ -216,7 +217,7 @@ public class FetchOrderService extends LifecycleService {
     private void fetchNewOrders(NewOrderRequest newOrderRequest){
         isLoading = true;
         ApiInterface apiInterface = ApiService.getApiService();
-        Log.d(TAG, "FETCHING NEW ORDER........");
+        //Log.d(TAG, "FETCHING NEW ORDER........");
         apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<List<Order>>() {
             @Override
             public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
@@ -228,6 +229,7 @@ public class FetchOrderService extends LifecycleService {
                         if(existingOrders == null) existingOrders = new ArrayList<>();
                         existingOrders.addAll(currentOrders);
                         mutablePendingNewOrders.postValue(existingOrders);
+                        mutableNewOrders.postValue(currentOrders);
                         showFullScreenOrderArriveNotification();
                     }
                     isLoading = false;

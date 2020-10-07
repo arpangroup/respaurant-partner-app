@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         //startActivity(new Intent(this, AcceptOrderActivity.class));
 
         if (!Settings.canDrawOverlays(this)) {
-            //requestPermission();
+            requestPermission();
         }
         //enableAutoStart();
 

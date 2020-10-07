@@ -64,7 +64,7 @@ public class App extends Application {
             NotificationChannel notificationChannelPushNotification = new NotificationChannel(
                     CHANNEL_ID_PUSH_NOTIFICATION,
                     CHANNEL_NAME_PUSH_NOTIFICATION,
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
             );
 
             AudioAttributes attributes = new AudioAttributes.Builder()
@@ -77,7 +77,16 @@ public class App extends Application {
 
             notificationChannelNewOrder.setDescription("This is New Order Notification Channel");
             notificationChannelNewOrder.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
             notificationChannelPushNotification.setDescription("This is Push Notifications channel");
+            notificationChannelPushNotification.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            notificationChannelPushNotification.setDescription("This is New Order Fetch Service channel");
+            notificationChannelPushNotification.enableLights(true);
+            notificationChannelPushNotification.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            notificationChannelPushNotification.setLightColor(Color.RED);
+            notificationChannelPushNotification.enableVibration(true);
+            notificationChannelPushNotification.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+
             serviceChannel.setDescription("This is New Order Fetch Service channel");
             serviceChannel.enableLights(true);
             serviceChannel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
