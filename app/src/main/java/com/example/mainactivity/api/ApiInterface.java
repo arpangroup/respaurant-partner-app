@@ -12,9 +12,11 @@ import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.request.OrderCancelRequest;
 import com.example.mainactivity.models.request.ReadyOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
+import com.example.mainactivity.models.request.RunningOrderRequest;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.models.response.LoginResponse;
+import com.example.mainactivity.models.response.NewOrderResponse;
 import com.example.mainactivity.models.response.RestaurantItemResponse;
 import com.google.gson.annotations.SerializedName;
 
@@ -45,11 +47,14 @@ public interface ApiInterface {
     Call<Dashboard> getDashboard(@Path("storeOwnerId") int storeOwnerId);
 
     @POST("/api/store-owner/orders/get-new-orders")
-    Call<List<Order>> getNewOrders(@Body NewOrderRequest newOrderRequest);
+    Call<NewOrderResponse> getNewOrders(@Body NewOrderRequest newOrderRequest);
 
 
     @POST("/api/store-owner/orders/get-accepted-orders")
     Call<List<Order>> getAcceptedOrders(@Body RequestToken requestToken);
+
+    @POST("/api/store-owner/orders/running-orders")
+    Call<List<Order>> getRunningOrders(@Body RunningOrderRequest runningOrderRequest);
 
     @POST("/api/store-owner/orders/accept-order")
     Call<ApiResponse> acceptOrder(@Body AcceptOrderRequest acceptOrderRequest);

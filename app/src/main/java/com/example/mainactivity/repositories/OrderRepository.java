@@ -1,26 +1,26 @@
 package com.example.mainactivity.repositories;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
-import com.example.mainactivity.models.DeliveryGuy;
+import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.models.Order;
-import com.example.mainactivity.models.User;
 import com.example.mainactivity.models.request.AcceptOrderRequest;
-import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.request.OrderCancelRequest;
 import com.example.mainactivity.models.request.ReadyOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
+import com.example.mainactivity.models.request.RunningOrderRequest;
 import com.example.mainactivity.models.response.ApiResponse;
-import com.example.mainactivity.models.response.Dashboard;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +31,7 @@ public class OrderRepository {
     private static OrderRepository orderRepository;
     private MutableLiveData<Boolean> isLoading=new MutableLiveData<>();
     private MutableLiveData<List<Order>> mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
+    private MutableLiveData<List<Order>> mutableRunningOrdersStatuses = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<List<String>> mutableCancelOrders;
 
     public static OrderRepository getInstance(){
@@ -56,23 +57,27 @@ public class OrderRepository {
         }
         return mutableAcceptedOrders;
     }
+
+    public void loadRunningOrderStatus(){
+        List<String> listed_orders = new ArrayList<>();
+        List<Order> acceptedOrders = mutableAcceptedOrders.getValue();
+        if(acceptedOrders != null){
+            if(acceptedOrders.size() > 0){
+                listed_orders = acceptedOrders.stream().map(order -> String.valueOf(order.getId())).collect(Collectors.toList());
+                loadRunningOrdersStatus(listed_orders);
+            }
+        }
+    }
+    public LiveData<List<Order>> getRunningOrderStatus(){
+       if(mutableRunningOrdersStatuses == null){
+           mutableRunningOrdersStatuses = new MutableLiveData<>(new ArrayList<>());
+       }
+       return mutableRunningOrdersStatuses;
+    }
     public LiveData<ApiResponse> acceptOrder(Order order, int foodPrepareTime,  int userId){
         return acceptOrderApi(order, foodPrepareTime, userId);
     }
-
-
-    public LiveData<List<Order>> getNewOrders(){
-        // Find already acccepted orders:
-        List<String> acceptedOrderIds = new ArrayList<>();
-        List<Order> acceptedOrders = mutableAcceptedOrders.getValue();
-        if (acceptedOrders != null) {
-            acceptedOrders.forEach(order -> acceptedOrderIds.add(String.valueOf(order.getId())));
-        }
-
-        NewOrderRequest newOrderRequest = new NewOrderRequest(acceptedOrderIds);
-
-        return loadNewOrdersApi(newOrderRequest);
-    }
+    
     public LiveData<List<String>> getAllCanceledOrders(){
         if(mutableCancelOrders == null){
             mutableCancelOrders = new MutableLiveData<>();
@@ -116,11 +121,26 @@ public class OrderRepository {
 
        orderList.forEach(orderObj ->{
            if(orderObj.getId() == order.getId()){
-               orderObj.setDeliveryDetails(order.getDeliveryDetails());
+//               orderObj.setDeliveryDetails(order.getDeliveryDetails());
+//               orderObj.setOrderStatusId(order.getOrderStatusId());
+//               orderList.set(orderList.indexOf(orderObj), orderObj);
                orderObj.setOrderStatusId(order.getOrderStatusId());
-               orderList.set(orderList.indexOf(orderObj), orderObj);
+
+               if (order.getOrderStatusId() == OrderStatus.DELIVERY_GUY_ASSIGNED.value()){
+                    orderObj.setDeliveryDetails(order.getDeliveryDetails());
+               }else if (order.getOrderStatusId() == OrderStatus.REACHED_PICKUP_LOCATION.value()){
+                   //...
+               }else if(order.getOrderStatusId() == OrderStatus.DELIVERED.value()){
+                    //...
+               }else if(order.getOrderStatusId() == OrderStatus.CANCELED.value()){
+                   //...
+               }else{
+                  //...
+               }
+
            }
        });
+       orderList.removeIf(orderObj -> orderObj.getOrderStatusId() == OrderStatus.DELIVERED.value() || orderObj.getOrderStatusId() == OrderStatus.CANCELED.value());
         mutableAcceptedOrders.setValue(orderList);
         return true;
     }
@@ -130,29 +150,6 @@ public class OrderRepository {
 
 
     /*========================================================API_CALLS==============================================*/
-    private LiveData<List<Order>> loadNewOrdersApi(NewOrderRequest newOrderRequest){
-        Log.d(TAG,  "Inside loadNewOrdersApi().....");
-        Log.d(TAG, "REQUEST: "+new Gson().toJson(newOrderRequest));
-        MutableLiveData<List<Order>> mutableNewOrderList = new MutableLiveData<>();
-        ApiInterface apiInterface = ApiService.getApiService();
-        isLoading.setValue(true);
-        apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<List<Order>>() {
-            @Override
-            public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
-                isLoading.setValue(false);
-                List<Order> orders = response.body();
-                Log.d(TAG, "RESPONSE: "+orders);
-
-                mutableNewOrderList.setValue(orders);
-            }
-
-            @Override
-            public void onFailure(Call<List<Order>> call, Throwable t) {
-                isLoading.setValue(false);
-            }
-        });
-        return mutableNewOrderList;
-    }
     private void loadAllAcceptedOrdersFromApi(){
         RequestToken requestToken = new RequestToken();
         Log.d(TAG,  "Inside loadAllAcceptedOrdersFromApi().....");
@@ -170,6 +167,31 @@ public class OrderRepository {
             @Override
             public void onFailure(Call<List<Order>> call, Throwable t) {
                 isLoading.setValue(false);
+            }
+        });
+    }
+    private void loadRunningOrdersStatus(List<String> listedOrderIds){
+        RunningOrderRequest runningOrderRequest = new RunningOrderRequest(listedOrderIds);
+        //Log.d(TAG,  "Inside getRunningOrdersStatus().....");
+        //Log.d(TAG, "REQUEST: "+new Gson().toJson(runningOrderRequest));
+        ApiInterface apiInterface = ApiService.getApiService();
+        //isLoading.setValue(true);
+        apiInterface.getRunningOrders(runningOrderRequest).enqueue(new Callback<List<Order>>() {
+            @Override
+            public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
+                //isLoading.setValue(false);
+                List<Order> orders = response.body();
+                if(orders != null){
+                    if(orders.size() > 0){
+                        //Log.d(TAG, "Response: OrderStatus");
+                        mutableRunningOrdersStatuses.setValue(orders);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Order>> call, Throwable t) {
+                //isLoading.setValue(false);
             }
         });
     }

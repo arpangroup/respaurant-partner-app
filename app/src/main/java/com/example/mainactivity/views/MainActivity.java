@@ -29,17 +29,22 @@ import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ActivityMainBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.services.NewOrderFetchService;
+import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.views.order.AcceptOrderActivity;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
+    private static final long ORDER_REFRESH_INTERVAL = 1000 * 5;
     private final String TAG = this.getClass().getSimpleName();
     private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 500;
     ActivityMainBinding mBinding;
@@ -49,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     Dashboard mDashboard = null;
 
 
+    private boolean isOnGoingOrder = false;
+    Timer timer = new Timer();
 
 
     @Override
@@ -73,6 +80,21 @@ public class MainActivity extends AppCompatActivity {
             requestPermission();
         }
         //enableAutoStart();
+
+        // Initially load all orders:
+        orderViewModel.loadAllAcceptedOrders();
+
+        orderViewModel.getAllAcceptedOrders().observe(this, orders -> {
+            if(orders.size() > 0){
+                isOnGoingOrder = true;
+                checkRunningOrders();
+            }else{
+                isOnGoingOrder = false;
+            }
+        });
+
+
+
 
         String deviceName = android.os.Build.MODEL;
         String deviceMan = android.os.Build.MANUFACTURER;
@@ -100,10 +122,24 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
     }
 
+    private void checkRunningOrders(){
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(isOnGoingOrder){
+                    orderViewModel.loadRunningOrderStatus();
+                }else{
+                    timer = null;
+                }
+            }
+        }, 0, ORDER_REFRESH_INTERVAL);
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        orderViewModel.loadAllAcceptedOrders();
     }
 
     @Override

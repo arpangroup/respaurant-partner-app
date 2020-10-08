@@ -152,7 +152,7 @@ public class EndlessService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, App.CHANNEL_ID_NEW_ORDER);
-        builder.setContentTitle("Fetching New Order")
+        builder.setContentTitle("Accepting New new Orders")
                 .setContentText("Fetching....")
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentIntent(pendingIntent)

@@ -188,37 +188,6 @@ public class NewOrderFetchService extends Service {
     }
 
 
-    private void fetchNewOrders(NewOrderRequest newOrderRequest){
-        isLoading = true;
-        ApiInterface apiInterface = ApiService.getApiService();
-        Log.d(TAG, "FETCHING NEW ORDER........");
-        apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<List<Order>>() {
-            @Override
-            public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
-                try{
-                    List<Order> orders = response.body();
-                    String ordersJson = new Gson().toJson(orders);
-                    if(orders != null && orders.size() > 0){
-                        Log.d(TAG, "FETCHED_NEW_ORDERS: "+ orders.size());
-                        createFullScreenNotification(ordersJson);
-                        sendMessageToUI(ordersJson);
-
-                        orders.forEach(order -> listedOrderIds.add(order.getId()+""));
-                    }
-                    isLoading = false;
-                }catch (Exception e){
-                    isLoading = false;
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Order>> call, Throwable t) {
-                isLoading = false;
-                t.printStackTrace();
-            }
-        });
-    }
     private void createFullScreenNotification(String orders){
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, App.CHANNEL_ID_NEW_ORDER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

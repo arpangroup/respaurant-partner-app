@@ -16,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.mainactivity.App;
@@ -27,12 +26,11 @@ import com.example.mainactivity.commons.Actions;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.User;
 import com.example.mainactivity.models.request.NewOrderRequest;
+import com.example.mainactivity.models.response.NewOrderResponse;
 import com.example.mainactivity.sharedpref.ServiceTracker;
 import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.views.MoreActivity;
-import com.example.mainactivity.views.order.AcceptOrderActivity;
 import com.example.mainactivity.views.order.AcceptOrderActivityDialog;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +48,12 @@ public class FetchOrderService extends LifecycleService {
     private boolean isLoading = false;
 
     public static MutableLiveData<Boolean> isFetching = new MutableLiveData<>(false);
-    public static MutableLiveData<List<Order>> mutablePendingNewOrders = new MutableLiveData<>(new ArrayList<>());
+    private static MutableLiveData<List<Order>> listedOrders = new MutableLiveData<>(new ArrayList<>());
     public static MutableLiveData<List<Order>> mutableNewOrders = new MutableLiveData<>(new ArrayList<>());
+    public static MutableLiveData<List<Order>> mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
+
+
+
 
     User user = null;
     Timer timer = null;
@@ -61,11 +63,11 @@ public class FetchOrderService extends LifecycleService {
     private boolean isServiceStarted = false;
 
     private List<String> getListedOrderIds(){
-        if(mutablePendingNewOrders == null || mutablePendingNewOrders.getValue() == null) {
+        if(listedOrders == null || listedOrders.getValue() == null) {
             return new ArrayList<>();
         }
         else{
-            return mutablePendingNewOrders.getValue().stream().map(order->String.valueOf(order.getId())).collect(Collectors.toList());
+            return listedOrders.getValue().stream().map(order->String.valueOf(order.getId())).collect(Collectors.toList());
         }
     }
 
@@ -218,17 +220,17 @@ public class FetchOrderService extends LifecycleService {
         isLoading = true;
         ApiInterface apiInterface = ApiService.getApiService();
         //Log.d(TAG, "FETCHING NEW ORDER........");
-        apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<List<Order>>() {
+        apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<NewOrderResponse>() {
             @Override
-            public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
+            public void onResponse(Call<NewOrderResponse> call, Response<NewOrderResponse> response) {
                 try{
-                    List<Order> currentOrders = response.body();
+                    List<Order> currentOrders = response.body().getNewOrders();
                     if(currentOrders != null && currentOrders.size() > 0){
                         Log.d(TAG, "FETCHED_NEW_ORDERS: " + currentOrders.size());
-                        List<Order> existingOrders = mutablePendingNewOrders.getValue();
+                        List<Order> existingOrders = listedOrders.getValue();
                         if(existingOrders == null) existingOrders = new ArrayList<>();
                         existingOrders.addAll(currentOrders);
-                        mutablePendingNewOrders.postValue(existingOrders);
+                        listedOrders.postValue(existingOrders);
                         mutableNewOrders.postValue(currentOrders);
                         showFullScreenOrderArriveNotification();
                     }
@@ -240,7 +242,7 @@ public class FetchOrderService extends LifecycleService {
             }
 
             @Override
-            public void onFailure(Call<List<Order>> call, Throwable t) {
+            public void onFailure(Call<NewOrderResponse> call, Throwable t) {
                 isLoading = false;
                 t.printStackTrace();
             }

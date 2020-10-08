@@ -60,9 +60,6 @@ public class OrderViewModel extends ViewModel {
         }
         return mutableNewOrders;
     }
-    public LiveData<List<Order>> getNewOrdersFromApi(){
-        return orderRepository.getNewOrders();
-    }
     public void changeDeliveryTimeOfNotAcceptedOrder(int orderId, int time){
         //orderRepository.changePrepareTime(orderId, time);
         if(mutableNewOrders != null && mutableNewOrders.getValue() != null){
@@ -91,6 +88,13 @@ public class OrderViewModel extends ViewModel {
     }
     public LiveData<List<Order>> getAllAcceptedOrders(){
         return orderRepository.getAllAcceptedOrders();
+    }
+
+    public void loadRunningOrderStatus(){
+        orderRepository.loadRunningOrderStatus();
+    }
+    public LiveData<List<Order>> getRunningOrderStatus(){
+        return orderRepository.getRunningOrderStatus();
     }
 
     public void setFilterOrders(List<Order> orders){

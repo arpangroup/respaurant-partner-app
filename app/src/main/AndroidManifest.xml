@@ -66,11 +66,11 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDHOCpobHOC5KsYSoIMV5l7i6s-iQxCIXA" />
 
-        <service android:name=".firebase.MessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+<!--        <service android:name=".firebase.MessagingService">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
 <!--        <service-->
 <!--            android:name=".services.NewOrderFetchService"-->
 <!--            android:enabled="true"-->

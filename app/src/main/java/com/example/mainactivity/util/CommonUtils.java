@@ -14,7 +14,10 @@ import androidx.core.app.NotificationCompat;
 import com.example.mainactivity.App;
 import com.example.mainactivity.R;
 import com.example.mainactivity.models.CouponDetails;
+import com.example.mainactivity.models.Order;
 import com.example.mainactivity.views.MoreActivity;
+
+import java.util.List;
 
 public class CommonUtils {
     public static String getFormattedTime(int hourIn24HourFormat, int minute){
@@ -88,6 +91,19 @@ public class CommonUtils {
 
         NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         notificationManager.notify(App.NOTIFICATION_ID_PUSH_NOTIFICATION, notification);
+    }
+
+    public static boolean isStatusChanged(List<Order> sourceOrders, Order targetOrder){
+        final boolean[] result = {false};
+        sourceOrders.forEach(order -> {
+            if(order.getId()  == targetOrder.getId()){
+                if(order.getOrderStatusId() == targetOrder.getOrderStatusId()){
+                    result[0] = true;
+                    return;
+                }
+            }
+        });
+        return result[0];
     }
 
 }

@@ -84,9 +84,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="8dp"
                                 android:background="@drawable/rectangle_gray"
-                                android:fontFamily="@font/sfpro_display_medium"
                                 android:text="@{order.acceptedOrderStatus}"
-                                android:hint="STATUS"
+                                android:hint="RIDER READY"
                                 android:paddingLeft="8dp"
                                 android:paddingRight="8dp"
                                 android:paddingTop="4dp"
@@ -158,7 +157,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
-                                    android:fontFamily="@font/sfpro_display_medium"
                                     android:text="@{`₹`+order.itemTotal}"
                                     android:hint="₹87.5"
                                     android:textColor="@color/silver"
@@ -171,7 +169,6 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:fontFamily="@font/sfpro_display_medium"
                                         android:text="@{order.orderitems.size() + ` `}"
                                         android:hint="1 "
                                         android:textColor="@color/silver"
@@ -179,7 +176,6 @@
                                     <TextView
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:fontFamily="@font/sfpro_display_medium"
                                         android:text="items"
                                         android:textColor="@color/silver"
                                         android:textSize="18sp" />
@@ -198,7 +194,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
-                                    android:fontFamily="@font/sfpro_display_medium"
                                     android:text="@{`₹`+ order.payable}"
                                     android:hint="₹12"
                                     android:textColor="@color/silver"
@@ -207,7 +202,6 @@
                                     android:id="@+id/name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="@font/sfpro_display_medium"
                                     android:text="Cash to be collected from Rider"
                                     android:textColor="@color/silver"
                                     android:textSize="18sp" />
@@ -225,7 +219,6 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
                                     android:layoutDirection="ltr"
-                                    android:fontFamily="@font/sfpro_display_medium"
                                     android:text="@{`₹`+order.discountAmount}"
                                     android:hint="₹ 10"
                                     android:textColor="@color/silver"
@@ -233,7 +226,6 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="@font/sfpro_display_medium"
                                     android:text="@{`Promo(` + order.coupon_name + `)`}"
                                     android:hint="Promo(DEMO)"
                                     android:textColor="@color/silver"
@@ -250,7 +242,6 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
-                                    android:fontFamily="@font/sfpro_display_medium"
                                     android:text="@{`₹`+order.tax}"
                                     android:hint="₹5.4"
                                     android:textColor="@color/silver"
@@ -258,7 +249,6 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="@font/sfpro_display_medium"
                                     android:text="Taxes"
                                     android:textColor="@color/silver"
                                     android:textSize="18sp" />
@@ -294,7 +284,6 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:fontFamily="@font/sfpro_display_medium"
                                         android:text="Total Bill: "
                                         android:textColor="@color/black"
                                         android:textStyle="bold"
@@ -303,7 +292,6 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="8dp"
-                                        android:fontFamily="@font/sfpro_display_medium"
                                         android:text="@{`₹`+ order.billAmount()}"
                                         android:hint="₹113.40"
                                         android:textColor="@color/black"
@@ -314,7 +302,6 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="8dp"
                                         android:background="@drawable/rectangle_gray"
-                                        android:fontFamily="@font/sfpro_display_medium"
                                         android:text="@{order.paymentMode.equals(`COD`) ? `COD` : `PAID`}"
                                         android:paddingLeft="12dp"
                                         android:paddingRight="12dp"
@@ -339,7 +326,7 @@
                         android:layout_marginRight="16dp"
                         android:background="@color/lightsilver" />
                     <RelativeLayout
-                        android:visibility="@{(order.orderStatusId == 3 || order.orderStatusId == 4 || order.orderStatusId == 7)&amp;(order.deliveryType ==1  &amp; order.deliveryDetails !=null) ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{(order.orderStatusId == 3 || order.orderStatusId == 4 || order.orderStatusId == 7 ||  order.orderStatusId == 8)&amp;(order.deliveryType ==1  &amp; order.deliveryDetails !=null) ? View.VISIBLE : View.GONE}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
@@ -399,7 +386,7 @@
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:visibility="@{(order.orderStatusId == 2 || order.orderStatusId == 3) ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{(order.orderStatusId == 2 || order.orderStatusId == 3 || order.orderStatusId == 8) ? View.VISIBLE : View.GONE}"
                         android:id="@+id/layout_ready"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

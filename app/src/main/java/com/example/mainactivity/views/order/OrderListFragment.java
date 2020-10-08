@@ -36,6 +36,7 @@ import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.FragmentOrderListBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.views.menuitem.MenuActivity;
 import com.example.mainactivity.views.MoreActivity;
@@ -161,6 +162,22 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             else mBinding.progressbar.setVisibility(View.GONE);
         });
 
+        orderViewModel.getRunningOrderStatus().observe(requireActivity(), fetchedOrders -> {
+            // First get all accepted orders
+            List<Order> acceptedOrders = orderViewModel.getAllAcceptedOrders().getValue();
+            acceptedOrders.forEach(acceptedOrder -> {
+                fetchedOrders.forEach(fetchedOrder -> {
+                    if(acceptedOrder.getId()  == fetchedOrder.getId()){
+                        if(acceptedOrder.getOrderStatusId() != fetchedOrder.getOrderStatusId()){// i.e, status changed
+                            handleOrderStatusChanged(fetchedOrder);
+                        }
+                    }
+                });
+            });
+
+        });
+
+
         orderViewModel.getAllAcceptedOrders().observe(requireActivity(), orders -> {
             mOrders = orders;
             mBinding.toolbar.tagAll.setText("All ("+orders.size() +")");
@@ -192,8 +209,29 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         });
     }
 
+    private void handleOrderStatusChanged(Order order) {
+        int orderStatus = order.getOrderStatusId();
+        orderViewModel.setStatusChange(order);
+        orderListAdapter.notifyDataSetChanged();
 
+        if (orderStatus == OrderStatus.DELIVERY_GUY_ASSIGNED.value()){
 
+        }else if(orderStatus == OrderStatus.REACHED_PICKUP_LOCATION.value()){
+
+        }else if(orderStatus == OrderStatus.DELIVERED.value()){
+            String msg = "You missed a new Order \n"+order.getUniqueOrderId();
+            msg += "Order amount of Rs: "+order.getItemTotal();
+            msg += "\n"+ order.getOrderComment();
+            CommonUtils.showPushNotification(requireActivity(), "Order Cancelled", msg);
+            startMediaPlayer(NotificationSoundType.ORDER_DELIVERED);
+
+        }else if(orderStatus == OrderStatus.CANCELED.value()){
+            startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
+        }else{
+            //Toast.makeText(requireActivity(), "SOMETHING ERROR HAPPENED", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
 
     private void handleSearch() {
@@ -292,28 +330,6 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         //BottomNavigation Click:
         mBinding.bottomNavigation.menuLinear.setOnClickListener(view -> startActivity(new Intent(requireActivity(), MenuActivity.class)));
         mBinding.bottomNavigation.accountLinear.setOnClickListener(view -> startActivity(new Intent(requireActivity(), MoreActivity.class)));
-
-        mBinding.fabReload.setOnClickListener(view -> {
-            orderViewModel.getNewOrdersFromApi().observe(requireActivity(), orders -> {
-                // check if the orders present in newOrders list or not
-                final Order[] lastOrder = {null};
-                orders.forEach(order -> {
-                    List<Order> newOrders = orderViewModel.getNewOrders().getValue();
-                    boolean isExist = newOrders.stream().anyMatch(order1 -> order.getId() == order1.getId());
-                    if(!isExist){
-                        orderViewModel.setNewOrder(order);
-                        lastOrder[0] = order;
-                    }
-                });
-                if(lastOrder[0] != null){
-//                    Intent intent = new Intent(requireActivity(), AcceptOrderActivity.class);
-//                    String orderJson = new Gson().toJson(lastOrder[0]);
-//                    intent.putExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS, orderJson);
-//                    startActivity(intent);
-                }
-            });
-
-        });
     }
 
 

@@ -76,7 +76,12 @@ public class App extends Application {
 
 
             notificationChannelNewOrder.setDescription("This is New Order Notification Channel");
+            notificationChannelNewOrder.enableLights(true);
             notificationChannelNewOrder.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            notificationChannelNewOrder.setLightColor(Color.RED);
+            notificationChannelNewOrder.enableVibration(true);
+            notificationChannelNewOrder.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+
 
             notificationChannelPushNotification.setDescription("This is Push Notifications channel");
             notificationChannelPushNotification.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
