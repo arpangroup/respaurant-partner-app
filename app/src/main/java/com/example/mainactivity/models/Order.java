@@ -58,6 +58,8 @@ public class Order {
     private String deliveryPin;
     @SerializedName("payable")
     private String payable;
+    @SerializedName("prepare_time")
+    private int prepareTime;
 
     @SerializedName("restaurant")
     private Restaurant restaurant;

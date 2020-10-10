@@ -19,6 +19,7 @@ public class Constants {
     private static LatLng DEFAULT_LOCATION_WESTBENGAL = new LatLng(22.9868, 87.8550);
     public static LatLng DEFAULT_LOCATION = DEFAULT_LOCATION_WESTBENGAL;
     public static final String WEBSITE_URL = "https://admin.pureeats.in/";
+    public static final String ASSET_URL_DELIVERY_GUY = WEBSITE_URL + "assets/img/delivery/";
     public static final String GOOGLE_MAP_API_KEY = "AIzaSyDHOCpobHOC5KsYSoIMV5l7i6s-iQxCIXA";
 
     public static final int ORDER_ACCEPT_WAITING_TIME = 1000*60*5;//5-minute

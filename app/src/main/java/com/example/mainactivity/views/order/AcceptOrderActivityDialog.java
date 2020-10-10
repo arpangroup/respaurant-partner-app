@@ -168,6 +168,7 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
                 stopMediaPlayer();
                 Intent  intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                finishAffinity();
                 finish();
             }else{
                 orderAcceptListAdapter.submitList(orders);

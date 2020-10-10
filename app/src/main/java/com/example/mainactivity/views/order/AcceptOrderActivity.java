@@ -189,6 +189,7 @@ public class AcceptOrderActivity extends AppCompatActivity implements OrderAccep
                 }
                 Intent  intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                finishAffinity();
                 finish();
             }
             orderAcceptListAdapter.submitList(orders);

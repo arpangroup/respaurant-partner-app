@@ -369,7 +369,10 @@
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
                                 android:hint="OTP: 7361"
-                                android:text="@{(order.orderStatusId == 3 || order.orderStatusId == 4) ? `OTP: `+order.deliveryDetails.deliveryPin : `` }"/>
+                                android:text="@{(order.orderStatusId == 3 || order.orderStatusId == 8) ? `OTP: `+order.deliveryDetails.otp : `` }"
+                                />
+<!--                            android:text="@{(order.orderStatusId == 3 || order.orderStatusId == 4) ? `OTP: `+order.deliveryDetails.deliveryPin : `` }"-->
+<!--                            @{order.uniqueOrderId.substring(9)}-->
                         </LinearLayout>
 
                         <ImageView

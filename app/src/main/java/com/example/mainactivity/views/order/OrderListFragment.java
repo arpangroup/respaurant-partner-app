@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Filter;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -114,28 +116,24 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             mOrders = orders;
             mBinding.toolbar.tagAll.setText("All ("+orders.size() +")");
 
-            List<Order> preparingOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.PREPARE);
-            List<Order> readyOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.READY);
-            List<Order> pickedUpOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.PICKED);
+            handleFilterItemCount(mOrders);
 
-            mBinding.toolbar.tagPreparing.setText("Preparing (" + preparingOrders.size() +")");
-            mBinding.toolbar.tagReady.setText("Ready (" + readyOrders.size() +")");
-            mBinding.toolbar.tagPicked.setText("PickedUp (" + pickedUpOrders.size() +")");
-
-
+            orderListAdapter.submitList(new ArrayList<>());
             orderListAdapter.submitList(orders);
 
+            new Handler().postDelayed(() -> mBinding.orderRecycler.scrollToPosition(0), 300);
 
-            Log.d(TAG, "#########################Scroll to top..........");
-            RecyclerView.LayoutManager layoutManager  = mBinding.orderRecycler.getLayoutManager();
+
+            //Log.d(TAG, "#########################Scroll to top..........");
+            //RecyclerView.LayoutManager layoutManager  = mBinding.orderRecycler.getLayoutManager();
             //mBinding.orderRecycler.getLayoutManager().scrollToPosition(-1);
             //layoutManager.scrollToPositionWithOffset(0, -2);
             //layoutManager.smoothScrollToPosition(mBinding.orderRecycler, null, 0);
             //mBinding.orderRecycler.scrollToPosition(0);
             //mBinding.orderRecycler.refreshDrawableState();
-            if (layoutManager != null) {
-                layoutManager.smoothScrollToPosition(mBinding.orderRecycler, new RecyclerView.State(), 0);
-            }
+//            if (layoutManager != null) {
+//                layoutManager.smoothScrollToPosition(mBinding.orderRecycler, new RecyclerView.State(), 0);
+//            }
         });
 
         orderViewModel.getCurrentFilterType().observe(requireActivity(), filterType -> {
@@ -144,13 +142,26 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             Log.d(TAG, "ORDER_SIZE: " + mOrders.size());
             //orderListAdapter.submitList(mOrders);
             orderListAdapter.getFilter().filter(filterType.name());
+            new Handler().postDelayed(() -> mBinding.orderRecycler.scrollToPosition(0), 300);
+            orderListAdapter.notifyDataSetChanged();
         });
+    }
+
+    private void handleFilterItemCount(List<Order> mOrders) {
+        List<Order> preparingOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.PREPARE);
+        List<Order> readyOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.READY);
+        List<Order> pickedUpOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.PICKED);
+
+        mBinding.toolbar.tagAll.setText("All (" + mOrders.size() +")");
+        mBinding.toolbar.tagPreparing.setText("Preparing (" + preparingOrders.size() +")");
+        mBinding.toolbar.tagReady.setText("Ready (" + readyOrders.size() +")");
+        mBinding.toolbar.tagPicked.setText("PickedUp (" + pickedUpOrders.size() +")");
     }
 
     private void handleOrderStatusChanged(Order order) {
         int orderStatus = order.getOrderStatusId();
         orderViewModel.setStatusChange(order);
-        orderListAdapter.notifyDataSetChanged();
+        //orderListAdapter.notifyDataSetChanged();
 
         if (orderStatus == OrderStatus.DELIVERY_GUY_ASSIGNED.value()){
 
@@ -169,6 +180,17 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             //Toast.makeText(requireActivity(), "SOMETHING ERROR HAPPENED", Toast.LENGTH_SHORT).show();
         }
 
+        orderViewModel.getCurrentFilterType().observe(requireActivity(), filterType -> {
+            Log.d(TAG, "CURRENT_FILTER_TYPE: " + filterType.name());
+            Log.d(TAG, "Orders: " + mOrders);
+            Log.d(TAG, "ORDER_SIZE: " + mOrders.size());
+            //orderListAdapter.submitList(mOrders);
+            orderListAdapter.getFilter().filter(filterType.name());
+        });
+
+        new Handler().postDelayed(() -> mBinding.orderRecycler.scrollToPosition(0), 300);
+        orderListAdapter.notifyDataSetChanged();
+        handleFilterItemCount(mOrders);
     }
 
 
@@ -235,6 +257,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         orderViewModel.makeOrderAsReady(orderId).observe(requireActivity(), apiResponse -> {
             if(apiResponse.isSuccess()){
                 orderListAdapter.updateStatus(position, OrderStatus.ORDER_READY.value());
+                handleFilterItemCount(mOrders);
             }
         });
     }

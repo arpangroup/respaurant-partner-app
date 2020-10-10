@@ -33,4 +33,10 @@ public class DeliveryGuy {
     @SerializedName("delivery_pin")
     private String deliveryPin;
 
+    public String getOtp(){
+        int lastIndex = this.phone.length();
+        String otp = this.phone.substring(lastIndex -4, lastIndex);
+        return otp;
+    }
+
 }

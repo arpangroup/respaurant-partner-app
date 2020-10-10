@@ -44,7 +44,7 @@ import retrofit2.Response;
 
 public class FetchOrderService extends LifecycleService {
     private static final String TAG = "EndlessService";
-    private static final long ORDER_FETCH_INTERVAL = 1000 * 5;
+    private static final long ORDER_FETCH_INTERVAL = 1000 * 10;
     private boolean isLoading = false;
 
     public static MutableLiveData<Boolean> isFetching = new MutableLiveData<>(false);

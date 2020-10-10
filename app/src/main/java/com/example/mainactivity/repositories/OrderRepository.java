@@ -113,8 +113,12 @@ public class OrderRepository {
 //    }
     public boolean setStatusChanged(Order order){
         //Update accepted orders list:
-        Log.d(TAG, "Inside assignDeliveryPerson...");
+        Log.d(TAG, "Inside setStatusChanged...");
        if(mutableAcceptedOrders == null) return false;
+       if(mutableAcceptedOrders.getValue() == null){
+           Log.d(TAG, "mutableAcceptedOrders  is null");
+           return false;
+       }
        List<Order> orderList = new ArrayList<>(mutableAcceptedOrders.getValue());
        Log.d(TAG, "ACCEPTED_ORDER_SIZE: "+orderList.size());
        Log.d(TAG, "ACCEPTED_ORDERS: "+ orderList);
