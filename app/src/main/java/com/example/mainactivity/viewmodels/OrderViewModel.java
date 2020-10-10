@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.response.ApiResponse;
 import com.example.mainactivity.repositories.OrderRepository;
+import com.example.mainactivity.views.order.OrderListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class OrderViewModel extends ViewModel {
     //private MutableLiveData<ORDER_TYPE> mutableOrderType = new MutableLiveData<>(ORDER_TYPE.ALL);
     private MutableLiveData<List<Order>> mutableOrders = null;
     private MutableLiveData<Order> mutableOrderDetails = new MutableLiveData<>();
+    private MutableLiveData<OrderListFragment.FilterType> mutableFilterType = null;
 
     private List<Order> ordersNotAccepted = new ArrayList<>();
     private List<Order> newOrders = new ArrayList<>();
@@ -97,6 +99,20 @@ public class OrderViewModel extends ViewModel {
         return orderRepository.getRunningOrderStatus();
     }
 
+    public void setFilterType(OrderListFragment.FilterType filterType){
+        if(mutableFilterType == null){
+            mutableFilterType = new MutableLiveData<>();
+        }
+        mutableFilterType.setValue(filterType);
+    }
+    public LiveData<OrderListFragment.FilterType> getCurrentFilterType(){
+        if(mutableFilterType == null){
+            mutableFilterType = new MutableLiveData<>();
+        }
+       return mutableFilterType;
+    }
+
+    /*======================Deprecated====================*/
     public void setFilterOrders(List<Order> orders){
         if(mutableOrders == null){
             mutableOrders = new MutableLiveData<>();
@@ -109,6 +125,7 @@ public class OrderViewModel extends ViewModel {
        }
        return mutableOrders;
     }
+    /*=======================================================*/
 
     public LiveData<ApiResponse> acceptOrder(Order order, int userId){
         int foodPrepareTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());

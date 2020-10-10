@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.commons.Constants;
+import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ItemOrderPreparingBinding;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.util.FormatDate;
+import com.example.mainactivity.views.order.OrderListFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderViewHolder> implements Filterable {
 
@@ -108,18 +111,37 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
         protected FilterResults performFiltering(CharSequence charSequence) {
             List<Order> filteredList = new ArrayList<>();
             if(originalList == null){
+                Log.d("ADAPTER: ", "originalList is null");
                 originalList = getCurrentList();
             }
-            if(charSequence.toString().isEmpty()){
-                filteredList.addAll(originalList);
-            }else{
-                originalList.forEach(order -> {
-                    if(order.getUniqueOrderId().toLowerCase().contains(charSequence.toString().toLowerCase()) ||
-                            order.getUser().getName().toLowerCase().contains(charSequence.toString().toLowerCase())
-                            ||  String.valueOf(order.getId()).contains(charSequence.toString().toLowerCase()) ){
-                        filteredList.add(order);
-                    }
-                });
+            /*======================================NEW[10-Oct-2020]=======================================*/
+            if(charSequence.toString().equalsIgnoreCase(OrderListFragment.FilterType.ALL.name())){
+                List<Order> filteredOrders = filterOrders(originalList, OrderListFragment.FilterType.ALL);
+                filteredList.addAll(filteredOrders);
+            }else if(charSequence.toString().equalsIgnoreCase(OrderListFragment.FilterType.PREPARE.name())){
+                List<Order> filteredOrders = filterOrders(originalList, OrderListFragment.FilterType.PREPARE);
+                filteredList.addAll(filteredOrders);
+            }else if(charSequence.toString().equalsIgnoreCase(OrderListFragment.FilterType.READY.name())){
+                List<Order> filteredOrders = filterOrders(originalList, OrderListFragment.FilterType.READY);
+                filteredList.addAll(filteredOrders);
+            }else if(charSequence.toString().equalsIgnoreCase(OrderListFragment.FilterType.PICKED.name())){
+                List<Order> filteredOrders = filterOrders(originalList, OrderListFragment.FilterType.PICKED);
+                filteredList.addAll(filteredOrders);
+            }
+            /*=============================================================================================*/
+            else{
+                if(charSequence.toString().isEmpty()){
+                    Log.d("ADAPTER: ", "originalList is empty");
+                    filteredList.addAll(originalList);
+                }else{
+                    originalList.forEach(order -> {
+                        if(order.getUniqueOrderId().toLowerCase().contains(charSequence.toString().toLowerCase()) ||
+                                order.getUser().getName().toLowerCase().contains(charSequence.toString().toLowerCase())
+                                ||  String.valueOf(order.getId()).contains(charSequence.toString().toLowerCase()) ){
+                            filteredList.add(order);
+                        }
+                    });
+                }
             }
             FilterResults filterResults = new FilterResults();
             filterResults.values = filteredList;
@@ -135,6 +157,26 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
             submitList((List<Order>) filterResults.values);
         }
     };
+
+    public static List<Order> filterOrders(List<Order> orderList, OrderListFragment.FilterType filterType){
+        if (orderList == null) return new ArrayList<>();
+
+        List<Order> filteredOrders;
+        if(filterType == OrderListFragment.FilterType.PREPARE){
+            filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() ==  OrderStatus.ORDER_RECEIVED.value() || order.getOrderStatusId() ==  OrderStatus.DELIVERY_GUY_ASSIGNED.value()).collect(Collectors.toList());
+        }else if(filterType == OrderListFragment.FilterType.READY){
+            filteredOrders = orderList
+                    .stream()
+                    .filter(order -> order.getOrderStatusId() ==  OrderStatus.ORDER_READY.value()).collect(Collectors.toList());
+        }else if(filterType == OrderListFragment.FilterType.PICKED){
+            filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() ==  OrderStatus.ON_THE_WAY.value()).collect(Collectors.toList());
+        }else{// ALL
+            filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() !=  OrderStatus.ORDER_PLACED.value()).collect(Collectors.toList());
+        }
+
+        return filteredOrders;
+
+    }
 
     class OrderViewHolder extends RecyclerView.ViewHolder{
         ItemOrderPreparingBinding itemOrderPreparingBinding ;

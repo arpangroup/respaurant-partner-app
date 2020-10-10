@@ -5,8 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
-import android.nfc.Tag;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,19 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderListAdapter;
@@ -38,15 +33,15 @@ import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
-import com.example.mainactivity.views.menuitem.MenuActivity;
 import com.example.mainactivity.views.MoreActivity;
+import com.example.mainactivity.views.menuitem.MenuActivity;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderListFragment extends Fragment implements OrderListAdapter.OrderPrepareInterface {
+public class OrderListFragmentOld extends Fragment implements OrderListAdapter.OrderPrepareInterface {
     private final String TAG = this.getClass().getSimpleName();
 
     private MediaPlayer mMediaPlayer;
@@ -57,12 +52,82 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
     //private Dashboard mDashboard;
     private List<Order> mOrders =  new ArrayList<>();
 
-    public static enum FilterType {
+    private static enum FilterType {
         ALL,
         PREPARE,
         READY,
         PICKED
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(requireActivity()).registerReceiver(mReceiver, new IntentFilter(MessagingService.MESSAGE_ORDER_STATUS));
+    }
+
+    private void startMediaPlayer(NotificationSoundType soundType) {
+        mMediaPlayer = new MediaPlayer();
+        Context context = requireActivity();
+        if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
+        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.swiggy_order_cancel_ringtone);
+        else mMediaPlayer = MediaPlayer.create(context, R.raw.default_notification_sound);
+        try{
+            mMediaPlayer.start();
+        }catch (Exception e){
+            //e.printStackTrace();
+        }
+    }
+    private void stopMediaPlayer(){
+        if(mMediaPlayer != null){
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopMediaPlayer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(mReceiver);
+    }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try{
+                String ordersJson = intent.getStringExtra(MessagingService.INTENT_EXTRA_ORDER_STATUS);
+                System.out.println("==================RECEIVED==========================");
+                System.out.println(ordersJson);
+                System.out.println("====================================================");
+                Order order = new Gson().fromJson(ordersJson, Order.class);
+                //Toast.makeText(context, "ID: "+orderObj.getId(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, " New order received", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "RECEIVER TRIGGERED", Toast.LENGTH_SHORT).show();
+
+                boolean isStatusChanged = orderViewModel.setStatusChange(order);
+                if(isStatusChanged){
+                    orderListAdapter.notifyDataSetChanged();
+                    mBinding.toolbar.tagAll.performClick();
+                    if (order.getOrderStatusId() == OrderStatus.CANCELED.value()){
+                        startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
+                    }else{
+                        startMediaPlayer(NotificationSoundType.DEFAULT);
+                    }
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(context, "RECEIVER: EXCEPTION", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,17 +160,15 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         orderViewModel.getRunningOrderStatus().observe(requireActivity(), fetchedOrders -> {
             // First get all accepted orders
             List<Order> acceptedOrders = orderViewModel.getAllAcceptedOrders().getValue();
-            if(acceptedOrders != null){
-                acceptedOrders.forEach(acceptedOrder -> {
-                    fetchedOrders.forEach(fetchedOrder -> {
-                        if(acceptedOrder.getId()  == fetchedOrder.getId()){
-                            if(acceptedOrder.getOrderStatusId() != fetchedOrder.getOrderStatusId()){// i.e, status changed
-                                handleOrderStatusChanged(fetchedOrder);
-                            }
+            acceptedOrders.forEach(acceptedOrder -> {
+                fetchedOrders.forEach(fetchedOrder -> {
+                    if(acceptedOrder.getId()  == fetchedOrder.getId()){
+                        if(acceptedOrder.getOrderStatusId() != fetchedOrder.getOrderStatusId()){// i.e, status changed
+                            handleOrderStatusChanged(fetchedOrder);
                         }
-                    });
+                    }
                 });
-            }
+            });
 
         });
 
@@ -113,18 +176,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         orderViewModel.getAllAcceptedOrders().observe(requireActivity(), orders -> {
             mOrders = orders;
             mBinding.toolbar.tagAll.setText("All ("+orders.size() +")");
-
-            List<Order> preparingOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.PREPARE);
-            List<Order> readyOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.READY);
-            List<Order> pickedUpOrders = OrderListAdapter.filterOrders(mOrders,  FilterType.PICKED);
-
-            mBinding.toolbar.tagPreparing.setText("Preparing (" + preparingOrders.size() +")");
-            mBinding.toolbar.tagReady.setText("Ready (" + readyOrders.size() +")");
-            mBinding.toolbar.tagPicked.setText("PickedUp (" + pickedUpOrders.size() +")");
-
-
-            orderListAdapter.submitList(orders);
-
+            orderViewModel.setFilterOrders(orders);
 
             Log.d(TAG, "#########################Scroll to top..........");
             RecyclerView.LayoutManager layoutManager  = mBinding.orderRecycler.getLayoutManager();
@@ -133,17 +185,22 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             //layoutManager.smoothScrollToPosition(mBinding.orderRecycler, null, 0);
             //mBinding.orderRecycler.scrollToPosition(0);
             //mBinding.orderRecycler.refreshDrawableState();
-            if (layoutManager != null) {
-                layoutManager.smoothScrollToPosition(mBinding.orderRecycler, new RecyclerView.State(), -orders.size());
-            }
+            layoutManager.smoothScrollToPosition(mBinding.orderRecycler, new RecyclerView.State(), -orders.size());
         });
 
-        orderViewModel.getCurrentFilterType().observe(requireActivity(), filterType -> {
-            Log.d(TAG, "CURRENT_FILTER_TYPE: " + filterType.name());
-            Log.d(TAG, "Orders: " + mOrders);
-            Log.d(TAG, "ORDER_SIZE: " + mOrders.size());
-            orderListAdapter.submitList(mOrders);
-            orderListAdapter.getFilter().filter(filterType.name());
+        orderViewModel.getAllFilteredOrders().observe(requireActivity(), orders -> {
+            mBinding.toolbar.tagAll.setText("All (" + mOrders.size() +")");
+
+            List<Order> preparingOrders = filterOrders(mOrders,  FilterType.PREPARE);
+            mBinding.toolbar.tagPreparing.setText("Preparing (" + preparingOrders.size() +")");
+
+            List<Order> readyOrders = filterOrders(mOrders,  FilterType.READY);
+            mBinding.toolbar.tagReady.setText("Ready (" + readyOrders.size() +")");
+
+            List<Order> pickedUpOrders = filterOrders(mOrders,  FilterType.PICKED);
+            mBinding.toolbar.tagPicked.setText("PickedUp (" + pickedUpOrders.size() +")");
+
+            orderListAdapter.submitList(orders);
         });
     }
 
@@ -243,22 +300,26 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         //Toolbar Click:
         mBinding.toolbar.tagAll.setOnCheckedChangeListener((compoundButton, b) -> {
             if(compoundButton.isChecked()){
-                orderViewModel.setFilterType(FilterType.ALL);
+                List<Order> filterItems = filterOrders(mOrders, FilterType.ALL);
+                orderViewModel.setFilterOrders(filterItems);
             }
         });
         mBinding.toolbar.tagPreparing.setOnCheckedChangeListener((compoundButton, b) -> {
             if(compoundButton.isChecked()){
-                orderViewModel.setFilterType(FilterType.PREPARE);
+                List<Order> filterItems = filterOrders(mOrders, FilterType.PREPARE);
+                orderViewModel.setFilterOrders(filterItems);
             }
         });
         mBinding.toolbar.tagReady.setOnCheckedChangeListener((compoundButton, b) -> {
             if(compoundButton.isChecked()){
-                orderViewModel.setFilterType(FilterType.READY);
+                List<Order> filterItems = filterOrders(mOrders, FilterType.READY);
+                orderViewModel.setFilterOrders(filterItems);
             }
         });
         mBinding.toolbar.tagPicked.setOnCheckedChangeListener((compoundButton, b) -> {
             if(compoundButton.isChecked()){
-                orderViewModel.setFilterType(FilterType.PICKED);
+                List<Order> filterItems = filterOrders(mOrders, FilterType.PICKED);
+                orderViewModel.setFilterOrders(filterItems);
             }
         });
         //BottomNavigation Click:
@@ -267,35 +328,24 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
     }
 
 
+    public List<Order> filterOrders(List<Order> orderList, FilterType filterType){
+        if (orderList == null) return new ArrayList<>();
 
-
-
-
-    private void startMediaPlayer(NotificationSoundType soundType) {
-        mMediaPlayer = new MediaPlayer();
-        Context context = requireActivity();
-        if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
-        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.swiggy_order_cancel_ringtone);
-        else mMediaPlayer = MediaPlayer.create(context, R.raw.default_notification_sound);
-        try{
-            mMediaPlayer.start();
-        }catch (Exception e){
-            //e.printStackTrace();
+        List<Order> filteredOrders;
+        if(filterType == FilterType.PREPARE){
+            filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() ==  OrderStatus.ORDER_RECEIVED.value() || order.getOrderStatusId() ==  OrderStatus.DELIVERY_GUY_ASSIGNED.value()).collect(Collectors.toList());
+        }else if(filterType == FilterType.READY){
+            filteredOrders = orderList
+                    .stream()
+                    .filter(order -> order.getOrderStatusId() ==  OrderStatus.ORDER_READY.value()).collect(Collectors.toList());
+        }else if(filterType == FilterType.PICKED){
+            filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() ==  OrderStatus.ON_THE_WAY.value()).collect(Collectors.toList());
+        }else{// ALL
+            filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() !=  OrderStatus.ORDER_PLACED.value()).collect(Collectors.toList());
         }
-    }
-    private void stopMediaPlayer(){
-        if(mMediaPlayer != null){
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
-    }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopMediaPlayer();
-    }
 
+        return filteredOrders;
 
+    }
 
 }

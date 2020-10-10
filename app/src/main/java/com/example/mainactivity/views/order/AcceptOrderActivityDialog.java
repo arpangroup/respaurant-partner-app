@@ -221,14 +221,6 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        isMusicEnable = false;
-        ACTIVE = false;
-        stopMediaPlayer();
-
-    }
     private void stopMediaPlayer(){
         isMusicEnable  = false;
         if(mMediaPlayer != null){
@@ -236,6 +228,15 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isMusicEnable = false;
+        ACTIVE = false;
+        stopMediaPlayer();
+
     }
 
     @Override
