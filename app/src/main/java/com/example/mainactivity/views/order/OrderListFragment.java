@@ -134,7 +134,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             //mBinding.orderRecycler.scrollToPosition(0);
             //mBinding.orderRecycler.refreshDrawableState();
             if (layoutManager != null) {
-                layoutManager.smoothScrollToPosition(mBinding.orderRecycler, new RecyclerView.State(), -orders.size());
+                layoutManager.smoothScrollToPosition(mBinding.orderRecycler, new RecyclerView.State(), 0);
             }
         });
 
