@@ -142,7 +142,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
             Log.d(TAG, "CURRENT_FILTER_TYPE: " + filterType.name());
             Log.d(TAG, "Orders: " + mOrders);
             Log.d(TAG, "ORDER_SIZE: " + mOrders.size());
-            orderListAdapter.submitList(mOrders);
+            //orderListAdapter.submitList(mOrders);
             orderListAdapter.getFilter().filter(filterType.name());
         });
     }
