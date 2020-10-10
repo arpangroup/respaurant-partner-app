@@ -56,7 +56,7 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
 
         if((order.getDeliveryType() == 1)&&(order.getOrderStatusId() >= 3)){
             if(order.getDeliveryDetails() != null){
-                Picasso.get().load(Constants.ASSET_URL_DELIVERY_GUY + order.getDeliveryDetails().getPhoto()).into(holder.itemOrderPreparingBinding.imgDeliveryGuy);
+                //Picasso.get().load(Constants.ASSET_URL_DELIVERY_GUY + order.getDeliveryDetails().getPhoto()).into(holder.itemOrderPreparingBinding.imgDeliveryGuy);
             }
         }
 

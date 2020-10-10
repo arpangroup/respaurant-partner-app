@@ -132,6 +132,10 @@ public class OrderRepository {
 
                if (order.getOrderStatusId() == OrderStatus.DELIVERY_GUY_ASSIGNED.value()){
                     orderObj.setDeliveryDetails(order.getDeliveryDetails());
+                    System.out.println("##########################################");
+                    System.out.println("ID: "+ orderObj.getId());
+                    System.out.println("DRIVER: "+orderObj.getDeliveryDetails());
+                    System.out.println("##########################################");
                }else if (order.getOrderStatusId() == OrderStatus.REACHED_PICKUP_LOCATION.value()){
                    //...
                }else if(order.getOrderStatusId() == OrderStatus.DELIVERED.value()){

@@ -44,7 +44,7 @@ import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
-    private static final long ORDER_REFRESH_INTERVAL = 1000 * 5;
+    private static final long ORDER_REFRESH_INTERVAL = 1000 * 10;
     private final String TAG = this.getClass().getSimpleName();
     private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 500;
     ActivityMainBinding mBinding;

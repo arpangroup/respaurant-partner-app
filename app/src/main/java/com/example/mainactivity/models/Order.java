@@ -1,6 +1,7 @@
 package com.example.mainactivity.models;
 
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
@@ -8,10 +9,12 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.adapters.DishListAdapter;
+import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.util.FormatDate;
 import com.example.mainactivity.util.FormatPrice;
 import com.google.gson.annotations.SerializedName;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -100,6 +103,14 @@ public class Order {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @BindingAdapter("android:driverImage")
+    public static void loadDriverImage(ImageView imageView, String imageUrl){
+        System.out.println("=======================================");
+        System.out.println(Constants.ASSET_URL_DELIVERY_GUY + imageUrl);
+        System.out.println("=======================================");
+        Picasso.get().load(Constants.ASSET_URL_DELIVERY_GUY + imageUrl).into(imageView);
     }
 
 

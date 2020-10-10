@@ -349,7 +349,8 @@
                                 android:id="@+id/img_delivery_guy"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:src="@drawable/human"/>
+                                android:src="@drawable/human"
+                                android:driverImage="@{order.deliveryDetails.photo}"/>
                         </androidx.cardview.widget.CardView>
                         <LinearLayout
                             android:layout_toRightOf="@+id/card"

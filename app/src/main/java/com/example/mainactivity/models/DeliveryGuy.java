@@ -1,6 +1,10 @@
 package com.example.mainactivity.models;
 
+import android.widget.ImageView;
+
+import com.example.mainactivity.commons.Constants;
 import com.google.gson.annotations.SerializedName;
+import com.squareup.picasso.Picasso;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,5 +42,8 @@ public class DeliveryGuy {
         String otp = this.phone.substring(lastIndex -4, lastIndex);
         return otp;
     }
+
+
+
 
 }
