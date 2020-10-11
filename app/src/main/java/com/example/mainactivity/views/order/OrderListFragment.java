@@ -45,6 +45,7 @@ import com.example.mainactivity.views.MoreActivity;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -159,26 +160,23 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
     }
 
     private void handleOrderStatusChanged(Order order) {
-        int orderStatus = order.getOrderStatusId();
+        OrderStatus orderStatus = CommonUtils.mapOrderStatus(order.getOrderStatusId());
         orderViewModel.setStatusChange(order);
-        //orderListAdapter.notifyDataSetChanged();
-
-        if (orderStatus == OrderStatus.DELIVERY_GUY_ASSIGNED.value()){
-
-        }else if(orderStatus == OrderStatus.REACHED_PICKUP_LOCATION.value()){
-
-        }else if(orderStatus == OrderStatus.DELIVERED.value()){
+        if(orderStatus == OrderStatus.DELIVERED){
             String msg = "You missed a new Order \n"+order.getUniqueOrderId();
             msg += "Order amount of Rs: "+order.getItemTotal();
             msg += "\n"+ order.getOrderComment();
-            CommonUtils.showPushNotification(requireActivity(), "Order Cancelled", msg);
+            CommonUtils.showPushNotification(requireActivity(), "Order Delivered", msg);
             startMediaPlayer(NotificationSoundType.ORDER_DELIVERED);
 
-        }else if(orderStatus == OrderStatus.CANCELED.value()){
+        }else if(orderStatus == OrderStatus.CANCELED){
             startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
         }else{
             //Toast.makeText(requireActivity(), "SOMETHING ERROR HAPPENED", Toast.LENGTH_SHORT).show();
         }
+
+
+
 
         orderViewModel.getCurrentFilterType().observe(requireActivity(), filterType -> {
             Log.d(TAG, "CURRENT_FILTER_TYPE: " + filterType.name());

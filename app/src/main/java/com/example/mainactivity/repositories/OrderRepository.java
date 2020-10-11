@@ -16,9 +16,11 @@ import com.example.mainactivity.models.request.ReadyOrderRequest;
 import com.example.mainactivity.models.request.RequestToken;
 import com.example.mainactivity.models.request.RunningOrderRequest;
 import com.example.mainactivity.models.response.ApiResponse;
+import com.example.mainactivity.util.CommonUtils;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,17 @@ public class OrderRepository {
     private MutableLiveData<List<Order>> mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<List<Order>> mutableRunningOrdersStatuses = new MutableLiveData<>(new ArrayList<>());
     private MutableLiveData<List<String>> mutableCancelOrders;
+
+    List<OrderStatus> statusListToBeUpdate = Arrays.asList(
+            //OrderStatus.ORDER_RECEIVED,
+            OrderStatus.DELIVERY_GUY_ASSIGNED, // 3<==ORDER_ACCEPTED_BY_DELIVERY
+            OrderStatus.ORDER_READY, // 7 <==ORDER_MARK_AS_READY
+            OrderStatus.REACHED_PICKUP_LOCATION, // 8<==DELIVERY_GUY_REACHED_PICKUP_LOCATION
+            OrderStatus.READY_FOR_PICKUP, // 10<== ORDER_IS_READY_TO_PICKUP
+            OrderStatus.ON_THE_WAY,  //4<== ORDER_IS_PICKED_UP_AND_DELIVERY_GUY_IS_ON_THE_WAY_TO_DELIVER
+            OrderStatus.DELIVERED, //5<=Delivered the order to customer
+            OrderStatus.CANCELED //6<==Cancelled the order by customer
+    );
 
     public static OrderRepository getInstance(){
         if (orderRepository == null){
@@ -125,26 +138,20 @@ public class OrderRepository {
 
        orderList.forEach(orderObj ->{
            if(orderObj.getId() == order.getId()){
-//               orderObj.setDeliveryDetails(order.getDeliveryDetails());
-//               orderObj.setOrderStatusId(order.getOrderStatusId());
-//               orderList.set(orderList.indexOf(orderObj), orderObj);
-               orderObj.setOrderStatusId(order.getOrderStatusId());
+               OrderStatus orderStatus = CommonUtils.mapOrderStatus(order.getOrderStatusId());
+               boolean isStatusPresentInTheList = statusListToBeUpdate.stream().anyMatch(orderStatus1 -> orderStatus1 ==  orderStatus);
+               if(isStatusPresentInTheList){
+                   orderObj.setOrderStatusId(order.getOrderStatusId());
 
-               if (order.getOrderStatusId() == OrderStatus.DELIVERY_GUY_ASSIGNED.value()){
-                    orderObj.setDeliveryDetails(order.getDeliveryDetails());
-                    System.out.println("##########################################");
-                    System.out.println("ID: "+ orderObj.getId());
-                    System.out.println("DRIVER: "+orderObj.getDeliveryDetails());
-                    System.out.println("##########################################");
-               }else if (order.getOrderStatusId() == OrderStatus.REACHED_PICKUP_LOCATION.value()){
-                   //...
-               }else if(order.getOrderStatusId() == OrderStatus.DELIVERED.value()){
-                    //...
-               }else if(order.getOrderStatusId() == OrderStatus.CANCELED.value()){
-                   //...
-               }else{
-                  //...
+                   if (orderStatus == OrderStatus.DELIVERY_GUY_ASSIGNED || orderStatus == OrderStatus.READY_FOR_PICKUP){
+                       orderObj.setDeliveryDetails(order.getDeliveryDetails());
+                       Log.d(TAG, "##########################################");
+                       Log.d(TAG,"ID: "+ orderObj.getId());
+                       Log.d(TAG,"DRIVER: "+orderObj.getDeliveryDetails());
+                       Log.d(TAG,"##########################################");
+                   }
                }
+
 
            }
        });

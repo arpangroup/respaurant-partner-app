@@ -15,11 +15,13 @@ import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ItemOrderPreparingBinding;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.util.FormatDate;
 import com.example.mainactivity.views.order.OrderListFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -160,8 +162,48 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
 
     public static List<Order> filterOrders(List<Order> orderList, OrderListFragment.FilterType filterType){
         if (orderList == null) return new ArrayList<>();
+        List<Order> filteredOrders = new ArrayList<>();
 
-        List<Order> filteredOrders;
+        List<OrderStatus> preparingFilter = Arrays.asList(
+                OrderStatus.ORDER_RECEIVED, //2
+                OrderStatus.DELIVERY_GUY_ASSIGNED,  //3
+                OrderStatus.REACHED_PICKUP_LOCATION //8
+        );
+        List<OrderStatus> readyFilter = Arrays.asList(
+                OrderStatus.ORDER_READY, //7
+                OrderStatus.READY_FOR_PICKUP //10
+        );
+        List<OrderStatus> pickedFilter = Arrays.asList(
+                OrderStatus.ON_THE_WAY, //4
+                OrderStatus.REACHED_DELIVERY_LOCATION //9
+        );
+
+        switch (filterType){
+            case PREPARE:
+                filteredOrders = orderList.stream().filter(order -> {
+                    OrderStatus orderStatus = CommonUtils.mapOrderStatus(order.getOrderStatusId());
+                    return preparingFilter.stream().anyMatch(orderStatus1 -> orderStatus == orderStatus1);
+                }).collect(Collectors.toList());
+                break;
+            case READY:
+                filteredOrders = orderList.stream().filter(order -> {
+                    OrderStatus orderStatus = CommonUtils.mapOrderStatus(order.getOrderStatusId());
+                    return readyFilter.stream().anyMatch(orderStatus1 -> orderStatus == orderStatus1);
+                }).collect(Collectors.toList());
+                break;
+            case PICKED:
+                filteredOrders = orderList.stream().filter(order -> {
+                    OrderStatus orderStatus = CommonUtils.mapOrderStatus(order.getOrderStatusId());
+                    return pickedFilter.stream().anyMatch(orderStatus1 -> orderStatus == orderStatus1);
+                }).collect(Collectors.toList());
+                break;
+            default:
+                filteredOrders = orderList;
+                break;
+        }
+
+
+        /*
         if(filterType == OrderListFragment.FilterType.PREPARE){
             filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() ==  OrderStatus.ORDER_RECEIVED.value() || order.getOrderStatusId() ==  OrderStatus.DELIVERY_GUY_ASSIGNED.value()).collect(Collectors.toList());
         }else if(filterType == OrderListFragment.FilterType.READY){
@@ -173,6 +215,7 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
         }else{// ALL
             filteredOrders = orderList.stream().filter(order -> order.getOrderStatusId() !=  OrderStatus.ORDER_PLACED.value()).collect(Collectors.toList());
         }
+        */
 
         return filteredOrders;
 

@@ -10,12 +10,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mainactivity.adapters.DishListAdapter;
 import com.example.mainactivity.commons.Constants;
+import com.example.mainactivity.commons.DeliveryType;
+import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.util.FormatDate;
 import com.example.mainactivity.util.FormatPrice;
 import com.google.gson.annotations.SerializedName;
 import com.squareup.picasso.Picasso;
 
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.Data;
@@ -107,9 +110,9 @@ public class Order {
 
     @BindingAdapter("android:driverImage")
     public static void loadDriverImage(ImageView imageView, String imageUrl){
-        System.out.println("=======================================");
-        System.out.println(Constants.ASSET_URL_DELIVERY_GUY + imageUrl);
-        System.out.println("=======================================");
+        //System.out.println("=======================================");
+        //System.out.println(Constants.ASSET_URL_DELIVERY_GUY + imageUrl);
+        //System.out.println("=======================================");
         Picasso.get().load(Constants.ASSET_URL_DELIVERY_GUY + imageUrl).into(imageView);
     }
 
@@ -141,31 +144,87 @@ public class Order {
     }
     public String getAcceptedOrderStatus(){
         String statusStr = "";
-        switch (this.orderStatusId){
-            case 1:
+        OrderStatus orderStatus = CommonUtils.mapOrderStatus(this.orderStatusId);
+        if (orderStatus == null) return statusStr;
+        switch (orderStatus){
+            case ORDER_PLACED:
                 statusStr = "PLACED";//ORDER-PLACED
                 break;
-            case 2:
+            case ORDER_RECEIVED:
                 //ORDER_RECEIVED: i.e, restaurant preparing the order
                 statusStr = "PREPARING"; //ORDER_RECEIVED
                 break;
-            case 3:
+            case DELIVERY_GUY_ASSIGNED:
                 statusStr = "DELIVERY ASSIGNED";//DELIVERY ASSIGNED
                 break;
-            case 4:
+            case ON_THE_WAY:
                 statusStr = "PICKED-UP";//ON_THE_WAY
                 break;
-            case 5:
+            case DELIVERED:
                 statusStr = "DELIVERED";
                 break;
-            case 6:
+            case CANCELED:
                 statusStr = "CANCELLED";
                 break;
-            case 7:
+            case ORDER_READY:
                 statusStr = "READY";
+                break;
+            case REACHED_PICKUP_LOCATION:
+                statusStr = "RIDER_REACHED";
+                break;
+            case REACHED_DELIVERY_LOCATION:
+                statusStr = "PICKED-UP";//RIDER_REACHED_TO_DELIVERY_LOCATION
+                break;
+            case READY_FOR_PICKUP:
+                statusStr = "READY_TO_PICKUP";
                 break;
         }
         return statusStr;
+    }
+
+    public boolean isRiderDetailsVisible(){
+        OrderStatus orderStatus = CommonUtils.mapOrderStatus(this.orderStatusId);
+        List<OrderStatus> checkList = Arrays.asList(
+                OrderStatus.DELIVERY_GUY_ASSIGNED,
+                OrderStatus.REACHED_PICKUP_LOCATION,
+                OrderStatus.READY_FOR_PICKUP
+        );
+        boolean isExistInCheckList = checkList.stream().anyMatch(orderStatus1 -> orderStatus1 == orderStatus);
+        return isExistInCheckList && this.deliveryType != DeliveryType.SELF_PICKUP.value();
+    }
+
+    public String getRiderTitle(DeliveryGuy deliveryGuy){
+        OrderStatus orderStatus = CommonUtils.mapOrderStatus(this.orderStatusId);
+        if(orderStatus == OrderStatus.DELIVERY_GUY_ASSIGNED){
+            return this.deliveryDetails.getName() + " is arriving in few minutes";
+        }else if(orderStatus == OrderStatus.REACHED_PICKUP_LOCATION){
+            return this.deliveryDetails.getName() + " is reached the restaurant";
+        }else if(orderStatus == OrderStatus.READY_FOR_PICKUP){
+            return deliveryGuy.getName() + " is ready to pickup the order";
+        }else if(orderStatus == OrderStatus.ON_THE_WAY){
+            return deliveryGuy.getName() + " is on the way to deliver the order";
+        }else{
+            return "";
+        }
+    }
+
+    public boolean isOtpVisible(){
+        OrderStatus orderStatus = CommonUtils.mapOrderStatus(this.orderStatusId);
+        List<OrderStatus> checkList = Arrays.asList(
+                OrderStatus.READY_FOR_PICKUP
+        );
+        boolean isExistInCheckList = checkList.stream().anyMatch(orderStatus1 -> orderStatus1 == orderStatus);
+        return isExistInCheckList && this.deliveryType != DeliveryType.SELF_PICKUP.value();
+    }
+
+    public boolean isOrderReadyButtonVisible(){
+        OrderStatus orderStatus = CommonUtils.mapOrderStatus(this.orderStatusId);
+        List<OrderStatus> checkList = Arrays.asList(
+                OrderStatus.ORDER_RECEIVED,
+                OrderStatus.DELIVERY_GUY_ASSIGNED
+                //OrderStatus.REACHED_PICKUP_LOCATION
+        );
+        return checkList.stream().anyMatch(orderStatus1 -> orderStatus1 == orderStatus);
     }
 
     public String getHistoryOrderStatus(){

@@ -70,7 +70,6 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
     @Override
     public void onResume() {
         super.onResume();
-        restaurantViewModel.loadDashboard();
     }
 
     @Override
@@ -82,6 +81,9 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         restaurantViewModel = new ViewModelProvider(requireActivity()).get(RestaurantViewModel.class);
         authenticationViewModel.init();
         restaurantViewModel.init();
+
+
+        restaurantViewModel.loadDashboard();
 
         // Initialize NavController
         navController = Navigation.findNavController(rootView);

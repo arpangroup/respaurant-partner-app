@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.mainactivity.App;
 import com.example.mainactivity.R;
+import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.models.CouponDetails;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.views.MoreActivity;
@@ -104,6 +105,20 @@ public class CommonUtils {
             }
         });
         return result[0];
+    }
+
+    public static OrderStatus mapOrderStatus(int statusId){
+        if(statusId == 1) return OrderStatus.ORDER_PLACED;
+        if(statusId == 2) return OrderStatus.ORDER_RECEIVED;
+        if(statusId == 3) return OrderStatus.DELIVERY_GUY_ASSIGNED;
+        if(statusId == 4) return OrderStatus.ON_THE_WAY;
+        if(statusId == 5) return OrderStatus.DELIVERED;
+        if(statusId == 6) return OrderStatus.CANCELED;
+        if(statusId == 7) return OrderStatus.ORDER_READY;
+        if(statusId == 8) return OrderStatus.REACHED_PICKUP_LOCATION;
+        if(statusId == 9) return OrderStatus.REACHED_DELIVERY_LOCATION;
+        if(statusId == 10) return OrderStatus.READY_FOR_PICKUP;
+        return null;
     }
 
 }
