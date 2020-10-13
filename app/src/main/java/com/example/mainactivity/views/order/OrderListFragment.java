@@ -163,10 +163,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         OrderStatus orderStatus = CommonUtils.mapOrderStatus(order.getOrderStatusId());
         orderViewModel.setStatusChange(order);
         if(orderStatus == OrderStatus.DELIVERED){
-            String msg = "You missed a new Order \n"+order.getUniqueOrderId();
-            msg += "Order amount of Rs: "+order.getItemTotal();
-            msg += "\n"+ order.getOrderComment();
-            CommonUtils.showPushNotification(requireActivity(), "Order Delivered", msg);
+            CommonUtils.showPushNotification(requireActivity(), "Order Delivered", "Order " +order.getUniqueOrderId()+ " has been delivered successfully");
             startMediaPlayer(NotificationSoundType.ORDER_DELIVERED);
 
         }else if(orderStatus == OrderStatus.CANCELED){

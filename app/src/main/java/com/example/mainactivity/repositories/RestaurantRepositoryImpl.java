@@ -55,8 +55,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository{
     public void loadDashboard(int userId){
         if(mutableDashboard == null){
             mutableDashboard = new MutableLiveData<>();
-            loadDashboardApi(userId);
         }
+        loadDashboardApi(userId);
     }
 
     @Override

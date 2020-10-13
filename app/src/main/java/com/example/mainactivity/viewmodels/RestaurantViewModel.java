@@ -1,5 +1,7 @@
 package com.example.mainactivity.viewmodels;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -34,6 +36,7 @@ public class RestaurantViewModel extends ViewModel {
     }
 
     public void loadDashboard(){
+        Log.d(TAG, "Loading Dashboard.....");
         int userId = new RequestToken().getUserId();
         restaurantRepository.loadDashboard(userId);
     }

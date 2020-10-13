@@ -134,6 +134,7 @@ public class OrderViewModel extends ViewModel {
 
     public LiveData<ApiResponse> acceptOrder(Order order, int userId){
         int foodPrepareTime = order.getPrepareTime();
+        if(foodPrepareTime == 0) foodPrepareTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
         return orderRepository.acceptOrder(order, foodPrepareTime, userId);
     }
     public LiveData<ApiResponse> cancelOrder(Order order, int userId, String cancelReason){

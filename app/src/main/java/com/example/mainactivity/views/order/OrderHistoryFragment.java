@@ -64,6 +64,8 @@ public class OrderHistoryFragment extends Fragment implements OrderHistoryAdapte
         mBinding.toolbar.back.setOnClickListener(view -> navController.popBackStack());
 
 
+        restaurantViewModel.loadDashboard();
+
         restaurantViewModel.getDashboard().observe(requireActivity(), dashboard -> {
             Log.d(TAG, "HISTORY_SIZE: "+dashboard.getAllOrders().size());
             orderHistoryAdapter.submitList(dashboard.getAllOrders());
@@ -71,6 +73,8 @@ public class OrderHistoryFragment extends Fragment implements OrderHistoryAdapte
         });
 
         restaurantViewModel.getIsLoading().observe(getViewLifecycleOwner(), aBoolean -> {
+            Log.d(TAG, "Inside isLoading.......................");
+            Log.d(TAG, "VALUE: " + aBoolean);
             if(aBoolean)mBinding.progressbar.setVisibility(View.VISIBLE);
             else mBinding.progressbar.setVisibility(View.GONE);
         });

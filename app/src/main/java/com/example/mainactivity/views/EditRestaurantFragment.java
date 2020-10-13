@@ -89,7 +89,7 @@ public class EditRestaurantFragment extends Fragment {
 
         // Initialize RecyclerView
         //menuItemAdapter = new MenuItemAdapter(this);
-        mBinding.businessExtra.layoutCommission.setVisibility(View.VISIBLE);
+        mBinding.businessExtra.layoutCommission.setVisibility(View.GONE);
         mBinding.businessExtra.btnCommissionIncrease.setVisibility(View.VISIBLE);
         mBinding.businessExtra.btnCommissionDecrease.setVisibility(View.VISIBLE);
         mBinding.businessExtra.layoutFixDeliveryCharge.setVisibility(View.GONE);

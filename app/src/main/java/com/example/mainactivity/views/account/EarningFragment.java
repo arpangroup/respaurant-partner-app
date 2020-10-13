@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,8 @@ public class EarningFragment extends Fragment {
             if(isLoading)mBinding.layoutProgress.setVisibility(View.VISIBLE);
             else mBinding.layoutProgress.setVisibility(View.GONE);
         });
+
+
 
 
         restaurantViewModel.getDashboard().observe(requireActivity(),  dashboard -> {
