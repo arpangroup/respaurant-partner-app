@@ -20,6 +20,7 @@ import com.example.mainactivity.R;
 import com.example.mainactivity.adapters.OrderAcceptListAdapter;
 import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.commons.NotificationSoundType;
+import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ActivityAcceptOrderBinding;
 import com.example.mainactivity.databinding.ItemOrderAcceptBinding;
 import com.example.mainactivity.firebase.MessagingService;
@@ -43,9 +44,14 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
     public static boolean ACTIVE = false;
     ActivityAcceptOrderBinding mBinding;
 
+    List<Order> mListedOrders = new ArrayList<>();
+
     private boolean isMusicEnable = true;
     private MediaPlayer mMediaPlayer;
     Timer timer;
+
+    private boolean isOnGoingOrder = false;
+
 
     OrderViewModel orderViewModel;
     private OrderAcceptListAdapter orderAcceptListAdapter;
@@ -128,14 +134,27 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
     private void subscribeToObserver(){
         Log.d(TAG, "Inside subscribeToObserver....");
         FetchOrderService.mutableNewOrders.observe(this, orders -> {
-            System.out.println("============================================================================");
-            Log.d(TAG, "ORDERS: "+orders);
-            // Check if newOrders are present in already accepted orders or not
+           try{
+               System.out.println("============================================================================");
+               Log.d(TAG, "ORDERS: "+orders);
+               // Check if newOrders are present in already accepted orders or not
 
+               orderViewModel.setNewOrder(orders);
+               System.out.println("============================================================================");
+           }catch (Exception e){
+               e.printStackTrace();
+           }
+        });
 
-
-            orderViewModel.setNewOrder(orders);
-            System.out.println("============================================================================");
+        FetchOrderService.mutableStatusList.observe(this, orders -> {
+            try{
+                System.out.println("=============================STATUS_CHANGEs===============================================");
+                orders.forEach(order -> System.out.println("ORDER_ID: "+ order.getId()  + "STATUS: "+ order.getOrderStatusId() + ", UID"+ order.getUniqueOrderId()));
+                orders.forEach(this::handleOrderStatusChanged);
+                System.out.println("===========================================================================================");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         });
     }
 
@@ -173,6 +192,7 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
             }else{
                 orderAcceptListAdapter.submitList(orders);
                 mBinding.toolbar.title.setText(orders.size() +" New Order");
+                mListedOrders = orders;
             }
         });
 
@@ -185,9 +205,26 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
         });
 
 
-
-
     }
+
+    private void handleOrderStatusChanged(Order fetchedOrder) {
+        Log.d(TAG, "Inside handleOrderStatusChanged");
+        OrderStatus orderStatus =  CommonUtils.mapOrderStatus(fetchedOrder.getOrderStatusId());
+        switch (orderStatus){
+            case ORDER_PLACED:
+                orderViewModel.removeOrderFromNewOrderList(fetchedOrder);
+                orderAcceptListAdapter.notifyDataSetChanged();
+                break;
+            case CANCELED:
+                orderViewModel.removeOrderFromNewOrderList(fetchedOrder);
+                orderAcceptListAdapter.notifyDataSetChanged();
+                startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
+                break;
+            default:
+                return;
+        }
+    }
+
 
 
     private void startMediaPlayer(NotificationSoundType soundType) {
@@ -283,6 +320,7 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
             if(binding != null)binding.layoutProgress.setVisibility(View.GONE);
             if(apiResponse.isSuccess()){
                 orderViewModel.removeOrderFromNewOrderList(order);
+                orderAcceptListAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -298,6 +336,7 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
             System.out.println(apiResponse);
             if(apiResponse.isSuccess()){
                 orderViewModel.removeOrderFromNewOrderList(order);
+                orderAcceptListAdapter.notifyDataSetChanged();
             }
         });
     }

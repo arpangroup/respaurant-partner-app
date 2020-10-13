@@ -52,6 +52,7 @@ public class OrderViewModel extends ViewModel {
         if(newOrders != null) {
             List<Order>  orders = newOrders;
             orders.removeIf(orderObj -> orderObj.getId() == order.getId());
+            Log.d(TAG, "Removed order "+order.getId());
             mutableNewOrders.setValue(orders);
         }
     }
@@ -94,6 +95,9 @@ public class OrderViewModel extends ViewModel {
 
     public void loadRunningOrderStatus(){
         orderRepository.loadRunningOrderStatus();
+    }
+    public void loadRunningOrderStatus(List<Order> listedOrders){
+        orderRepository.loadRunningOrderStatus(listedOrders);
     }
     public LiveData<List<Order>> getRunningOrderStatus(){
         return orderRepository.getRunningOrderStatus();

@@ -81,6 +81,15 @@ public class OrderRepository {
             }
         }
     }
+    public void loadRunningOrderStatus(List<Order> listedOrders){
+        List<String> listed_orders = new ArrayList<>();
+        if(listedOrders != null){
+            if(listedOrders.size() > 0){
+                listed_orders = listedOrders.stream().map(order -> String.valueOf(order.getId())).collect(Collectors.toList());
+                loadRunningOrdersStatus(listed_orders);
+            }
+        }
+    }
     public LiveData<List<Order>> getRunningOrderStatus(){
        if(mutableRunningOrdersStatuses == null){
            mutableRunningOrdersStatuses = new MutableLiveData<>(new ArrayList<>());

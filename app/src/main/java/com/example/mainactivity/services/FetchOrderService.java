@@ -34,6 +34,7 @@ import com.example.mainactivity.views.order.AcceptOrderActivityDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
@@ -43,14 +44,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class FetchOrderService extends LifecycleService {
-    private static final String TAG = "EndlessService";
+    private static final String TAG = "FetchOrderService";
     private static final long ORDER_FETCH_INTERVAL = 1000 * 10;
     private boolean isLoading = false;
 
     public static MutableLiveData<Boolean> isFetching = new MutableLiveData<>(false);
     private static MutableLiveData<List<Order>> listedOrders = new MutableLiveData<>(new ArrayList<>());
+
     public static MutableLiveData<List<Order>> mutableNewOrders = new MutableLiveData<>(new ArrayList<>());
-    public static MutableLiveData<List<Order>> mutableAcceptedOrders = new MutableLiveData<>(new ArrayList<>());
+    public static MutableLiveData<List<Order>> mutableStatusList = new MutableLiveData<>(new ArrayList<>());
+
 
 
 
@@ -219,21 +222,39 @@ public class FetchOrderService extends LifecycleService {
     private void fetchNewOrders(NewOrderRequest newOrderRequest){
         isLoading = true;
         ApiInterface apiInterface = ApiService.getApiService();
-        //Log.d(TAG, "FETCHING NEW ORDER........");
+        Log.d(TAG, "FETCHING NEW ORDER........");
+        Log.d(TAG, "LISTED_ORDERS: "+newOrderRequest.getListed_order_ids());
         apiInterface.getNewOrders(newOrderRequest).enqueue(new Callback<NewOrderResponse>() {
             @Override
             public void onResponse(Call<NewOrderResponse> call, Response<NewOrderResponse> response) {
                 try{
-                    List<Order> currentOrders = response.body().getNewOrders();
+                    List<Order> currentOrders = response.body() != null ? response.body().getNewOrders() : null;
+                    List<Order> statusList = response.body() != null ? response.body().getListedOrderStatuses() : null;
                     if(currentOrders != null && currentOrders.size() > 0){
                         Log.d(TAG, "FETCHED_NEW_ORDERS: " + currentOrders.size());
                         List<Order> existingOrders = listedOrders.getValue();
                         if(existingOrders == null) existingOrders = new ArrayList<>();
-                        existingOrders.addAll(currentOrders);
-                        listedOrders.postValue(existingOrders);
-                        mutableNewOrders.postValue(currentOrders);
-                        showFullScreenOrderArriveNotification();
+                        if(existingOrders.size() != currentOrders.size()){
+                            existingOrders.addAll(currentOrders);
+                            listedOrders.postValue(existingOrders);
+                            mutableNewOrders.postValue(currentOrders);
+                            showFullScreenOrderArriveNotification();
+                        }
                     }
+
+                    if(statusList != null){
+                        List<Order> changeList = statusList.stream().filter(order -> order.getOrderStatusId() != 1).collect(Collectors.toList());
+                        Log.d(TAG, "###########################STATUS_CHANGES#####################################");
+                        changeList.forEach(order -> System.out.println("ORDER_ID: "+ order.getId()  + "STATUS: "+ order.getOrderStatusId() + ", UID"+ order.getUniqueOrderId()));
+                        // remove the ID from the existing list:
+                        List<Order> existingOrders = listedOrders.getValue();
+                        if(existingOrders != null){
+                            changeList.forEach(order -> existingOrders.removeIf(order1 -> order.getId() == order1.getId()));
+                        }
+                        Log.d(TAG, "##############################################################################");
+                        mutableStatusList.postValue(changeList);
+                    }
+
                     isLoading = false;
                 }catch (Exception e){
                     isLoading = false;
