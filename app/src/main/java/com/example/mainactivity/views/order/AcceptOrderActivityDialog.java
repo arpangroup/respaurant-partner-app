@@ -221,13 +221,13 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
             case ORDER_RECEIVED:
                 orderViewModel.removeOrderFromNewOrderList(fetchedOrder);
                 orderAcceptListAdapter.notifyDataSetChanged();
-                CommonUtils.showPushNotification(this, "Order Accepted", fetchedOrder.getUniqueOrderId() + " has been accepted");
+                //CommonUtils.showPushNotification(this, "Order Accepted", fetchedOrder.getUniqueOrderId() + " has been accepted");
                 break;
             case CANCELED:
                 orderViewModel.removeOrderFromNewOrderList(fetchedOrder);
                 orderAcceptListAdapter.notifyDataSetChanged();
                 //startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
-                CommonUtils.showPushNotification(this, "Order Cancelled", fetchedOrder.getUniqueOrderId() + " has been cancelled");
+                //CommonUtils.showPushNotification(this, "Order Cancelled", fetchedOrder.getUniqueOrderId() + " has been cancelled");
                 break;
             default:
                 return;

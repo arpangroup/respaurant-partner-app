@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.PowerManager;
 import android.os.SystemClock;
@@ -23,12 +24,15 @@ import com.example.mainactivity.R;
 import com.example.mainactivity.api.ApiInterface;
 import com.example.mainactivity.api.ApiService;
 import com.example.mainactivity.commons.Actions;
+import com.example.mainactivity.commons.NotificationSoundType;
+import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.User;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.response.NewOrderResponse;
 import com.example.mainactivity.sharedpref.ServiceTracker;
 import com.example.mainactivity.sharedpref.UserSession;
+import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.views.MoreActivity;
 import com.example.mainactivity.views.order.AcceptOrderActivityDialog;
 
@@ -56,6 +60,7 @@ public class FetchOrderService extends LifecycleService {
 
 
 
+    private MediaPlayer mMediaPlayer;
 
 
     User user = null;
@@ -124,6 +129,11 @@ public class FetchOrderService extends LifecycleService {
             }
             stopForeground(true);
             stopSelf();
+            if(mMediaPlayer != null){
+                mMediaPlayer.stop();
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+            }
         }catch (Exception e){
             e.printStackTrace();
             Log.d(TAG, "Service stopped without being started: "+e.getMessage());
@@ -249,7 +259,10 @@ public class FetchOrderService extends LifecycleService {
                         // remove the ID from the existing list:
                         List<Order> existingOrders = listedOrders.getValue();
                         if(existingOrders != null){
-                            changeList.forEach(order -> existingOrders.removeIf(order1 -> order.getId() == order1.getId()));
+                            changeList.forEach(order -> {
+                                existingOrders.removeIf(order1 -> order.getId() == order1.getId());
+                                handleOrderStatusChanged(order);
+                            });
                         }
                         Log.d(TAG, "##############################################################################");
                         mutableStatusList.postValue(changeList);
@@ -307,4 +320,39 @@ public class FetchOrderService extends LifecycleService {
             startActivity(intent);
         }
     }
+
+
+    private void handleOrderStatusChanged(Order fetchedOrder) {
+        Log.d(TAG, "Inside handleOrderStatusChanged");
+        OrderStatus orderStatus =  CommonUtils.mapOrderStatus(fetchedOrder.getOrderStatusId());
+        switch (orderStatus){
+            case ORDER_RECEIVED:
+                startMediaPlayer(NotificationSoundType.ORDER_DELIVERED);
+                CommonUtils.showPushNotification(this, "Order Accepted", fetchedOrder.getUniqueOrderId() + " has been accepted");
+                break;
+            case CANCELED:
+                startMediaPlayer(NotificationSoundType.ORDER_CANCELED);
+                CommonUtils.showPushNotification(this, "Order Cancelled", fetchedOrder.getUniqueOrderId() + " has been cancelled");
+                break;
+            default:
+                return;
+        }
+    }
+
+
+    private void startMediaPlayer(NotificationSoundType soundType) {
+        mMediaPlayer = new MediaPlayer();
+        Context context = getApplicationContext();
+        if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
+        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.swiggy_order_cancel_ringtone);
+        else mMediaPlayer = MediaPlayer.create(context, R.raw.default_notification_sound);
+
+        try{
+            mMediaPlayer.start();
+        }catch (Exception e){
+            //e.printStackTrace();
+        }
+    }
+
+
 }
