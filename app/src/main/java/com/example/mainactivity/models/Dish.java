@@ -3,6 +3,7 @@ package com.example.mainactivity.models;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 
+import com.example.mainactivity.util.FormatPrice;
 import com.google.gson.annotations.SerializedName;
 
 import lombok.Data;
@@ -38,6 +39,11 @@ public class Dish {
 
     @SerializedName("updated_at")
     private String updatedAt;
+
+    public String getTotalItemPrice(){
+        double total = this.quantity  * Double.parseDouble(this.price);
+        return FormatPrice.format(total);
+    }
 
 
     public static DiffUtil.ItemCallback<Dish> itemCallback = new DiffUtil.ItemCallback<Dish>() {

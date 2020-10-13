@@ -65,7 +65,9 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
         TimeZone.setDefault(TimeZone.getTimeZone("GMT+05:30"));
         long currentTime = new Date().getTime();
         long orderTime = FormatDate.getTimeFromDateString(order.getCreatedAt());
-        long targetTime = orderTime + Constants.ORDER_READY_WAITING_TIME;
+        //long targetTime = orderTime + Constants.ORDER_READY_WAITING_TIME;
+        long waitingTime = 1000 * 60 * order.getPrepareTime();//1000*60*15;<==15-min
+        long targetTime = orderTime + waitingTime;
         long elapsedTime = currentTime - orderTime;
         long remainingTime = targetTime - currentTime;
 //        Log.d("TIME", "........................................\n");
@@ -81,7 +83,7 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
 
         if(remainingTime >0){
             startAcceptCountDownTimer(holder, position, remainingTime);
-            startProgressBar(holder);
+            startProgressBar(holder, order);
         }else{
             holder.itemOrderPreparingBinding.txtCounter.setText("(0:00)");
         }
@@ -263,7 +265,8 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
             }
         }.start();
     }
-    private void startProgressBar(OrderListAdapter.OrderViewHolder holder){
+    private void startProgressBar(OrderListAdapter.OrderViewHolder holder, Order order){
+        int waitingTime = 1000 * 60 * order.getPrepareTime();
         final int[] counter = {0};
         Timer t = new Timer();
         TimerTask timerTask = new TimerTask() {
@@ -272,12 +275,14 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
                 counter[0]++;
                 holder.itemOrderPreparingBinding.progressBarOrderReady.setProgress(counter[0]);
 
-                if (counter[0] == Constants.ORDER_READY_WAITING_TIME){
+                //if (counter[0] == Constants.ORDER_READY_WAITING_TIME){
+                if (counter[0] == waitingTime){
                     t.cancel();
                 }
             }
         };
-        int period = Constants.ORDER_READY_WAITING_TIME / 100;
+        //int period = Constants.ORDER_READY_WAITING_TIME / 100;
+        int period = waitingTime / 100;
         t.schedule(timerTask, 0, period);//1% in every 100ms
     }
     private void updateCancelTimer(long mTimeLeftInMills, OrderListAdapter.OrderViewHolder holder){

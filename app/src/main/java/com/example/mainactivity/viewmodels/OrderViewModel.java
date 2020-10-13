@@ -69,7 +69,8 @@ public class OrderViewModel extends ViewModel {
             List<Order> orderList = mutableNewOrders.getValue();
 
             Order updatableOrder = orderList.stream().filter(order -> order.getId() == orderId).findAny().get();
-            updatableOrder.getRestaurant().setDeliveryTime(String.valueOf(time));
+            //updatableOrder.getRestaurant().setDeliveryTime(String.valueOf(time));
+            updatableOrder.setPrepareTime(time);
             mutableNewOrders.setValue(orderList);
         }
         //orderList.set(orderList.indexOf(order.get), order);
@@ -132,7 +133,7 @@ public class OrderViewModel extends ViewModel {
     /*=======================================================*/
 
     public LiveData<ApiResponse> acceptOrder(Order order, int userId){
-        int foodPrepareTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
+        int foodPrepareTime = order.getPrepareTime();
         return orderRepository.acceptOrder(order, foodPrepareTime, userId);
     }
     public LiveData<ApiResponse> cancelOrder(Order order, int userId, String cancelReason){

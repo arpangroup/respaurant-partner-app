@@ -32,8 +32,10 @@ import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.response.Dashboard;
 import com.example.mainactivity.services.NewOrderFetchService;
+import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
+import com.example.mainactivity.views.auth.AuthActivity;
 import com.example.mainactivity.views.order.AcceptOrderActivity;
 import com.google.gson.Gson;
 
@@ -71,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(mBinding.getRoot());
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         orderViewModel.init();
+
+        if(!UserSession.isLoggedIn()){
+            Intent intent = new Intent(this, AuthActivity.class);
+            finishAffinity();
+            startActivity(intent);
+            finish();
+        }
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_container);
         //NavigationUI.setupActionBarWithNavController(this, navController);

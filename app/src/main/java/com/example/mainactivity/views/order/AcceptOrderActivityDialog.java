@@ -31,6 +31,7 @@ import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.views.MainActivity;
+import com.example.mainactivity.views.auth.AuthActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -149,7 +150,7 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
         FetchOrderService.mutableStatusList.observe(this, orders -> {
             try{
                 System.out.println("=============================STATUS_CHANGEs===============================================");
-                orders.forEach(order -> System.out.println("ORDER_ID: "+ order.getId()  + "STATUS: "+ order.getOrderStatusId() + ", UID"+ order.getUniqueOrderId()));
+                orders.forEach(order -> System.out.println("ORDER_ID: "+ order.getId()  + ", STATUS: "+ order.getOrderStatusId() + ", UID"+ order.getUniqueOrderId()));
                 orders.forEach(this::handleOrderStatusChanged);
                 System.out.println("===========================================================================================");
             }catch (Exception e){
@@ -170,6 +171,12 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
         View rootView = mBinding.getRoot();
         setContentView(rootView);
         mUser = UserSession.getUserData(this);
+        if(!UserSession.isLoggedIn()){
+            Intent intent = new Intent(this, AuthActivity.class);
+            finishAffinity();
+            startActivity(intent);
+            finish();
+        }
 
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         orderViewModel.init();
@@ -211,7 +218,7 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
         Log.d(TAG, "Inside handleOrderStatusChanged");
         OrderStatus orderStatus =  CommonUtils.mapOrderStatus(fetchedOrder.getOrderStatusId());
         switch (orderStatus){
-            case ORDER_PLACED:
+            case ORDER_RECEIVED:
                 orderViewModel.removeOrderFromNewOrderList(fetchedOrder);
                 orderAcceptListAdapter.notifyDataSetChanged();
                 CommonUtils.showPushNotification(this, "Order Accepted", fetchedOrder.getUniqueOrderId() + " has been accepted");
@@ -300,16 +307,26 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
 
     @Override
     public void onIncreasePreparationTime(Order order) {
-        int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
-        if(preparationTime == Constants.FOOD_PREPARE_TIME_MAX)return;
+        int foodPreparingMaxTime = Integer.parseInt(order.getRestaurant().getDeliveryTime()) + Constants.FOOD_PREPARE_TIME_MAX;
+        Log.d(TAG, "DeliveryTime: "+ order.getRestaurant().getDeliveryTime() + ", PrepareTimeMax: "+foodPreparingMaxTime);
+        //int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
+        if(order.getPrepareTime() == 0)order.setPrepareTime(Integer.parseInt(order.getRestaurant().getDeliveryTime()));
+        int preparationTime = order.getPrepareTime();
+        //if(preparationTime == Constants.FOOD_PREPARE_TIME_MAX)return;
+        if(preparationTime == foodPreparingMaxTime)return;
         preparationTime += 1;
         orderViewModel.changeDeliveryTimeOfNotAcceptedOrder(order.getId(), preparationTime);
     }
 
     @Override
     public void onDecreasePreparationTime(Order order) {
-        int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
-        if(preparationTime == Constants.FOOD_PREPARE_TIME_MIN)return;
+        int foodPreparingMinTime = Integer.parseInt(order.getRestaurant().getDeliveryTime()) - Constants.FOOD_PREPARE_TIME_MIN;
+        Log.d(TAG, "DeliveryTime: "+ order.getRestaurant().getDeliveryTime() + ", PrepareTimeMin: "+foodPreparingMinTime);
+        //int preparationTime = Integer.parseInt(order.getRestaurant().getDeliveryTime());
+        if(order.getPrepareTime() == 0)order.setPrepareTime(Integer.parseInt(order.getRestaurant().getDeliveryTime()));
+        int preparationTime = order.getPrepareTime();
+        //if(preparationTime == Constants.FOOD_PREPARE_TIME_MIN)return;
+        if(preparationTime == foodPreparingMinTime)return;
         preparationTime -= 1;
         if(preparationTime < 1) preparationTime = 0;
         orderViewModel.changeDeliveryTimeOfNotAcceptedOrder(order.getId(), preparationTime);
@@ -331,6 +348,8 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
 
     @Override
     public void onAcceptClick(Order order, ItemOrderAcceptBinding binding) {
+        Log.d(TAG, "Inside onAcceptClick()....");
+        Log.d(TAG, "ÖRDER: ID"+ order.getId() + ", DeliverTime: "+order.getRestaurant().getDeliveryTime() + "PrepareTime: "+order.getPrepareTime());
         binding.layoutProgress.setVisibility(View.VISIBLE);
         if(orderViewModel.getNewOrders().getValue().size() == 1)stopMediaPlayer();
         orderViewModel.acceptOrder(order, mUser.getId()).observe(this, apiResponse -> {
