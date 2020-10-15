@@ -207,7 +207,7 @@
                                         android:textColor="@color/white"
                                         android:textStyle="normal"
                                         android:textSize="12sp"
-                                        android:hint="This week" />
+                                        android:text="This week" />
 <!--                                    android:hint="This week: 20-27 Apr"-->
 
                                     <TextView
