@@ -1,17 +1,22 @@
 package com.example.mainactivity.views.auth;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,10 +26,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.mainactivity.R;
+import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.databinding.FragmentLoginUsingOTPBinding;
 import com.example.mainactivity.models.request.RequestToken;
+import com.example.mainactivity.receivers.OtpReceiver;
 import com.example.mainactivity.viewmodels.AuthenticationViewModel;
 import com.example.mainactivity.views.MainActivity;
+
+import java.util.Locale;
 
 public class LoginUsingOTPFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
@@ -64,6 +73,9 @@ public class LoginUsingOTPFragment extends Fragment {
         authenticationViewModel = new ViewModelProvider(requireActivity()).get(AuthenticationViewModel.class);
         authenticationViewModel.init();
         initOTPInput();
+        startTimer();
+        requestPermissions();
+        new OtpReceiver().setEditTextOtp(mBinding.et1, mBinding.et2, mBinding.et3, mBinding.et4, mBinding.et5);
         mBinding.layoutLoginWithPassword.setVisibility(View.GONE);
         mBinding.layoutAlert.setVisibility(View.GONE);
 
@@ -78,13 +90,26 @@ public class LoginUsingOTPFragment extends Fragment {
             navController.navigate(R.id.action_loginUsingOTPFragment_to_loginUsingPasswordFragment);
         });
 
-        // Injecting the viewmodel to the view for data-binding
-        //mBinding.setAuthViewModel(authenticationViewModel);
+        mBinding.txtResend.setOnClickListener(view -> {
+            authenticationViewModel.sendLoginOtp(authenticationViewModel.getPhoneNumber().getValue());
+            mTimeLeftInMills = COUNT_DOWN_TIME;
+            mBinding.txtCounter.setVisibility(View.VISIBLE);
+            startTimer();
+        });
+
+        //Injecting the viewmodel to the view for data-binding
+        mBinding.setAuthViewModel(authenticationViewModel);
+    }
+
+    private void requestPermissions(){
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECEIVE_MMS) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECEIVE_SMS}, Constants.RECEIVE_SMS_PERMISSION);
+        }
     }
 
 
     private void initOTPInput() {
-        mBinding.et1.requestFocus();
+        //mBinding.et1.requestFocus();
         //requireActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         mBinding.et1.addTextChangedListener(new TextWatcher() {
             @Override
@@ -255,6 +280,32 @@ public class LoginUsingOTPFragment extends Fragment {
             }
         });
     }
+
+    private void startTimer(){
+        mBinding.txtResend.setEnabled(false);
+        new CountDownTimer(mTimeLeftInMills, 1000){
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMills = millisUntilFinished;
+                updateCancelTimer();
+            }
+
+            @Override
+            public void onFinish() {
+                mBinding.txtCounter.setVisibility(View.GONE);
+                mBinding.txtResend.setEnabled(true);
+            }
+        }.start();
+    }
+    private void updateCancelTimer(){
+        int minutes = (int) (mTimeLeftInMills / 1000) /60;// divided by 60 seconds
+        int seconds = (int) (mTimeLeftInMills / 1000) % 60;
+
+        String timeLeftFormatted = String.format(Locale.getDefault(), "%01d:%02d", minutes, seconds);
+        mBinding.txtCounter.setText(timeLeftFormatted);
+
+    }
+
 
 
 }

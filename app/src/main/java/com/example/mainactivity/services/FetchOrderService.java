@@ -38,7 +38,6 @@ import com.example.mainactivity.views.order.AcceptOrderActivityDialog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
@@ -344,7 +343,7 @@ public class FetchOrderService extends LifecycleService {
         mMediaPlayer = new MediaPlayer();
         Context context = getApplicationContext();
         if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
-        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.swiggy_order_cancel_ringtone);
+        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.order_cancel_ringtone);
         else mMediaPlayer = MediaPlayer.create(context, R.raw.default_notification_sound);
 
         try{

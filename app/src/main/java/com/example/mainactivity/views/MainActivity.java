@@ -1,5 +1,6 @@
 package com.example.mainactivity.views;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -16,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,12 +29,14 @@ import android.widget.Toast;
 import com.example.mainactivity.App;
 import com.example.mainactivity.R;
 import com.example.mainactivity.commons.Actions;
+import com.example.mainactivity.commons.Constants;
 import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ActivityMainBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.response.Dashboard;
+import com.example.mainactivity.receivers.ConnectivityReceiver;
 import com.example.mainactivity.services.FetchOrderService;
 import com.example.mainactivity.services.NewOrderFetchService;
 import com.example.mainactivity.sharedpref.ServiceTracker;
@@ -49,7 +53,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
     private static final long ORDER_REFRESH_INTERVAL = 1000 * 10;
     private final String TAG = this.getClass().getSimpleName();
     private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 500;
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        checkInternetConnection();
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         orderViewModel.init();
 
@@ -171,6 +176,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        //Register intent filter
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.EXTRA_CAPTIVE_PORTAL);
+
+        ConnectivityReceiver connectivityReceiver = new ConnectivityReceiver();
+        registerReceiver(connectivityReceiver, intentFilter);
+
+        //register connection status listener
+        App.getInstance().setConnectivityListener(this);
     }
 
     @Override
@@ -234,5 +249,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void checkInternetConnection() {
+        boolean isConnected = ConnectivityReceiver.isConnected();
+        if(!isConnected){
+            changeActivity();
+        }
+    }
 
+    private void changeActivity() {
+        Intent intent = new Intent(this, OfflineActivity.class);
+        startActivity(intent);
+    }
+
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if(!isConnected){
+            changeActivity();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == Constants.REQUEST_CALL_ACTIVITY){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                //makePhoneCall();
+            }
+        }
+    }
 }

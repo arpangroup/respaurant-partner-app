@@ -14,6 +14,7 @@ import com.example.mainactivity.sharedpref.ServiceTracker;
 
 public class BootCompleteReceiver extends BroadcastReceiver {
     private static final String TAG = "BootCompleteReceiver";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction() == Intent.ACTION_BOOT_COMPLETED && ServiceTracker.getServiceState(context) == ServiceTracker.ServiceState.STARTED){

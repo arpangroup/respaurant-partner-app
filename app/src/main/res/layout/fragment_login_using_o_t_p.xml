@@ -4,6 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <variable
+            name="authViewModel"
+            type="com.example.mainactivity.viewmodels.AuthenticationViewModel" />
+
 
     </data>
 
@@ -76,7 +80,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4.5dp"
-                                    android:text="8016626642"
+                                    android:text="@{authViewModel.phoneNumber}"
                                     android:textColor="@color/silver"
                                     android:textSize="12.7sp" />
                             </LinearLayout>

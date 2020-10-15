@@ -13,6 +13,7 @@ public class Constants {
     public static final int REQUEST_IMAGE_EXTERNAL = 107;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 108;
     public static final int REQUEST_NO_INTERNET_ACTIVITY = 200;
+    public static final int RECEIVE_SMS_PERMISSION = 500;
 
 
     private static LatLng DEFAULT_LOCATION_KOLKATA = new LatLng(22.5714427, 88.3428709);

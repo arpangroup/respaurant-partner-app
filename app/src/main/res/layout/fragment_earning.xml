@@ -46,6 +46,7 @@
                         android:orientation="horizontal">
 
                         <LinearLayout
+                            android:id="@+id/seeMoreDeliveredOrders"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layoutDirection="ltr"
@@ -206,7 +207,8 @@
                                         android:textColor="@color/white"
                                         android:textStyle="normal"
                                         android:textSize="12sp"
-                                        android:text="This week: 20-27 Apr" />
+                                        android:hint="This week" />
+<!--                                    android:hint="This week: 20-27 Apr"-->
 
                                     <TextView
                                         android:id="@+id/earningWeekly"
@@ -243,7 +245,8 @@
                                         android:textColor="@color/white"
                                         android:textStyle="normal"
                                         android:textSize="12sp"
-                                        android:text="This month: 01-31 Apr" />
+                                        android:text="This month" />
+<!--                                    android:text="This month: 01-31 Apr"-->
 
                                     <TextView
                                         android:id="@+id/earningMonthly"
@@ -376,6 +379,7 @@
                         android:orientation="horizontal">
 
                         <LinearLayout
+                            android:id="@+id/seeMoreCancelledOrders"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layoutDirection="ltr"
@@ -548,7 +552,8 @@
                                         android:textColor="@color/black"
                                         android:textStyle="normal"
                                         android:textSize="12sp"
-                                        android:text="This week: 20-27 Apr" />
+                                        android:text="This week" />
+<!--                                    android:text="This week: 20-27 Apr"-->
 
                                     <TextView
                                         android:layout_width="match_parent"
@@ -583,7 +588,8 @@
                                         android:textColor="@color/black"
                                         android:textStyle="normal"
                                         android:textSize="12sp"
-                                        android:text="This month: 01-31 Apr" />
+                                        android:text="This month" />
+<!--                                    android:text="This month: 01-31 Apr"-->
 
                                     <TextView
                                         android:layout_width="match_parent"

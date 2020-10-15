@@ -53,6 +53,8 @@ public class EarningFragment extends Fragment {
         navController = Navigation.findNavController(rootView);
         mBinding.toolbar.title.setText("Business Insights");
         mBinding.toolbar.more.setVisibility(View.GONE);
+        mBinding.seeMoreDeliveredOrders.setVisibility(View.GONE);
+        mBinding.seeMoreCancelledOrders.setVisibility(View.GONE);
 
         mBinding.toolbar.back.setOnClickListener(view -> navController.popBackStack());
 

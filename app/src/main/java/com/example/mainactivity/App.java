@@ -1,19 +1,29 @@
 package com.example.mainactivity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+
+import com.example.mainactivity.commons.Constants;
+import com.example.mainactivity.receivers.ConnectivityReceiver;
 
 public class App extends Application {
+    private static App mInstance;
     public static final String CHANNEL_ID_NEW_ORDER = "channel_new_orders";
     public static final String CHANNEL_ID_PUSH_NOTIFICATION = "channel_push_notifications";
     public static final String CHANNEL_ID_NEW_ORDER_FETCH_SERVICE = "channel_new_order_fetch_service";
@@ -43,8 +53,22 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        mInstance = this;
         createNotificationChannels();
     }
+
+    public static synchronized App getInstance(){
+        return mInstance;
+    }
+
+    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener){
+        ConnectivityReceiver.connectivityReceiverListener = listener;
+    }
+
+
+
+
+
 
     private void createNotificationChannels() {
         Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.default_notification_sound);

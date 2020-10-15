@@ -1,15 +1,19 @@
 package com.example.mainactivity.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.mainactivity.App;
 import com.example.mainactivity.R;
@@ -120,5 +124,23 @@ public class CommonUtils {
         if(statusId == 10) return OrderStatus.READY_FOR_PICKUP;
         return null;
     }
+
+    public static void makePhoneCall(Activity activity, String phoneNumber){
+        String number = phoneNumber;
+        if(number.trim().length() > 0){
+            phoneNumber = number; // this is because if call permission is not available then after permission access we will  call this makePhoneCall() function
+            if(ContextCompat.checkSelfPermission(activity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CALL_PHONE}, com.example.mainactivity.commons.Constants.REQUEST_CALL_ACTIVITY);
+            }else{
+                String dial = "tel:" + number;
+                Log.i("APP", "Calling to......."+number+"....................");
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse(dial));
+                activity.startActivity(intent);
+            }
+        }
+
+    }
+
 
 }

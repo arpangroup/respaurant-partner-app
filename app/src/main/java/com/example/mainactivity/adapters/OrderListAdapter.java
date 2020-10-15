@@ -231,7 +231,19 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
             this.itemOrderPreparingBinding = binding;
 
             //Order order =getItem(getAdapterPosition());
-            this.itemOrderPreparingBinding.layoutReady.setOnClickListener(view -> orderPrepareInterface.onOrderReady(getAdapterPosition(), getItem(getAdapterPosition()).getId()));
+            this.itemOrderPreparingBinding.layoutReady.setOnClickListener(view -> {
+                Order order = getItem(getAdapterPosition());
+                orderPrepareInterface.onOrderReady(getAdapterPosition(), order.getId());
+            });
+
+            this.itemOrderPreparingBinding.imgCall.setOnClickListener(view -> {
+                Order order = getItem(getAdapterPosition());
+                if(order.getDeliveryDetails() != null){
+                    orderPrepareInterface.onCallToDriver(order.getDeliveryDetails().getPhone());
+                }
+
+
+            });
         }
     }
 
@@ -239,6 +251,7 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
     public interface OrderPrepareInterface{
         void onAutoCancelOrder(Order order);
         void onOrderReady(int position, int orderId);
+        void onCallToDriver(String mobileNumber);
     }
 
     public void updateStatus(int position, int newStatus){
@@ -278,6 +291,8 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
                 //if (counter[0] == Constants.ORDER_READY_WAITING_TIME){
                 if (counter[0] == waitingTime){
                     t.cancel();
+                    holder.itemOrderPreparingBinding.layoutReady.setEnabled(false);
+                    holder.itemOrderPreparingBinding.layoutReady.setOnClickListener(null);
                 }
             }
         };
@@ -295,6 +310,8 @@ public class OrderListAdapter extends ListAdapter<Order, OrderListAdapter.OrderV
     }
 
     private void disableOrderReadyButton(OrderListAdapter.OrderViewHolder holder, int position){
+        holder.itemOrderPreparingBinding.layoutReady.setEnabled(false);
+        holder.itemOrderPreparingBinding.layoutReady.setOnClickListener(null);
 
     }
 

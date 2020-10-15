@@ -60,10 +60,11 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@{order.uniqueOrderId.substring(9)}"
+                            android:text="@{order.uniqueOrderId}"
                             android:hint="SRJI-8DL81QKYA"
                             android:textStyle="bold"
                             android:textSize="16sp" />
+<!--                        android:text="@{order.uniqueOrderId.substring(9)}"-->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -371,8 +372,9 @@
                                 android:layout_height="wrap_content"
                                 android:textStyle="bold"
                                 android:hint="OTP: 1234"
-                                android:text="@{order.otpVisible ? `OTP: `+order.deliveryDetails.otp : `` }"
+                                android:text="@{order.otpVisible ? `OTP: `+order.deliveryOtp : `` }"
                                 />
+<!--                            android:text="@{order.otpVisible ? `OTP: `+order.deliveryDetails.otp : `` }"-->
 <!--                            android:text="@{(order.orderStatusId == 3 || order.orderStatusId == 4) ? `OTP: `+order.deliveryDetails.deliveryPin : `` }"-->
 <!--                            @{order.uniqueOrderId.substring(9)}-->
                         </LinearLayout>

@@ -240,7 +240,7 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
         mMediaPlayer = new MediaPlayer();
         Context context = getApplicationContext();
         if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
-        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.swiggy_order_cancel_ringtone);
+        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.order_cancel_ringtone);
         else mMediaPlayer = MediaPlayer.create(context, R.raw.default_notification_sound);
 
        if(soundType == NotificationSoundType.ORDER_ARRIVE){

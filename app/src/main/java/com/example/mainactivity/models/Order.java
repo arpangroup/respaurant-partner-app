@@ -217,6 +217,12 @@ public class Order {
         return isExistInCheckList && this.deliveryType != DeliveryType.SELF_PICKUP.value();
     }
 
+    public String getDeliveryOtp(){
+        int lastIndex = this.uniqueOrderId.length();
+        String otp = this.uniqueOrderId.substring(lastIndex-4);
+        return otp;
+    }
+
     public boolean isOrderReadyButtonVisible(){
         OrderStatus orderStatus = CommonUtils.mapOrderStatus(this.orderStatusId);
         List<OrderStatus> checkList = Arrays.asList(

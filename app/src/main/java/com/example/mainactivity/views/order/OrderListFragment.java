@@ -1,23 +1,16 @@
 package com.example.mainactivity.views.order;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.MediaPlayer;
-import android.nfc.Tag;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.text.Editable;
@@ -27,8 +20,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Filter;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.mainactivity.R;
@@ -36,18 +27,14 @@ import com.example.mainactivity.adapters.OrderListAdapter;
 import com.example.mainactivity.commons.NotificationSoundType;
 import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.FragmentOrderListBinding;
-import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 import com.example.mainactivity.views.menuitem.MenuActivity;
 import com.example.mainactivity.views.MoreActivity;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderListFragment extends Fragment implements OrderListAdapter.OrderPrepareInterface {
     private final String TAG = this.getClass().getSimpleName();
@@ -257,6 +244,11 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         });
     }
 
+    @Override
+    public void onCallToDriver(String mobileNumber) {
+        CommonUtils.makePhoneCall(requireActivity(), mobileNumber);
+    }
+
     private void initClicks() {
         //Toolbar Click:
         mBinding.toolbar.tagAll.setOnCheckedChangeListener((compoundButton, b) -> {
@@ -293,7 +285,7 @@ public class OrderListFragment extends Fragment implements OrderListAdapter.Orde
         mMediaPlayer = new MediaPlayer();
         Context context = requireActivity();
         if(soundType == NotificationSoundType.ORDER_ARRIVE)mMediaPlayer = MediaPlayer.create(context, R.raw.order_arrived_ringtone);
-        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.swiggy_order_cancel_ringtone);
+        else if(soundType == NotificationSoundType.ORDER_CANCELED)mMediaPlayer = MediaPlayer.create(context, R.raw.order_cancel_ringtone);
         else mMediaPlayer = MediaPlayer.create(context, R.raw.default_notification_sound);
         try{
             mMediaPlayer.start();

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.example.mainactivity.adapters.OrderListAdapter;
 import com.example.mainactivity.databinding.FragmentPrepareOrderBinding;
 import com.example.mainactivity.models.Order;
+import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
 
 public class OrderPrepareFragment extends Fragment implements OrderListAdapter.OrderPrepareInterface {
@@ -64,5 +65,10 @@ public class OrderPrepareFragment extends Fragment implements OrderListAdapter.O
     @Override
     public void onOrderReady(int position, int orderId) {
 
+    }
+
+    @Override
+    public void onCallToDriver(String mobileNumber) {
+        CommonUtils.makePhoneCall(requireActivity(), mobileNumber);
     }
 }
