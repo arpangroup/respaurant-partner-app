@@ -112,6 +112,11 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
             });
         });
 
+        restaurantViewModel.getIsLoading().observe(requireActivity(), aBoolean -> {
+            if(aBoolean) mBinding.progressLayout.setVisibility(View.VISIBLE);
+            else mBinding.progressLayout.setVisibility(View.GONE);
+        });
+
         restaurantViewModel.getRestaurantDetails().observe(getViewLifecycleOwner(), restaurant -> {
             mBinding.restaurantName.setText(restaurant.getName());
             mBinding.desc.setText(restaurant.getAddress());
@@ -132,11 +137,11 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         boolean isRestaurantActive = UserSession.isRestaurantActive(requireActivity());
         if(isRestaurantActive && serviceStarted) {
             Log.d(TAG, "Restaurant is ACTIVE and Service STARTED; ==> return; ");
-            return;
+            actionOnService(Actions.START);
         }
         else if(!isRestaurantActive && !serviceStarted) {
             Log.d(TAG, "Restaurant is NOT_ACTIVE and Service NOT_STARTED; ==> return; ");
-            return;
+            actionOnService(Actions.STOP);
         }
         else if(isRestaurantActive && !serviceStarted) {
             Log.d(TAG, "Restaurant is ACTIVE and Service NOT_STARTED; ==> try to START service ");
@@ -187,12 +192,16 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         if(ServiceTracker.getServiceState(requireActivity()) == ServiceTracker.ServiceState.STOPPED && action == Actions.STOP) return;
         Intent intent = new Intent(getActivity(), FetchOrderService.class);
         intent.setAction(action.name());
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            Log.d(TAG, "Starting the service in >=26 Mode");
-            ContextCompat.startForegroundService(requireActivity(), intent);
-        }else{
-            Log.d(TAG, "Starting the service in < 26 Mode");
-            requireActivity().startService(intent);
+        try{
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                Log.d(TAG, "Starting the service in >=26 Mode");
+                ContextCompat.startForegroundService(requireActivity(), intent);
+            }else{
+                Log.d(TAG, "Starting the service in < 26 Mode");
+                requireActivity().startService(intent);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
     }

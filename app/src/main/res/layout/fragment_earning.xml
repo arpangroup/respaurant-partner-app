@@ -142,7 +142,7 @@
                                         android:textColor="@color/white"
                                         android:textStyle="normal"
                                         android:textSize="14sp"
-                                        android:text="@{dashboard.todaysAllCancelledOrders.size() +` orders`}"
+                                        android:text="@{dashboard.todaysAllCompletedOrders.size() +` orders`}"
                                         android:hint="2 orders" />
 
                                 </LinearLayout>

@@ -62,7 +62,7 @@ public class EarningFragment extends Fragment {
         });
 
 
-
+        restaurantViewModel.loadDashboard();
 
         restaurantViewModel.getDashboard().observe(requireActivity(),  dashboard -> {
 //            //Earnings

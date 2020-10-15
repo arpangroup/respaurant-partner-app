@@ -51,7 +51,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="Mughal Durbar Restaurant and Hotel"
+                        android:text=""
                         android:maxLines="1"
                         style="@style/TextAppearance.AppCompat.Title"
                         android:layout_marginStart="12dp"/>
@@ -63,7 +63,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_marginRight="40dp"
-                        android:text="Howrah, Kolkata"
+                        android:text=""
                         android:fontFamily="@font/sfpro_display_medium"
                         android:textSize="11sp"
                         android:textColor="#8A000000" />
@@ -317,6 +317,20 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/progressLayout"
+        android:visibility="gone"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/bottomNavigation"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 
     <include
         android:id="@+id/bottomNavigation"

@@ -9,6 +9,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,13 +26,16 @@ import android.widget.Toast;
 
 import com.example.mainactivity.App;
 import com.example.mainactivity.R;
+import com.example.mainactivity.commons.Actions;
 import com.example.mainactivity.commons.OrderStatus;
 import com.example.mainactivity.databinding.ActivityMainBinding;
 import com.example.mainactivity.firebase.MessagingService;
 import com.example.mainactivity.models.Order;
 import com.example.mainactivity.models.request.NewOrderRequest;
 import com.example.mainactivity.models.response.Dashboard;
+import com.example.mainactivity.services.FetchOrderService;
 import com.example.mainactivity.services.NewOrderFetchService;
+import com.example.mainactivity.sharedpref.ServiceTracker;
 import com.example.mainactivity.sharedpref.UserSession;
 import com.example.mainactivity.util.CommonUtils;
 import com.example.mainactivity.viewmodels.OrderViewModel;
@@ -101,6 +105,24 @@ public class MainActivity extends AppCompatActivity {
                 isOnGoingOrder = false;
             }
         });
+
+        // Check if service is running or not
+        System.out.println("#################### FETCH_ORDER_SERVICE ######################");
+        if(isMyServiceRunning(FetchOrderService.class)){
+            System.out.println("Service is running in background");
+            if(ServiceTracker.getServiceState(this) == ServiceTracker.ServiceState.STARTED){
+                System.out.println("As service is already running so no action need to handle");
+            }
+        }else{
+            System.out.println("Service is not running in background");
+            if(ServiceTracker.getServiceState(this) == ServiceTracker.ServiceState.STARTED){
+                Intent intent = new Intent(this, FetchOrderService.class);
+                intent.setAction(Actions.START.name());
+                System.out.println("Trying to run the service");
+                ContextCompat.startForegroundService(this, intent);
+            }
+        }
+        System.out.println("#############################################################");
 
 
 
@@ -199,6 +221,16 @@ public class MainActivity extends AppCompatActivity {
                         .show();
                 break;
             }
+    }
+
+    public boolean isMyServiceRunning(Class<?> serviceClass){
+        ActivityManager manager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+        for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
+            if(serviceClass.getName().equals(service.service.getClassName())){
+                return true;
+            }
+        }
+        return false;
     }
 
 
