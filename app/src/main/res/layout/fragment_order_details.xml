@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="order"
-            type="com.example.mainactivity.models.Order" />
+            type="com.pureeats.restaurant.models.Order" />
     </data>
 
     <RelativeLayout

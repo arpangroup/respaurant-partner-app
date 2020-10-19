@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/accountListFragment"
-        android:name="com.example.mainactivity.views.account.AccountListFragment"
+        android:name="com.pureeats.restaurant.views.account.AccountListFragment"
         android:label="fragment_account_list"
         tools:layout="@layout/fragment_account_list" >
         <action
@@ -22,12 +22,12 @@
     </fragment>
     <fragment
         android:id="@+id/editRestaurantFragment"
-        android:name="com.example.mainactivity.views.EditRestaurantFragment"
+        android:name="com.pureeats.restaurant.views.EditRestaurantFragment"
         android:label="fragment_edit_restaurant"
         tools:layout="@layout/fragment_edit_restaurant" />
     <fragment
         android:id="@+id/orderHistoryFragment"
-        android:name="com.example.mainactivity.views.order.OrderHistoryFragment"
+        android:name="com.pureeats.restaurant.views.order.OrderHistoryFragment"
         android:label="fragment_order_history"
         tools:layout="@layout/fragment_order_history" >
         <action
@@ -36,12 +36,12 @@
     </fragment>
     <fragment
         android:id="@+id/earningFragment"
-        android:name="com.example.mainactivity.views.account.EarningFragment"
+        android:name="com.pureeats.restaurant.views.account.EarningFragment"
         android:label="fragment_earning"
         tools:layout="@layout/fragment_earning" />
     <fragment
         android:id="@+id/orderDetailsFragment"
-        android:name="com.example.mainactivity.views.order.OrderDetailsFragment"
+        android:name="com.pureeats.restaurant.views.order.OrderDetailsFragment"
         android:label="fragment_order_details"
         tools:layout="@layout/fragment_order_details" />
 </navigation>

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/menuListFragment"
-        android:name="com.example.mainactivity.views.menuitem.MenuListFragment"
+        android:name="com.pureeats.restaurant.views.menuitem.MenuListFragment"
         android:label="fragment_menu_list"
         tools:layout="@layout/fragment_menu_list" >
         <action
@@ -20,12 +20,12 @@
     </fragment>
     <fragment
         android:id="@+id/editItemFragment"
-        android:name="com.example.mainactivity.views.menuitem.EditItemFragment"
+        android:name="com.pureeats.restaurant.views.menuitem.EditItemFragment"
         android:label="fragment_edit_item"
         tools:layout="@layout/fragment_edit_item" />
     <fragment
         android:id="@+id/editCategoryFragment"
-        android:name="com.example.mainactivity.views.menuitem.EditCategoryFragment"
+        android:name="com.pureeats.restaurant.views.menuitem.EditCategoryFragment"
         android:label="fragment_edit_category"
         tools:layout="@layout/fragment_edit_category" >
         <action

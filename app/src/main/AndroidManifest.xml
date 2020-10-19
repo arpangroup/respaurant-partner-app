@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mainactivity">
+    package="com.pureeats.restaurant">
     <!-- DATA available Or Not -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -24,15 +24,15 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:name=".App"
+        android:name="com.pureeats.restaurant.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.OfflineActivity"></activity>
-        <activity android:name=".views.location.LocationActivity" /> <!-- <activity -->
+        <activity android:name="com.pureeats.restaurant.views.OfflineActivity"></activity>
+        <activity android:name="com.pureeats.restaurant.views.location.LocationActivity" /> <!-- <activity -->
         <!-- android:name=".views.order.AcceptOrderActivity" -->
         <!-- android:launchMode="singleTop" -->
         <!-- android:parentActivityName=".views.MainActivity"> -->
@@ -41,24 +41,24 @@
         <!-- android:value="com.example.mainactivity.views.MainActivity" /> -->
         <!-- </activity> -->
         <activity
-            android:name=".views.order.AcceptOrderActivityDialog"
+            android:name="com.pureeats.restaurant.views.order.AcceptOrderActivityDialog"
             android:launchMode="singleTop"
-            android:parentActivityName=".views.MainActivity">
+            android:parentActivityName="com.pureeats.restaurant.views.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.mainactivity.views.MainActivity" />
+                android:value="com.pureeats.restaurant.views.MainActivity" />
         </activity>
-        <activity android:name=".views.SplashScreenActivity">
+        <activity android:name="com.pureeats.restaurant.views.SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.auth.AuthActivity" />
-        <activity android:name=".views.menuitem.MenuActivity" />
-        <activity android:name=".views.MoreActivity" />
-        <activity android:name=".views.MainActivity" />
+        <activity android:name="com.pureeats.restaurant.views.auth.AuthActivity" />
+        <activity android:name="com.pureeats.restaurant.views.menuitem.MenuActivity" />
+        <activity android:name="com.pureeats.restaurant.views.MoreActivity" />
+        <activity android:name="com.pureeats.restaurant.views.MainActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -81,13 +81,13 @@
         <!-- android:exported="false"> -->
         <!-- </service> -->
         <service
-            android:name=".services.FetchOrderService"
+            android:name="com.pureeats.restaurant.services.FetchOrderService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync"></service>
 
         <receiver
-            android:name=".receivers.BootCompleteReceiver"
+            android:name="com.pureeats.restaurant.receivers.BootCompleteReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -97,7 +97,7 @@
 
 
         <receiver
-            android:name=".receivers.ConnectivityReceiver"
+            android:name="com.pureeats.restaurant.receivers.ConnectivityReceiver"
             android:enabled="true"
             android:exported="true">
         </receiver>

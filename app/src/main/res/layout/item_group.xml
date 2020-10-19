@@ -7,11 +7,11 @@
         <import type="android.view.View"/>
         <variable
             name="category"
-            type="com.example.mainactivity.models.ItemCategory" />
+            type="com.pureeats.restaurant.models.ItemCategory" />
 
         <variable
             name="parentInterface"
-            type="com.example.mainactivity.adapters.ItemCategoryAdapter.ItemCategoryInterface" />
+            type="com.pureeats.restaurant.adapters.ItemCategoryAdapter.ItemCategoryInterface" />
     </data>
 
     <LinearLayout

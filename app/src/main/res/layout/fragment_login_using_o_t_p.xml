@@ -6,7 +6,7 @@
     <data>
         <variable
             name="authViewModel"
-            type="com.example.mainactivity.viewmodels.AuthenticationViewModel" />
+            type="com.pureeats.restaurant.viewmodels.AuthenticationViewModel" />
 
 
     </data>

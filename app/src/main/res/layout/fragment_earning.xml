@@ -6,7 +6,7 @@
     <data>
         <variable
             name="dashboard"
-            type="com.example.mainactivity.models.response.Dashboard" />
+            type="com.pureeats.restaurant.models.response.Dashboard" />
     </data>
 
     <RelativeLayout

@@ -4,7 +4,7 @@
     <data>
         <variable
             name="dish"
-            type="com.example.mainactivity.models.Dish" />
+            type="com.pureeats.restaurant.models.Dish" />
     </data>
 
     <LinearLayout
