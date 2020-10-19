@@ -158,7 +158,7 @@ public class EditRestaurantFragment extends Fragment {
 
             // BusinessDetails:
             mBinding.businessDetails.etStoreName.setText(restaurant.getName());
-            mBinding.businessDetails.etDescription.setText(restaurant.getName());
+            mBinding.businessDetails.etDescription.setText(restaurant.getDescription());
             mBinding.businessDetails.image.setImageResource(R.drawable.foodimg_1);
             Picasso.get().load(Constants.WEBSITE_URL + restaurant.getImage()).into(mBinding.businessDetails.image);
             mBinding.businessDetails.etAddress.setText(restaurant.getAddress());

@@ -58,6 +58,21 @@ public class FetchOrderService extends LifecycleService {
     public static MutableLiveData<List<Order>> mutableStatusList = new MutableLiveData<>(new ArrayList<>());
 
 
+//    public static void setOrdersToList(List<Order> orders){
+//        List<Order> orderList = listedOrders.getValue();
+//        if(orderList != null){
+//            orders.forEach(order -> {
+//                boolean isPresent = orderList.stream().anyMatch(order1 -> order.getId() == order1.getId());
+//                if(!isPresent){
+//                    orderList.add(order);
+//                }
+//            });
+//        }
+//
+//        listedOrders.postValue(orderList);
+//    }
+
+
 
     private MediaPlayer mMediaPlayer;
 

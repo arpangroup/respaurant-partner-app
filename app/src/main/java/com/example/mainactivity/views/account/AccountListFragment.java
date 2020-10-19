@@ -244,9 +244,7 @@ public class AccountListFragment extends Fragment implements AccountSectionAdapt
         Intent intentLogin = new Intent(requireActivity(), AuthActivity.class);
         intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         requireActivity().finishAffinity();
-        if(ServiceTracker.getServiceState(requireActivity()) == ServiceTracker.ServiceState.STARTED){
-            actionOnService(Actions.STOP);
-        }
+        actionOnService(Actions.STOP);
         startActivity(intentLogin);
         requireActivity().finish();
     }

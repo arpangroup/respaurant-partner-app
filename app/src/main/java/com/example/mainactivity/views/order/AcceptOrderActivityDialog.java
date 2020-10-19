@@ -288,6 +288,12 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
 
     @Override
     public void onBackPressed() {
+        cancelAllOrder();
+        super.onBackPressed();
+        isMusicEnable = false;
+    }
+
+    private void cancelAllOrder(){
         try{
             List<Order> notAcceptedOrders = orderViewModel.getNewOrders().getValue();
             if (notAcceptedOrders != null){
@@ -299,10 +305,14 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
             e.printStackTrace();
         }
 
-        super.onBackPressed();
-        isMusicEnable = false;
+    }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cancelAllOrder();
+        finish();
     }
 
     @Override

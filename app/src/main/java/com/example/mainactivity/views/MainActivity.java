@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
         // Check if service is running or not
         System.out.println("#################### FETCH_ORDER_SERVICE ######################");
-        if(isMyServiceRunning(FetchOrderService.class)){
+        if(isFetchOrderServiceRunning(FetchOrderService.class)){
             System.out.println("Service is running in background");
             if(ServiceTracker.getServiceState(this) == ServiceTracker.ServiceState.STARTED){
                 System.out.println("As service is already running so no action need to handle");
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             }
     }
 
-    public boolean isMyServiceRunning(Class<?> serviceClass){
+    public boolean isFetchOrderServiceRunning(Class<?> serviceClass){
         ActivityManager manager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
         for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
             if(serviceClass.getName().equals(service.service.getClassName())){
