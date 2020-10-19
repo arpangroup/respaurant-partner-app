@@ -8,9 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.pureeats.restaurant.databinding.Cart1Binding;
 import com.pureeats.restaurant.databinding.Cart2Binding;
-import com.pureeats.restaurant.databinding.ItemDish1Binding;
 import com.pureeats.restaurant.models.AccountSection;
 
 public class AccountSectionAdapter extends ListAdapter<AccountSection, AccountSectionAdapter.AccountViewHolder> {
