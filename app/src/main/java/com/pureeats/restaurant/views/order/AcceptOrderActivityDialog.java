@@ -311,8 +311,8 @@ public class AcceptOrderActivityDialog extends AppCompatActivity implements Orde
     @Override
     protected void onPause() {
         super.onPause();
-        cancelAllOrder();
-        finish();
+        //cancelAllOrder();
+        //finish();
     }
 
     @Override
