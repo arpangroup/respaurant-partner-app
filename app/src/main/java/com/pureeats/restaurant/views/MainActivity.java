@@ -9,9 +9,12 @@ import androidx.navigation.Navigation;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -19,11 +22,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.pureeats.restaurant.App;
 import com.pureeats.restaurant.R;
 import com.pureeats.restaurant.commons.Actions;
 import com.pureeats.restaurant.commons.Constants;
+import com.pureeats.restaurant.commons.UpdateHelper;
 import com.pureeats.restaurant.databinding.ActivityMainBinding;
 import com.pureeats.restaurant.models.response.Dashboard;
 import com.pureeats.restaurant.receivers.ConnectivityReceiver;
@@ -36,9 +42,10 @@ import com.pureeats.restaurant.views.auth.AuthActivity;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener{
-    private static final long ORDER_REFRESH_INTERVAL = 1000 * 10;
+public class MainActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener, UpdateHelper.OnUpdateCheckListener{
     private final String TAG = this.getClass().getSimpleName();
+    private static final long ORDER_REFRESH_INTERVAL = 1000 * 10;
+    private FirebaseRemoteConfig mRemoteConfig;
     private static final int ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 500;
     ActivityMainBinding mBinding;
     OrderViewModel orderViewModel;
@@ -81,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             requestPermission();
         }
         //enableAutoStart();
+
 
         // Initially load all orders:
         orderViewModel.loadAllAcceptedOrders();
@@ -141,6 +149,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 //        startActivity(intent);
     }
 
+
+
     private void checkRunningOrders(){
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -169,6 +179,11 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
         //register connection status listener
         App.getInstance().setConnectivityListener(this);
+
+
+        UpdateHelper.with(this)
+                .onUpdateCheck(this)
+                .check();
     }
 
     @Override
@@ -259,5 +274,26 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 //makePhoneCall();
             }
         }
+    }
+
+    @Override
+    public void onUpdateCheckListener(String urlApp) {
+        Log.d(TAG, "Inside onUpdateCheckListener............................") ;
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("New Version Available")
+                .setMessage("Please update to new new version to continue")
+                .setPositiveButton("UPDATE", (dialogInterface, i) -> {
+                    try {
+                        String url = "market://details?id=\" + \"com.pureeats.restaurant";
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    }catch (ActivityNotFoundException e){
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlApp)));
+                    }
+                }).create();
+//                .setNegativeButton("CANCEL", (dialogInterface, i) -> {
+//                    dialogInterface.dismiss();
+//                }).create();
+        alertDialog.setCancelable(false);
+        alertDialog.show();
     }
 }

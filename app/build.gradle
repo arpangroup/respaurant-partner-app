@@ -5,17 +5,17 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
 
-//    buildFeatures {
-//        viewBinding = true
-//        dataBinding = true
-//    }
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+    }
 
-    dataBinding{
-        enabled = true
-    }
-    viewBinding{
-        enabled = true
-    }
+//    dataBinding{
+//        enabled = true
+//    }
+//    viewBinding{
+//        enabled = true
+//    }
 
     defaultConfig {
         applicationId "com.pureeats.restaurant"
@@ -53,7 +53,14 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.navigation:navigation-fragment:2.3.0'
     implementation 'androidx.navigation:navigation-ui:2.3.0'
-    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+    implementation 'com.google.firebase:firebase-core:17.5.1'
+    implementation 'com.google.firebase:firebase-config:19.2.0'
+    implementation 'com.google.firebase:firebase-analytics:17.6.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

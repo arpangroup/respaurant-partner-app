@@ -11,9 +11,17 @@ import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.pureeats.restaurant.commons.UpdateHelper;
 import com.pureeats.restaurant.receivers.ConnectivityReceiver;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class App extends Application {
     private static App mInstance;
@@ -57,11 +65,6 @@ public class App extends Application {
     public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener){
         ConnectivityReceiver.connectivityReceiverListener = listener;
     }
-
-
-
-
-
 
     private void createNotificationChannels() {
         Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.default_notification_sound);
