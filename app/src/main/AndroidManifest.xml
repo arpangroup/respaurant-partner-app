@@ -13,8 +13,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+<!--    <uses-permission android:name="android.permission.READ_SMS" />-->
+<!--    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />-->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- EndLessService -->
@@ -66,10 +66,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDHOCpobHOC5KsYSoIMV5l7i6s-iQxCIXA" /> <!-- <service android:name=".firebase.MessagingService"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="com.google.firebase.MESSAGING_EVENT" /> -->
-        <!-- </intent-filter> -->
-        <!-- </service> -->
+
         <!-- <service -->
         <!-- android:name=".services.NewOrderFetchService" -->
         <!-- android:enabled="true" -->
@@ -80,11 +77,20 @@
         <!-- android:enabled="true" -->
         <!-- android:exported="false"> -->
         <!-- </service> -->
+
+        <service
+            android:name=".firebase.MessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <service
             android:name="com.pureeats.restaurant.services.FetchOrderService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="dataSync"></service>
+            android:foregroundServiceType="dataSync"/>
 
         <receiver
             android:name="com.pureeats.restaurant.receivers.BootCompleteReceiver"

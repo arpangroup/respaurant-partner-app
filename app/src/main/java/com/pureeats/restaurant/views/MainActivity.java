@@ -3,12 +3,14 @@ package com.pureeats.restaurant.views;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,11 +19,14 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -42,7 +47,7 @@ import com.pureeats.restaurant.views.auth.AuthActivity;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener, UpdateHelper.OnUpdateCheckListener{
+public class MainActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener, UpdateHelper.OnUpdateCheckListener {
     private final String TAG = this.getClass().getSimpleName();
     private static final long ORDER_REFRESH_INTERVAL = 1000 * 10;
     private FirebaseRemoteConfig mRemoteConfig;
@@ -50,6 +55,13 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     ActivityMainBinding mBinding;
     OrderViewModel orderViewModel;
     NavController navController;
+
+    ConnectivityManager connectivityManager;
+    ConnectivityManager.NetworkCallback networkCallback;
+    Dialog networkAlertDialog;
+
+    public static final int MobileData = 2;
+    public static final int WifiData = 1;
 
     Dashboard mDashboard = null;
 
@@ -88,6 +100,11 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             requestPermission();
         }
         //enableAutoStart();
+
+        View view = getLayoutInflater().inflate(R.layout.activity_offline, null);
+        networkAlertDialog = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
+        networkAlertDialog.setContentView(view);
+        networkAlertDialog.setCancelable(false);
 
 
         // Initially load all orders:
@@ -169,7 +186,9 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     @Override
     protected void onResume() {
         super.onResume();
+        handleNetworkConnection();
 
+        /*
         //Register intent filter
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.EXTRA_CAPTIVE_PORTAL);
@@ -179,6 +198,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
         //register connection status listener
         App.getInstance().setConnectivityListener(this);
+         */
 
 
         UpdateHelper.with(this)
@@ -186,11 +206,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 .check();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
-    }
+
 
     private void requestPermission() {
         // Check if Android M or higher
@@ -295,5 +311,42 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 //                }).create();
         alertDialog.setCancelable(false);
         alertDialog.show();
+    }
+
+
+    public void handleNetworkConnection(){
+        connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkRequest networkRequest = new NetworkRequest.Builder().build();
+        networkCallback = new ConnectivityManager.NetworkCallback(){
+            @Override
+            public void onLost(@NonNull Network network) {
+                Log.d(TAG, "########################LOST");
+                super.onLost(network);
+
+               networkAlertDialog.show();
+
+            }
+
+            @Override
+            public void onAvailable(@NonNull Network network) {
+                Log.d(TAG, "########################available");
+                try{
+                    networkAlertDialog.dismiss();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
+    }
+
+    @Override
+    protected void onStop() {
+        connectivityManager.unregisterNetworkCallback(networkCallback);
+        super.onStop();
+        //LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
+
+
     }
 }

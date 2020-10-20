@@ -17,6 +17,7 @@ import com.pureeats.restaurant.R;
 import com.pureeats.restaurant.commons.OrderStatus;
 import com.pureeats.restaurant.sharedpref.ServiceTracker;
 import com.pureeats.restaurant.sharedpref.UserSession;
+import com.pureeats.restaurant.util.CommonUtils;
 import com.pureeats.restaurant.views.order.AcceptOrderActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -39,9 +40,9 @@ public class MessagingService extends FirebaseMessagingService {
     }
     int[] validOrderStatusList = {
 //            OrderStatus.ORDER_PLACED.value(),//1
-            OrderStatus.DELIVERY_GUY_ASSIGNED.value(),//3
+//            OrderStatus.DELIVERY_GUY_ASSIGNED.value(),//3
             //OrderStatus.REACHED_PICKUP_LOCATION.value(),//8
-            OrderStatus.ON_THE_WAY.value(),// 4 ORDER_PICKED_FROM_RESTAURANT_BY_DELIVERY_GUY
+//            OrderStatus.ON_THE_WAY.value(),// 4 ORDER_PICKED_FROM_RESTAURANT_BY_DELIVERY_GUY
             OrderStatus.DELIVERED.value(),//5
             OrderStatus.CANCELED.value()//6
     };
@@ -102,11 +103,14 @@ public class MessagingService extends FirebaseMessagingService {
             String orderJson = remoteMessage.getData().get("order");
             String title = data.get("title");
             String message = data.get("message");
-            if(orderStatusId == OrderStatus.ORDER_PLACED.value() || orderStatusId == OrderStatus.CANCELED.value()){
+            if(orderStatusId == OrderStatus.ORDER_PLACED.value()){
                 // Show full screen notification
                 //showFullScreenOrderArriveNotification(title, message, orderJson);
                 //sendMessageToBroadCastReceiver(orderJson);
-            }else{
+            }else if(orderStatusId == OrderStatus.CANCELED.value() ||  orderStatusId == OrderStatus.DELIVERED.value()){
+                CommonUtils.showPushNotification(this, data.get("title"), data.get("message"));
+            }
+            else{
                 if (ServiceTracker.getServiceState(this) == ServiceTracker.ServiceState.STARTED){
                     sendMessageToBroadCastReceiver(orderJson);
                 }
