@@ -89,9 +89,7 @@ public class CommonUtils {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)// clear notification after click
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setOngoing(false)
-                .setChannelId(App.CHANNEL_ID_PUSH_NOTIFICATION)
-                .setOngoing(true);
+                .setChannelId(App.CHANNEL_ID_PUSH_NOTIFICATION);
         Notification notification = builder.build();
 
         NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
