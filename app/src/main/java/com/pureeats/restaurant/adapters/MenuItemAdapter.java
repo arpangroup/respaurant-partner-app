@@ -1,7 +1,10 @@
 package com.pureeats.restaurant.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
@@ -11,8 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pureeats.restaurant.databinding.ItemMenuBinding;
 import com.pureeats.restaurant.models.MenuItem;
 
-public class MenuItemAdapter extends ListAdapter<MenuItem, MenuItemAdapter.MenuItemViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
 
+public class MenuItemAdapter extends ListAdapter<MenuItem, MenuItemAdapter.MenuItemViewHolder> implements Filterable {
+    private static final String TAG = "MenuItemAdapter";
     ItemCategoryAdapter.ItemCategoryInterface itemCategoryInterface;
 //    public MenuItemAdapter() {
 //        super(MenuItem.itemCallback);
@@ -50,6 +56,36 @@ public class MenuItemAdapter extends ListAdapter<MenuItem, MenuItemAdapter.MenuI
             }
         });
     }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+
+    Filter filter = new Filter() {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            Log.d("", "sortType:  " + charSequence);
+            List<MenuItem> filteredList = new ArrayList<>();
+
+
+
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = filteredList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            Log.d(TAG, "FILTER_RESULTS: " + filterResults.values);
+            //items = (List<Restaurant>) filterResults;
+            submitList((List<MenuItem>) filterResults);
+            //notifyDataSetChanged();
+        }
+    };
+
 
 
     static class MenuItemViewHolder extends RecyclerView.ViewHolder{

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/menuListFragment"
-        android:name="com.pureeats.restaurant.views.menuitem.MenuListFragment"
+        android:name="com.pureeats.restaurant.views.menuitem.MenuListFragmentV1"
         android:label="fragment_menu_list"
         tools:layout="@layout/fragment_menu_list" >
         <action

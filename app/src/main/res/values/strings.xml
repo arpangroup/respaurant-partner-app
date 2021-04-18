@@ -230,7 +230,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="google_maps_key">AIzaSyDHOCpobHOC5KsYSoIMV5l7i6s-iQxCIXA</string>
+    <string name="google_maps_key">AIzaSyCt_14My2CYghVw6eZFSYFlFPBOK29lkww</string>
     <string name="title_activity_success">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>

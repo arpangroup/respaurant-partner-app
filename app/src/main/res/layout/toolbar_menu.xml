@@ -13,6 +13,7 @@
         android:paddingLeft="16dp"
         android:orientation="vertical">
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layoutDirection="rtl"
@@ -42,6 +43,39 @@
                 android:textColorHint="@color/silver"
                 android:textSize="18sp" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:visibility="gone"
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:padding="8dp"
+                android:src="@drawable/ic_baseline_arrow_back_24" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:closeIcon="@drawable/ic_baseline_close_24"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@color/transferent"
+                app:queryHint="Search..."
+                android:iconifiedByDefault="true"
+                android:focusable="false"
+                app:searchIcon="@null" />
+        </LinearLayout>
+
 
         <LinearLayout
             android:visibility="gone"
@@ -112,6 +146,7 @@
                 android:layout_marginRight="16dp"
                 android:text="All Items (4)"/>
             <RadioButton
+                android:visibility="gone"
                 android:id="@+id/radiobutton_out_of_stock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

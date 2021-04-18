@@ -99,7 +99,7 @@ public class Order {
         try {
             double itemTotal = Double.parseDouble(this.itemTotal);
             double discount = Double.parseDouble(this.discountAmount);
-            double billAmount = itemTotal - discount;
+            double billAmount = itemTotal + discount;
             return FormatPrice.formatDecimalPoint(billAmount);
         }catch (Exception e){
             e.printStackTrace();

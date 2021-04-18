@@ -65,7 +65,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDHOCpobHOC5KsYSoIMV5l7i6s-iQxCIXA" /> <!-- <service android:name=".firebase.MessagingService"> -->
+            android:value="AIzaSyCt_14My2CYghVw6eZFSYFlFPBOK29lkww" /> <!-- <service android:name=".firebase.MessagingService"> -->
 
         <!-- <service -->
         <!-- android:name=".services.NewOrderFetchService" -->
