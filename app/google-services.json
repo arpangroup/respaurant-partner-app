@@ -1,34 +1,33 @@
 {
   "project_info": {
-    "project_number": "255563104683",
-    "firebase_url": "https://pureeats-partner.firebaseio.com",
-    "project_id": "pureeats-partner",
-    "storage_bucket": "pureeats-partner.appspot.com"
+    "project_number": "33750448711",
+    "project_id": "restaurantpartner-28e92",
+    "storage_bucket": "restaurantpartner-28e92.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:255563104683:android:fa4b5e30c0b3f8e06092ee",
+        "mobilesdk_app_id": "1:33750448711:android:59e76200173f2a82600f62",
         "android_client_info": {
           "package_name": "com.pureeats.restaurant"
         }
       },
       "oauth_client": [
         {
-          "client_id": "255563104683-nbf7nv3b1q9lnibkq82r5037a5o73a7f.apps.googleusercontent.com",
+          "client_id": "33750448711-6b13qd0onu3f1u6a442cadn7u8nj5oe8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA9OfOLyLmzHnwzHxTvuM2g8bveBVdkWrw"
+          "current_key": "AIzaSyBAs4qotp02PbulzKrzKTfSMgPnFaoNI0I"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "255563104683-nbf7nv3b1q9lnibkq82r5037a5o73a7f.apps.googleusercontent.com",
+              "client_id": "33750448711-6b13qd0onu3f1u6a442cadn7u8nj5oe8.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

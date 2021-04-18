@@ -58,25 +58,29 @@ public class EndlessService extends Service {
 
 
     private void startService() {
-        if(isServiceStarted) return;
-        Log.d(TAG, "Starting the foreground service task");
-        Toast.makeText(this, "Service starting its task", Toast.LENGTH_SHORT).show();
-        isServiceStarted = true;
-        ServiceTracker.setServiceState(this, ServiceTracker.ServiceState.STARTED);
+        try {
+            if (isServiceStarted) return;
+            Log.d(TAG, "Starting the foreground service task");
+            Toast.makeText(this, "Service starting its task", Toast.LENGTH_SHORT).show();
+            isServiceStarted = true;
+            ServiceTracker.setServiceState(this, ServiceTracker.ServiceState.STARTED);
 
-        // we need this lock so our service gets not affected by Doze Mode
-        PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        //wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "whatever");
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NewOrderFetchService::lock");
-        wakeLock.acquire();
+            // we need this lock so our service gets not affected by Doze Mode
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            //wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "whatever");
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NewOrderFetchService::lock");
+            wakeLock.acquire();
 
-        // we're starting a loop in a coroutine
-        new Thread(() -> {
-            while (isServiceStarted){
-                //pingFakeServer();
-            }
-        });
-        Log.d(TAG, "End of the loop for the service");
+            // we're starting a loop in a coroutine
+            new Thread(() -> {
+                while (isServiceStarted) {
+                    //pingFakeServer();
+                }
+            });
+            Log.d(TAG, "End of the loop for the service");
+        }catch (Throwable t){
+            t.printStackTrace();
+        }
     }
     private void stopService() {
         Log.d(TAG, "Stopping the foreground service");
@@ -90,7 +94,7 @@ public class EndlessService extends Service {
             }
             stopForeground(true);
             stopSelf();
-        }catch (Exception e){
+        }catch (Throwable e){
             e.printStackTrace();
             Log.d(TAG, "Service stopped without being started: "+e.getMessage());
         }
@@ -119,15 +123,19 @@ public class EndlessService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        Log.d(TAG, "TASK REMOVED..............");
+        try {
+            Log.d(TAG, "TASK REMOVED..............");
 
-        Intent restartServiceIntent  = new Intent(getApplicationContext(), EndlessService.class);
-        restartServiceIntent.setPackage(getPackageName());
+            Intent restartServiceIntent = new Intent(getApplicationContext(), EndlessService.class);
+            restartServiceIntent.setPackage(getPackageName());
 
-        PendingIntent restartServicePendingIntent = PendingIntent.getService(this, 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
-        getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        AlarmManager alarmService =(AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() +1000, restartServicePendingIntent);
+            PendingIntent restartServicePendingIntent = PendingIntent.getService(this, 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
+            getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+            AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+            alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, restartServicePendingIntent);
+        }catch (Throwable t){
+            t.printStackTrace();
+        }
 
 //        PendingIntent service = PendingIntent.getService(
 //                getApplicationContext(),

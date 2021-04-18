@@ -17,7 +17,7 @@ public class UpdateHelper {
     public static String KEY_UPDATE_URL = "update_url";
 
     public interface OnUpdateCheckListener{
-        void onUpdateCheckListener(String urlApp);
+        void onUpdateCheckListener(double appVersion, double currentVersion, String urlApp);
     }
 
     public static Builder with(Context context){
@@ -56,7 +56,17 @@ public class UpdateHelper {
                     String updateUrl = remoteConfig.getString(KEY_UPDATE_URL);
 
                     if(!TextUtils.equals(currentVersion, appVersion) && onUpdateCheckListener != null){
-                        onUpdateCheckListener.onUpdateCheckListener(updateUrl);
+                        try{
+                            double currentVersionDouble = Double.parseDouble(appVersion);
+                            double  availableVersion= Double.parseDouble(currentVersion);
+                            Log.d("VERSION", "CURRENT_VERSION : "+ currentVersion );
+                            Log.d("VERSION","AVAILABLE_VERSION:" + availableVersion);
+                            if(availableVersion > currentVersionDouble){
+                                onUpdateCheckListener.onUpdateCheckListener(currentVersionDouble, availableVersion, updateUrl);
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

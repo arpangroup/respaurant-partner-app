@@ -293,15 +293,16 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     }
 
     @Override
-    public void onUpdateCheckListener(String urlApp) {
+    public void onUpdateCheckListener(double currentVersion, double availableVersion, String urlApp) {
         Log.d(TAG, "Inside onUpdateCheckListener............................") ;
         AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("New Version Available")
-                .setMessage("Please update to new new version to continue")
+                .setMessage("Please update to new new version to continue \nCurrentVersion: "+currentVersion +"\nAvailableVersion: "+availableVersion )
                 .setPositiveButton("UPDATE", (dialogInterface, i) -> {
                     try {
-                        String url = "market://details?id=\" + \"com.pureeats.restaurant";
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                        final String appPackageName = getPackageName();
+                        //String url = "market://details?id=\" + \"com.arpangroup.pureeats";
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
                     }catch (ActivityNotFoundException e){
                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(urlApp)));
                     }
